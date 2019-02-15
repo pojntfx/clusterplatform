@@ -1,17 +1,12 @@
 # Cluster Platform
 
-![Cluster Platform Logo](./assets/logo.webp)
+![Cluster Platform logo](./assets/logo.webp)
 
 The Futurist's Approach to System Design.
 
 ## Features
 
-- [📄 Landing](http://txti.es/clusterplatform): A page to connect all sections and serve as an overview
-- [⌨ Develop](./packages/develop/README.md): Make development of distributed systems simple
-- [🌐 Distribute](./packages/distribute/README.md): Lean distribution of your platform
-- [🕹 Control](./packages/control/README.md): Operate your platform with ease
-  <!-- - [Discuss](https://discuss.clusterplatform.io): Have a productive discussion on and thus contribute to the Cluster Platform -->
-- [💬 Chat](https://clusterplatform.slack.com): Instant messaging, announcements and more
+See [Home](./packages/site/src/index.md).
 
 ## Licenses
 

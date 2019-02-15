@@ -1,7 +1,5 @@
 # Cluster Platform Develop
 
-![Cluster Platform Develop Logo](./assets/logo.webp)
-
 Make development of distributed systems simple.
 
 ## Features

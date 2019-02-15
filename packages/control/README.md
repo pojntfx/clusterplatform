@@ -1,7 +1,5 @@
 # Cluster Platform Control
 
-![Cluster Platform Control Logo](./assets/logo.webp)
-
 Operate your platform with ease.
 
 ## Features
