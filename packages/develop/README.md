@@ -11,4 +11,4 @@ Make development of distributed systems simple.
 
 ## More
 
-See [Platform README](../../README.md).
+See [Home](../site/src/index.md).

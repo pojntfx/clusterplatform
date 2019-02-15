@@ -16,4 +16,4 @@ Operate your platform with ease.
 
 ## More
 
-See [Platform README](../../README.md).
+See [Home](../site/src/index.md).

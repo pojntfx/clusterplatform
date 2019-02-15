@@ -9,4 +9,4 @@ Logos, icons, mockups and more.
 
 ## More
 
-See [Platform README](../../README.md).
+See [Home](../site/src/index.md).
