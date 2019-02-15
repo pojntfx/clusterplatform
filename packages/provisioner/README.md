@@ -62,4 +62,4 @@ Now, you can either use the REST api directly on [localhost:3000/api](http://loc
 
 ## More
 
-See [Platform README](../../README.md).
+See [Home](../site/src/index.md).

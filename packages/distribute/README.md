@@ -29,4 +29,4 @@ Lean distribution of your platform.
 
 ## More
 
-See [Platform README](../../README.md).
+See [Home](../site/src/index.md).
