@@ -1,7 +1,5 @@
 # Cluster Platform Distribute
 
-![Cluster Platform Distribute Logo](./assets/logo.webp)
-
 Lean distribution of your platform.
 
 ## Features
