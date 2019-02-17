@@ -1,0 +1,18 @@
+apiVersion: skaffold/v1beta5
+kind: Config
+build:
+  artifacts:
+    - image: clusterplatform/ipxe-manager
+      context: packages/ipxe-manager
+    - image: clusterplatform/ipxe-worker
+      context: packages/ipxe-worker
+    - image: clusterplatform/gateway
+      context: packages/gateway
+deploy:
+  kubectl:
+    manifests:
+      - packages/ipxe-manager/stack.yml
+      - packages/ipxe-worker/stack.yml
+      - packages/gateway/stack.yml
+      - packages/nats/stack.yml
+      - packages/redis/stack.yml

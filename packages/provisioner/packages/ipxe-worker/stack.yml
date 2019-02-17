@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ipxe-worker
+spec:
+  selector:
+    matchLabels:
+      app: ipxe-worker
+  template:
+    metadata:
+      labels:
+        app: ipxe-worker
+    spec:
+      containers:
+        - name: ipxe-worker
+          image: clusterplatform/ipxe-worker
+          resources:
+            limits:
+              memory: 50Mi
+              cpu: 50m
+          envFrom:
+            - configMapRef:
+                name: nats
+            - configMapRef:
+                name: redis
