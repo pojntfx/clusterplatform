@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ipxe-manager
+spec:
+  selector:
+    matchLabels:
+      app: ipxe-manager
+  template:
+    metadata:
+      labels:
+        app: ipxe-manager
+    spec:
+      containers:
+        - name: ipxe-manager
+          image: clusterplatform/ipxe-manager
+          resources:
+            limits:
+              memory: 50Mi
+              cpu: 50m
+          envFrom:
+            - configMapRef:
+                name: nats
+            - configMapRef:
+                name: redis

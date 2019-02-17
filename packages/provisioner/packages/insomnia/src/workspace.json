@@ -1,0 +1,74 @@
+{
+	"_type": "export",
+	"__export_format": 3,
+	"__export_date": "2019-02-17T12:51:20.105Z",
+	"__export_source": "insomnia.desktop.app:v6.3.2",
+	"resources": [
+		{
+			"_id": "wrk_e9ac3126193f4dc6ad90a16bcdaf97fd",
+			"created": 1550407615275,
+			"description": "",
+			"modified": 1550407615275,
+			"name": "Cluster Platform Provisioner",
+			"parentId": null,
+			"_type": "workspace"
+		},
+		{
+			"_id": "env_129554519b384da1b90aefab6d71cc50",
+			"color": null,
+			"created": 1550407615327,
+			"data": {
+				"gateway": "http://localhost:3000/api"
+			},
+			"isPrivate": false,
+			"metaSortKey": 1550407615327,
+			"modified": 1550407774569,
+			"name": "New Environment",
+			"parentId": "wrk_e9ac3126193f4dc6ad90a16bcdaf97fd",
+			"_type": "environment"
+		},
+		{
+			"_id": "jar_87679a4f778e4e9fa0176f6ee29cc7ea",
+			"cookies": [],
+			"created": 1550407615341,
+			"modified": 1550407615341,
+			"name": "Default Jar",
+			"parentId": "wrk_e9ac3126193f4dc6ad90a16bcdaf97fd",
+			"_type": "cookie_jar"
+		},
+		{
+			"_id": "fld_11248f48b3b240eaaee0f4a7b64634ab",
+			"created": 1550407620987,
+			"description": "",
+			"environment": {},
+			"metaSortKey": -1550407620987,
+			"modified": 1550407757000,
+			"name": "ipxes",
+			"parentId": "wrk_e9ac3126193f4dc6ad90a16bcdaf97fd",
+			"_type": "request_group"
+		},
+		{
+			"_id": "req_bbeb28b2df794cbeb8f566914b9252ee",
+			"authentication": {},
+			"body": {},
+			"created": 1550407751883,
+			"description": "",
+			"headers": [],
+			"isPrivate": false,
+			"metaSortKey": -1550407751883,
+			"method": "POST",
+			"modified": 1550407781271,
+			"name": "ipxes",
+			"parameters": [],
+			"parentId": "fld_11248f48b3b240eaaee0f4a7b64634ab",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ gateway  }}/ipxes",
+			"_type": "request"
+		}
+	]
+}
