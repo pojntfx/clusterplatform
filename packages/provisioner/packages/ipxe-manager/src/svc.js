@@ -79,7 +79,7 @@ module.exports = {
     }),
     Db
   ],
-  adapter: new Adapter(process.env.POSTGRESQL_URI),
+  adapter: new Adapter(process.env.POSTGRES_URI),
   model: {
     name: "ipxe",
     define: {

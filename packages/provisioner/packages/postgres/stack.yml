@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: bitnami/postgresql:10.7.0
+          image: postgres:11.2-alpine
           resources:
             limits:
               memory: 250Mi
@@ -25,7 +25,7 @@ spec:
                 name: postgres
           volumeMounts:
             - name: postgres
-              mountPath: /bitnami
+              mountPath: /var/lib/postgresql/data
       volumes:
         - name: postgres
           persistentVolumeClaim:
@@ -47,7 +47,7 @@ metadata:
   name: postgres
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 5Gi
@@ -57,7 +57,8 @@ kind: ConfigMap
 metadata:
   name: postgres
 data:
-  POSTGRESQL_PASSWORD: postgres-password
-  POSTGRESQL_USERNAME: postgres-username
-  POSTGRESQL_DATABASE: postgres-database
-  POSTGRESQL_URI: postgres://postgres-username:postgres-password@postgres:5432/postgres-database
+  POSTGRES_PASSWORD: postgres-password
+  POSTGRES_USER: postgres-user
+  POSTGRES_DB: postgres-db
+  PGDATA: /var/lib/postgresql/data/pgdata
+  POSTGRES_URI: postgres://postgres-user:postgres-password@postgres:5432/postgres-db
