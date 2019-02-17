@@ -16,10 +16,12 @@ spec:
           image: clusterplatform/ipxe-manager
           resources:
             limits:
-              memory: 50Mi
-              cpu: 50m
+              memory: 150Mi
+              cpu: 150m
           envFrom:
             - configMapRef:
                 name: nats
             - configMapRef:
                 name: redis
+            - configMapRef:
+                name: postgres

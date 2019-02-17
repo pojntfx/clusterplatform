@@ -6,7 +6,12 @@
   "dependencies": {
     "moleculer": "^0.13.6",
     "moleculer-bull": "^0.2.3",
-    "nats": "^1.2.2"
+    "moleculer-db": "^0.7.7",
+    "moleculer-db-adapter-sequelize": "^0.1.11",
+    "nats": "^1.2.2",
+    "pg": "^7.8.0",
+    "pg-hstore": "^2.3.2",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {},
   "scripts": {
