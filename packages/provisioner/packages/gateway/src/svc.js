@@ -7,9 +7,12 @@ module.exports = {
     routes: [
       {
         path: "/api",
-        whitelist: ["ipxe-manager.create"],
+        whitelist: ["ipxe-manager.*"],
         aliases: {
-          "POST /ipxes": "ipxe-manager.create"
+          "POST /ipxes": "ipxe-manager.createOverwrite",
+          "GET /ipxes": "ipxe-manager.list",
+          "GET /ipxes/:id": "ipxe-manager.get",
+          "DELETE /ipxes/:id": "ipxe-manager.get"
         }
       }
     ]

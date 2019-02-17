@@ -16,8 +16,8 @@ spec:
           image: redis:5.0.3-alpine
           resources:
             limits:
-              memory: 50Mi
-              cpu: 50m
+              memory: 150Mi
+              cpu: 150m
           ports:
             - containerPort: 6379
 ---

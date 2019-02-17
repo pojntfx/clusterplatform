@@ -16,3 +16,4 @@ deploy:
       - packages/gateway/stack.yml
       - packages/nats/stack.yml
       - packages/redis/stack.yml
+      - packages/postgres/stack.yml
