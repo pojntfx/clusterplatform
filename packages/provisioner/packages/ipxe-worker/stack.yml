@@ -16,8 +16,8 @@ spec:
           image: clusterplatform/ipxe-worker
           resources:
             limits:
-              memory: 150Mi
-              cpu: 150m
+              memory: 650Mi
+              cpu: 650m
           envFrom:
             - configMapRef:
                 name: nats
@@ -25,3 +25,21 @@ spec:
                 name: redis
             - configMapRef:
                 name: minio
+          volumeMounts:
+            - name: ipxe-worker
+              mountPath: /tmp/ipxe
+      volumes:
+        - name: ipxe-worker
+          persistentVolumeClaim:
+            claimName: ipxe-worker
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ipxe-worker
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi

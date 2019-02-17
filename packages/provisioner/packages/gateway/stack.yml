@@ -16,8 +16,8 @@ spec:
           image: clusterplatform/gateway
           resources:
             limits:
-              memory: 150Mi
-              cpu: 150m
+              memory: 50Mi
+              cpu: 50m
           envFrom:
             - configMapRef:
                 name: nats

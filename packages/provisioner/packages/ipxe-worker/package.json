@@ -4,6 +4,7 @@
   "description": "",
   "main": "src/svc.js",
   "dependencies": {
+    "async-shelljs": "^0.1.2",
     "minio": "^7.0.5",
     "moleculer": "^0.13.6",
     "moleculer-bull": "^0.2.3",
