@@ -23,3 +23,5 @@ spec:
                 name: nats
             - configMapRef:
                 name: redis
+            - configMapRef:
+                name: minio
