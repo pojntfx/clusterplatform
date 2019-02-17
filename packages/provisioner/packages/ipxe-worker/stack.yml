@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: ipxe-worker
-          image: clusterplatform/ipxe-worker
+          image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-worker
           resources:
             limits:
               memory: 650Mi
@@ -39,7 +39,7 @@ metadata:
   name: ipxe-worker
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 5Gi

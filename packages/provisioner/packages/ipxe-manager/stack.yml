@@ -13,11 +13,11 @@ spec:
     spec:
       containers:
         - name: ipxe-manager
-          image: clusterplatform/ipxe-manager
+          image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-manager
           resources:
             limits:
-              memory: 50Mi
-              cpu: 50m
+              memory: 100Mi
+              cpu: 100m
           envFrom:
             - configMapRef:
                 name: nats
