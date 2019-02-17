@@ -4,9 +4,11 @@
   "description": "",
   "main": "src/svc.js",
   "dependencies": {
+    "minio": "^7.0.5",
     "moleculer": "^0.13.6",
     "moleculer-bull": "^0.2.3",
-    "nats": "^1.2.2"
+    "nats": "^1.2.2",
+    "shelljs": "^0.8.3"
   },
   "devDependencies": {},
   "scripts": {
