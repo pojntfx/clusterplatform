@@ -5,7 +5,7 @@ module.exports = {
   name: "ipxe-worker",
   queues: {
     "ipxe-worker.create": async function(job) {
-      await this.logger.info("Creating new Ipxe", job.data);
+      await this.logger.info("Creating new Ipxe artifact", job.data);
       await job.progress(0);
       const ipxe = new Ipxe({
         downloaddir: "/tmp/ipxe/downloaddir",
@@ -14,12 +14,11 @@ module.exports = {
         artifactId: job.data.artifactId
       });
       await job.progress(10);
-      await ipxe.download();
-      await job.progress(20);
-      await ipxe.build({
-        driver: "ipxe",
-        extension: "lkrn"
+      await ipxe.download({
+        remote: "https://github.com/ipxe/ipxe.git"
       });
+      await job.progress(20);
+      await ipxe.build(job.data);
       await job.progress(50);
       await ipxe.package();
       await job.progress(70);

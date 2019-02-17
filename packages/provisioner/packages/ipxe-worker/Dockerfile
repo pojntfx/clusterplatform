@@ -1,5 +1,5 @@
-FROM node:lts-alpine
-RUN apk add git gcc binutils make
+FROM fedora:29
+RUN dnf install -y npm git gcc binutils make perl xz xz-devel
 COPY package.json .
 COPY package-lock.json .
 RUN npm ci

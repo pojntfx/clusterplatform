@@ -16,8 +16,8 @@ spec:
           image: nats:1.4.1
           resources:
             limits:
-              memory: 150Mi
-              cpu: 150m
+              memory: 50Mi
+              cpu: 50m
           ports:
             - containerPort: 4222
 ---

@@ -16,8 +16,8 @@ spec:
           image: minio/minio:RELEASE.2019-02-06T21-16-36Z
           resources:
             limits:
-              memory: 150Mi
-              cpu: 150m
+              memory: 50Mi
+              cpu: 50m
           ports:
             - containerPort: 9000
           args:

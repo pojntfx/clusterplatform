@@ -1,5 +1,8 @@
 const { Client } = require("minio");
-const shell = require("shelljs");
+const shell = require("async-shelljs");
+const git = require("./git");
+const autotools = require("./autotools");
+const fs = require("./fs");
 
 module.exports = class {
   constructor({ artifactId, downloaddir, builddir, distdir }) {
@@ -12,18 +15,27 @@ module.exports = class {
     shell.mkdir("-p", this.distdir);
   }
 
-  async download() {}
+  async download({ remote }) {
+    git.cloneOrPullRepo(remote, this.downloaddir);
+  }
 
-  async build({ driver, extension }) {
+  async build({ platform, driver, extension, script }) {
     this.localFilename = `${driver}.${extension}`;
     this.remoteFilename = `${this.artifactId}/${driver}.${extension}`;
-    return shell.exec(
-      `echo "asdfasfdasdf" > ${this.builddir}/${this.localFilename}`
+    await fs.writeFile(`${this.downloaddir}/preseed.ipxe`, script);
+    await shell.cd(`${this.downloaddir}/src/`);
+    await autotools.make(
+      `${platform}/${driver}.${extension}`,
+      `EMBED=${this.downloaddir}/preseed.ipxe NO_WERROR=1`
+    );
+    return await shell.cp(
+      `${this.downloaddir}/src/${platform}/${this.localFilename}`,
+      `${this.builddir}/${this.localFilename}`
     );
   }
 
   async package() {
-    return shell.cp(
+    return await shell.cp(
       `${this.builddir}/${this.localFilename}`,
       `${this.distdir}/${this.localFilename}`
     );

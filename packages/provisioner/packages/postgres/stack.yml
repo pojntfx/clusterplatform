@@ -16,13 +16,20 @@ spec:
           image: bitnami/postgresql:10.7.0
           resources:
             limits:
-              memory: 150Mi
-              cpu: 150m
+              memory: 250Mi
+              cpu: 250m
           ports:
             - containerPort: 5432
           envFrom:
             - configMapRef:
                 name: postgres
+          volumeMounts:
+            - name: postgres
+              mountPath: /bitnami
+      volumes:
+        - name: postgres
+          persistentVolumeClaim:
+            claimName: postgres
 ---
 apiVersion: v1
 kind: Service
@@ -33,6 +40,17 @@ spec:
     app: postgres
   ports:
     - port: 5432
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
 ---
 apiVersion: v1
 kind: ConfigMap
