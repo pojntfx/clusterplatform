@@ -16,8 +16,8 @@ spec:
           image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-manager
           resources:
             limits:
-              memory: 100Mi
-              cpu: 100m
+              memory: 200Mi
+              cpu: 200m
           envFrom:
             - configMapRef:
                 name: nats
@@ -25,3 +25,5 @@ spec:
                 name: redis
             - configMapRef:
                 name: postgres
+            - configMapRef:
+                name: verdaccio

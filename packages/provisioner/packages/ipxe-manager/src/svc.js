@@ -3,7 +3,7 @@ const Db = require("moleculer-db");
 const Adapter = require("moleculer-db-adapter-sequelize");
 const Orm = require("sequelize");
 const uuidv1 = require("uuid/v1");
-const syncQueueWithDb = require("./syncQueueWithDb");
+const { syncQueueWithDb } = require("@clusterplatform/builder-utils");
 
 module.exports = {
   name: "ipxe-manager",

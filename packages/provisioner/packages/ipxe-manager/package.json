@@ -11,7 +11,8 @@
     "nats": "^1.2.2",
     "pg": "^7.8.0",
     "pg-hstore": "^2.3.2",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "@clusterplatform/builder-utils": "canary"
   },
   "devDependencies": {},
   "scripts": {

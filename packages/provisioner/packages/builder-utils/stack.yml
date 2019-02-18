@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: builder-utils
+spec:
+  template:
+    metadata:
+      labels:
+        app: builder-utils
+    spec:
+      containers:
+        - name: builder-utils
+          image: registry.gitlab.com/clusterplatform/clusterplatform/builder-utils
+          resources:
+            limits:
+              memory: 100Mi
+              cpu: 100m
+          envFrom:
+            - configMapRef:
+                name: verdaccio
+      restartPolicy: Never
