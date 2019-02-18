@@ -3,6 +3,7 @@ const Db = require("moleculer-db");
 const Adapter = require("moleculer-db-adapter-sequelize");
 const Orm = require("sequelize");
 const uuidv1 = require("uuid/v1");
+const syncQueueWithDb = require("./syncQueueWithDb");
 
 module.exports = {
   name: "ipxe-manager",
@@ -29,43 +30,12 @@ module.exports = {
           ...ctx.params,
           artifactId
         });
-        const queue = await this.getQueue("ipxe-worker.create");
-        queue.on("global:progress", async (jobInQueueId, progress) => {
-          const jobInQueue = await queue.getJob(jobInQueueId);
-          await this.logger.info(
-            "Progress on Ipxe artifact",
-            jobInQueue.data.artifactId,
-            progress
-          );
-          const jobInDb = (await ctx.call("ipxe-manager.find", {
-            query: {
-              artifactId: jobInQueue.data.artifactId
-            }
-          }))[0];
-          await ctx.call("ipxe-manager.update", {
-            id: jobInDb.id,
-            artifactId: jobInQueue.data.artifactId,
-            progress,
-            status: "working"
-          });
-        });
-        queue.on("global:completed", async (jobInQueueId, res) => {
-          const jobInQueue = await queue.getJob(jobInQueueId);
-          await this.logger.info(
-            "Ipxe artifact done",
-            jobInQueue.data.artifactId,
-            res
-          );
-          const jobInDb = (await ctx.call("ipxe-manager.find", {
-            query: {
-              artifactId: jobInQueue.data.artifactId
-            }
-          }))[0];
-          await ctx.call("ipxe-manager.update", {
-            id: jobInDb.id,
-            artifactId: jobInQueue.data.artifactId,
-            status: "done"
-          });
+        await syncQueueWithDb({
+          queueName: "ipxe-worker.create",
+          managerName: "ipxe-manager",
+          service: this,
+          artifact: "ipxe",
+          ctx
         });
         return jobInDb;
       }
