@@ -4,22 +4,48 @@ build:
   artifacts:
     - image: registry.gitlab.com/clusterplatform/clusterplatform/builder-utils
       context: packages/builder-utils
+      sync:
+        "src/*.js": src
     - image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-manager
       context: packages/ipxe-manager
+      sync:
+        "src/*.js": src
     - image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-worker
       context: packages/ipxe-worker
+      sync:
+        "src/*.js": src
     - image: registry.gitlab.com/clusterplatform/clusterplatform/grub-manager
       context: packages/grub-manager
+      sync:
+        "src/*.js": src
     - image: registry.gitlab.com/clusterplatform/clusterplatform/grub-worker
       context: packages/grub-worker
+      sync:
+        "src/*.js": src
     - image: registry.gitlab.com/clusterplatform/clusterplatform/syslinux-manager
       context: packages/syslinux-manager
+      sync:
+        "src/*.js": src
     - image: registry.gitlab.com/clusterplatform/clusterplatform/syslinux-worker
       context: packages/syslinux-worker
+      sync:
+        "src/*.js": src
+    - image: registry.gitlab.com/clusterplatform/clusterplatform/iso-manager
+      context: packages/iso-manager
+      sync:
+        "src/*.js": src
+    - image: registry.gitlab.com/clusterplatform/clusterplatform/iso-worker
+      context: packages/iso-worker
+      sync:
+        "src/*.js": src
     - image: registry.gitlab.com/clusterplatform/clusterplatform/bootmedium
       context: packages/bootmedium
+      sync:
+        "src/*.js": src
     - image: registry.gitlab.com/clusterplatform/clusterplatform/gateway
       context: packages/gateway
+      sync:
+        "src/*.js": src
 deploy:
   kubectl:
     manifests:
@@ -35,5 +61,7 @@ deploy:
       - packages/grub-worker/stack.yml
       - packages/syslinux-manager/stack.yml
       - packages/syslinux-worker/stack.yml
+      - packages/iso-manager/stack.yml
+      - packages/iso-worker/stack.yml
       - packages/bootmedium/stack.yml
       - packages/gateway/stack.yml

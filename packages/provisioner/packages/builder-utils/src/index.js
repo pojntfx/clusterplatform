@@ -6,3 +6,4 @@ module.exports.grubMkImage = require("./grubMkImage");
 module.exports.zip = require("./zip");
 module.exports.mkDosFs = require("./mkDosFs");
 module.exports.mcopy = require("./mcopy");
+module.exports.xorriso = require("./xorriso");

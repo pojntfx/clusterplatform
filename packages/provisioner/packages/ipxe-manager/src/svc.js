@@ -2,7 +2,7 @@ const Queue = require("moleculer-bull");
 const Db = require("moleculer-db");
 const Adapter = require("moleculer-db-adapter-sequelize");
 const Orm = require("sequelize");
-const uuidv1 = require("uuid/v1");
+const uuidv1 = require("uuid/v4");
 const { syncQueueWithDb } = require("@clusterplatform/builder-utils");
 
 module.exports = {

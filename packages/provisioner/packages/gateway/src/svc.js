@@ -11,6 +11,7 @@ module.exports = {
           "ipxe-manager.*",
           "grub-manager.*",
           "syslinux-manager.*",
+          "iso-manager.*",
           "bootmedium.*"
         ],
         aliases: {
@@ -29,6 +30,11 @@ module.exports = {
           "GET /syslinuxs": "syslinux-manager.list",
           "GET /syslinuxs/:id": "syslinux-manager.get",
           "DELETE /syslinuxs/:id": "syslinux-manager.remove",
+          // isos
+          "POST /isos": "iso-manager.createOverwrite",
+          "GET /isos": "iso-manager.list",
+          "GET /isos/:id": "iso-manager.get",
+          "DELETE /isos/:id": "iso-manager.remove",
           // bootmediums
           "POST /bootmediums": "bootmedium.createOverwrite",
           "GET /bootmediums": "bootmedium.list",
