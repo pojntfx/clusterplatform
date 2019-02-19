@@ -16,6 +16,8 @@ build:
       context: packages/syslinux-manager
     - image: registry.gitlab.com/clusterplatform/clusterplatform/syslinux-worker
       context: packages/syslinux-worker
+    - image: registry.gitlab.com/clusterplatform/clusterplatform/bootmedium
+      context: packages/bootmedium
     - image: registry.gitlab.com/clusterplatform/clusterplatform/gateway
       context: packages/gateway
 deploy:
@@ -33,4 +35,5 @@ deploy:
       - packages/grub-worker/stack.yml
       - packages/syslinux-manager/stack.yml
       - packages/syslinux-worker/stack.yml
+      - packages/bootmedium/stack.yml
       - packages/gateway/stack.yml
