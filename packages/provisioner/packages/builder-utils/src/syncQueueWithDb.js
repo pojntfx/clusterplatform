@@ -31,7 +31,7 @@ module.exports = async ({ queueName, managerName, service, artifact, ctx }) => {
         artifactId: jobInQueue.data.artifactId
       }
     }))[0];
-    await ctx.call(`${managerName}.update`, {
+    return await ctx.call(`${managerName}.update`, {
       id: jobInDb.id,
       artifactId: jobInQueue.data.artifactId,
       status: "done"

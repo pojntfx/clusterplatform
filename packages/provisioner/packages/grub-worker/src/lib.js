@@ -1,6 +1,14 @@
 const { Client } = require("minio");
 const shell = require("async-shelljs");
-const { git, autotools, fs } = require("@clusterplatform/builder-utils");
+const {
+  git,
+  autotools,
+  fs,
+  grubMkImage,
+  zip,
+  mkDosFs,
+  mcopy
+} = require("@clusterplatform/builder-utils");
 
 module.exports = class {
   constructor({ artifactId, downloaddir, builddir, distdir }) {
@@ -9,7 +17,8 @@ module.exports = class {
     this.builddir = `${builddir}/${this.artifactId}`;
     this.distdir = `${distdir}/${this.artifactId}`;
     shell.mkdir("-p", this.downloaddir);
-    shell.mkdir("-p", this.builddir);
+    shell.mkdir("-p", `${this.builddir}/EFI/BOOT`);
+    shell.mkdir("-p", `${this.builddir}/grub`);
     shell.mkdir("-p", this.distdir);
   }
 
@@ -17,26 +26,76 @@ module.exports = class {
     await git.cloneOrPullRepo(remote, this.downloaddir);
   }
 
-  async build({ platform, driver, extension, script }) {
-    this.localFilename = `${driver}.${extension}`;
-    this.remoteFilename = `${this.artifactId}/${driver}.${extension}`;
-    await fs.writeFile(`${this.downloaddir}/preseed.ipxe`, script);
-    await shell.cd(`${this.downloaddir}/src/`);
-    await autotools.make(
-      `${platform}/${driver}.${extension}`,
-      `EMBED=${this.downloaddir}/preseed.ipxe NO_WERROR=1`
-    );
-    return await shell.cp(
-      `${this.downloaddir}/src/${platform}/${this.localFilename}`,
-      `${this.builddir}/${this.localFilename}`
-    );
+  async autogen() {
+    await shell.cd(this.downloaddir);
+    await autotools.autogen(".");
   }
 
-  async package() {
-    return await shell.cp(
-      `${this.builddir}/${this.localFilename}`,
-      `${this.distdir}/${this.localFilename}`
+  async configure({ platform, architecture, extension, label }) {
+    this.platform = platform;
+    this.architecture = architecture;
+    this.extension = extension;
+    this.label = label;
+    await autotools.configure({
+      path: ".",
+      prefix: `${this.downloaddir}/out`,
+      args: `--with-platform=${extension} --disable-werror`
+    });
+  }
+
+  async make() {
+    await autotools.make();
+  }
+
+  async install() {
+    await autotools.makeInstall();
+  }
+
+  async makeImage() {
+    // Create the embedded script
+    await fs.writeFile(
+      `${this.downloaddir}/embedded.cfg`,
+      `search --file --set=root /${this.label
+        .split(" ")
+        .join("_")
+        .toLowerCase()}
+    if [ -e ($root)/grub/grub.cfg ]; then
+        set prefix=($root)/grub
+        configfile $prefix/grub/grub.cfg
+    else
+        echo "Could not find /grub/grub.cfg!"
+    fi`
     );
+    await shell.mkdir("-p", `${this.builddir}/EFI/BOOT`);
+    await grubMkImage.makeImage({
+      // Create the GRUB EFI executable
+      pathToBinary: `${this.downloaddir}/out/bin/grub-mkimage`,
+      platform: this.platform,
+      root: this.builddir,
+      architecture: this.architecture,
+      configFile: `${this.downloaddir}/embedded.cfg`
+    });
+  }
+
+  async packageImg() {
+    this.localFilename = "grub.img";
+    this.remoteFilename = `${this.artifactId}/grub.img`;
+    await mkDosFs.makeDosFilesystem({
+      label: this.label,
+      dest: `${this.distdir}/grub.img`,
+      size: 2048
+    });
+    await mcopy.mcopy({
+      src: `${this.builddir}/EFI`,
+      dest: `${this.distdir}/grub.img`
+    });
+  }
+
+  async packageFolder() {
+    this.localFilename = "grub.zip";
+    this.remoteFilename = `${this.artifactId}/grub.zip`;
+    await shell.cd(this.builddir);
+    await zip.createArchive("EFI", `${this.distdir}/grub.zip`);
   }
 
   async upload({ endpoint, port, region, bucket, accessKey, secretKey }) {

@@ -2,14 +2,18 @@ apiVersion: skaffold/v1beta5
 kind: Config
 build:
   artifacts:
+    - image: registry.gitlab.com/clusterplatform/clusterplatform/builder-utils
+      context: packages/builder-utils
     - image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-manager
       context: packages/ipxe-manager
     - image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-worker
       context: packages/ipxe-worker
+    - image: registry.gitlab.com/clusterplatform/clusterplatform/grub-manager
+      context: packages/grub-manager
+    - image: registry.gitlab.com/clusterplatform/clusterplatform/grub-worker
+      context: packages/grub-worker
     - image: registry.gitlab.com/clusterplatform/clusterplatform/gateway
       context: packages/gateway
-    - image: registry.gitlab.com/clusterplatform/clusterplatform/builder-utils
-      context: packages/builder-utils
 deploy:
   kubectl:
     manifests:
@@ -21,4 +25,6 @@ deploy:
       - packages/builder-utils/stack.yml
       - packages/ipxe-manager/stack.yml
       - packages/ipxe-worker/stack.yml
+      - packages/grub-manager/stack.yml
+      - packages/grub-worker/stack.yml
       - packages/gateway/stack.yml

@@ -1,5 +1,5 @@
 FROM fedora:29
-RUN dnf install -y npm git gcc binutils make perl xz xz-devel
+RUN dnf install -y npm git gcc binutils make mtools flex bison python autoconf automake dosfstools zip
 COPY package.json .
 ENV SERVICEDIR=src
 ENV SERVICES=svc.js
