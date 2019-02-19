@@ -1,5 +1,5 @@
 {
-  "name": "@clusterplatform/grub-worker",
+  "name": "@clusterplatform/syslinux-worker",
   "version": "0.0.1-alpha1",
   "description": "",
   "main": "src/svc.js",

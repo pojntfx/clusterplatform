@@ -1,15 +1,17 @@
 {
-  "name": "@clusterplatform/grub-worker",
+  "name": "@clusterplatform/syslinux-manager",
   "version": "0.0.1-alpha1",
   "description": "",
   "main": "src/svc.js",
   "dependencies": {
-    "async-shelljs": "^0.1.2",
-    "minio": "^7.0.5",
     "moleculer": "^0.13.6",
     "moleculer-bull": "^0.2.3",
+    "moleculer-db": "^0.7.7",
+    "moleculer-db-adapter-sequelize": "^0.1.11",
     "nats": "^1.2.2",
-    "shelljs": "^0.8.3",
+    "pg": "^7.8.0",
+    "pg-hstore": "^2.3.2",
+    "uuid": "^3.3.2",
     "@clusterplatform/builder-utils": "canary"
   },
   "devDependencies": {},

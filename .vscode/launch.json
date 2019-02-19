@@ -4,10 +4,10 @@
     {
       "type": "node",
       "request": "attach",
-      "name": "Attach to node process (first, port-forward the pod's port 9229)",
+      "name": "Attach to node process (first: forward port 9229 and select the `package.json` of the service in the editor)",
       "address": "localhost",
       "port": 9229,
-      "localRoot": "${workspaceFolder}",
+      "localRoot": "${fileDirname}",
       "remoteRoot": "/"
     }
   ]

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: syslinux-worker
+spec:
+  selector:
+    matchLabels:
+      app: syslinux-worker
+  template:
+    metadata:
+      labels:
+        app: syslinux-worker
+    spec:
+      containers:
+        - name: syslinux-worker
+          image: registry.gitlab.com/clusterplatform/clusterplatform/syslinux-worker
+          resources:
+            limits:
+              memory: 200Mi
+              cpu: 200m
+          envFrom:
+            - configMapRef:
+                name: nats
+            - configMapRef:
+                name: redis
+            - configMapRef:
+                name: minio
+            - configMapRef:
+                name: verdaccio
+            - configMapRef:
+                name: syslinux-worker
+          volumeMounts:
+            - name: syslinux-worker
+              mountPath: /tmp/syslinux
+      volumes:
+        - name: syslinux-worker
+          persistentVolumeClaim:
+            claimName: syslinux-worker
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: syslinux-worker
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: syslinux-worker
+data:
+  MINIO_BUCKET: syslinuxs

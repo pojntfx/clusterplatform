@@ -12,6 +12,10 @@ build:
       context: packages/grub-manager
     - image: registry.gitlab.com/clusterplatform/clusterplatform/grub-worker
       context: packages/grub-worker
+    - image: registry.gitlab.com/clusterplatform/clusterplatform/syslinux-manager
+      context: packages/syslinux-manager
+    - image: registry.gitlab.com/clusterplatform/clusterplatform/syslinux-worker
+      context: packages/syslinux-worker
     - image: registry.gitlab.com/clusterplatform/clusterplatform/gateway
       context: packages/gateway
 deploy:
@@ -27,4 +31,6 @@ deploy:
       - packages/ipxe-worker/stack.yml
       - packages/grub-manager/stack.yml
       - packages/grub-worker/stack.yml
+      - packages/syslinux-manager/stack.yml
+      - packages/syslinux-worker/stack.yml
       - packages/gateway/stack.yml
