@@ -16,8 +16,8 @@ spec:
           image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-worker
           resources:
             limits:
-              memory: 650Mi
-              cpu: 650m
+              memory: 500Mi
+              cpu: 500m
           envFrom:
             - configMapRef:
                 name: nats
@@ -25,6 +25,8 @@ spec:
                 name: redis
             - configMapRef:
                 name: minio
+            - configMapRef:
+                name: verdaccio
           volumeMounts:
             - name: ipxe-worker
               mountPath: /tmp/ipxe

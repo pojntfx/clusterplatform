@@ -3,7 +3,10 @@
   "version": "0.0.1-alpha1",
   "description": "",
   "main": "src/index.js",
-  "dependencies": {},
+  "dependencies": {
+    "async-shelljs": "^0.1.2",
+    "shelljs": "^0.8.3"
+  },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

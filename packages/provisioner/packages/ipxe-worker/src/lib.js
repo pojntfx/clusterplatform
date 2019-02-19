@@ -1,8 +1,6 @@
 const { Client } = require("minio");
 const shell = require("async-shelljs");
-const git = require("./git");
-const autotools = require("./autotools");
-const fs = require("./fs");
+const { git, autotools, fs } = require("@clusterplatform/builder-utils");
 
 module.exports = class {
   constructor({ artifactId, downloaddir, builddir, distdir }) {
