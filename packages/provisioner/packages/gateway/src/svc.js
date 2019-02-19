@@ -7,7 +7,12 @@ module.exports = {
     routes: [
       {
         path: "/api",
-        whitelist: ["ipxe-manager.*", "grub-manager.*", "syslinux-manager.*"],
+        whitelist: [
+          "ipxe-manager.*",
+          "grub-manager.*",
+          "syslinux-manager.*",
+          "bootmedium.*"
+        ],
         aliases: {
           // ipxes
           "POST /ipxes": "ipxe-manager.createOverwrite",
@@ -23,7 +28,12 @@ module.exports = {
           "POST /syslinuxs": "syslinux-manager.createOverwrite",
           "GET /syslinuxs": "syslinux-manager.list",
           "GET /syslinuxs/:id": "syslinux-manager.get",
-          "DELETE /syslinuxs/:id": "syslinux-manager.remove"
+          "DELETE /syslinuxs/:id": "syslinux-manager.remove",
+          // bootmediums
+          "POST /bootmediums": "bootmedium.createOverwrite",
+          "GET /bootmediums": "bootmedium.list",
+          "GET /bootmediums/:id": "bootmedium.get",
+          "DELETE /bootmediums/:id": "bootmedium.remove"
         }
       }
     ]
