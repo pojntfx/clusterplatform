@@ -1,5 +1,5 @@
 FROM fedora:29
-RUN dnf install -y npm syslinux
+RUN dnf install -y npm zip xorriso
 COPY package.json .
 ENV SERVICEDIR=src
 ENV SERVICES=svc.js

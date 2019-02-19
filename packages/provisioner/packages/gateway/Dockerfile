@@ -1,9 +1,7 @@
 FROM node:lts-alpine
 COPY package.json .
-COPY package-lock.json .
-RUN npm ci
 ENV SERVICEDIR=src
 ENV SERVICES=svc.js
 ENV TRANSPORTER=TCP
 COPY src src
-CMD ["node_modules/.bin/moleculer-runner"]
+CMD npm set registry ${NPM_REGISTRY} && npm install && node --inspect=0.0.0.0:9229 node_modules/moleculer/bin/moleculer-runner --hot

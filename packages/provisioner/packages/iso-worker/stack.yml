@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iso-worker
+spec:
+  selector:
+    matchLabels:
+      app: iso-worker
+  template:
+    metadata:
+      labels:
+        app: iso-worker
+    spec:
+      containers:
+        - name: iso-worker
+          image: registry.gitlab.com/clusterplatform/clusterplatform/iso-worker
+          resources:
+            limits:
+              memory: 500Mi
+              cpu: 500m
+          envFrom:
+            - configMapRef:
+                name: nats
+            - configMapRef:
+                name: redis
+            - configMapRef:
+                name: minio
+            - configMapRef:
+                name: verdaccio
+            - configMapRef:
+                name: iso-worker
+          volumeMounts:
+            - name: iso-worker
+              mountPath: /tmp/iso
+      volumes:
+        - name: iso-worker
+          persistentVolumeClaim:
+            claimName: iso-worker
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: iso-worker
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: iso-worker
+data:
+  MINIO_BUCKET: isos

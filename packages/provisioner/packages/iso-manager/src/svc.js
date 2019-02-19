@@ -6,36 +6,39 @@ const uuidv1 = require("uuid/v4");
 const { syncQueueWithDb } = require("@clusterplatform/builder-utils");
 
 module.exports = {
-  name: "grub-manager",
+  name: "iso-manager",
   actions: {
     createOverwrite: {
       params: {
-        platform: "string",
-        architecture: "string",
-        extension: "string",
         label: "string",
-        fragment: "string"
+        ipxeUefiUrl: "string",
+        ipxeBiosUrl: "string",
+        grubImgUrl: "string",
+        grubEfiUrl: "string",
+        ldLinuxUrl: "string",
+        isolinuxBinUrl: "string",
+        isohdpfxBinUrl: "string"
       },
       handler: async function(ctx) {
         const artifactId = uuidv1();
-        await this.logger.info("Queueing grub artifact creation", {
+        await this.logger.info("Queueing iso artifact creation", {
           ...ctx.params,
           artifactId
         });
-        const jobInDb = await ctx.call("grub-manager.create", {
+        const jobInDb = await ctx.call("iso-manager.create", {
           artifactId,
           progress: "0",
           status: "preparing"
         });
-        await this.createJob("grub-worker.create", {
+        await this.createJob("iso-worker.create", {
           ...ctx.params,
           artifactId
         });
         await syncQueueWithDb({
-          queueName: "grub-worker.create",
-          managerName: "grub-manager",
+          queueName: "iso-worker.create",
+          managerName: "iso-manager",
           service: this,
-          artifact: "grub",
+          artifact: "iso",
           ctx
         });
         return jobInDb;
@@ -52,7 +55,7 @@ module.exports = {
   ],
   adapter: new Adapter(process.env.POSTGRES_URI),
   model: {
-    name: "grub",
+    name: "iso",
     define: {
       artifactId: Orm.STRING,
       progress: Orm.STRING,
