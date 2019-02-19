@@ -5,7 +5,7 @@ module.exports = {
   name: "ipxe-worker",
   queues: {
     "ipxe-worker.create": async function(job) {
-      await this.logger.info("Creating new Ipxe artifact", job.data);
+      await this.logger.info("Creating new ipxe artifact", job.data);
       await job.progress(0);
       const ipxe = new Ipxe({
         downloaddir: "/tmp/ipxe/downloaddir",

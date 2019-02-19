@@ -6,35 +6,36 @@ const uuidv1 = require("uuid/v1");
 const { syncQueueWithDb } = require("@clusterplatform/builder-utils");
 
 module.exports = {
-  name: "ipxe-manager",
+  name: "grub-manager",
   actions: {
     createOverwrite: {
       params: {
-        script: "string",
         platform: "string",
-        driver: "string",
-        extension: "string"
+        architecture: "string",
+        extension: "string",
+        label: "string",
+        fragment: "string"
       },
       handler: async function(ctx) {
         const artifactId = uuidv1();
-        await this.logger.info("Queueing ipxe artifact creation", {
+        await this.logger.info("Queueing grub artifact creation", {
           ...ctx.params,
           artifactId
         });
-        const jobInDb = await ctx.call("ipxe-manager.create", {
+        const jobInDb = await ctx.call("grub-manager.create", {
           artifactId,
           progress: "0",
           status: "preparing"
         });
-        await this.createJob("ipxe-worker.create", {
+        await this.createJob("grub-worker.create", {
           ...ctx.params,
           artifactId
         });
         await syncQueueWithDb({
-          queueName: "ipxe-worker.create",
-          managerName: "ipxe-manager",
+          queueName: "grub-worker.create",
+          managerName: "grub-manager",
           service: this,
-          artifact: "ipxe",
+          artifact: "grub",
           ctx
         });
         return jobInDb;
@@ -51,7 +52,7 @@ module.exports = {
   ],
   adapter: new Adapter(process.env.POSTGRES_URI),
   model: {
-    name: "ipxe",
+    name: "grub",
     define: {
       artifactId: Orm.STRING,
       progress: Orm.STRING,

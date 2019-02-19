@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ipxe-worker
+  name: grub-worker
 spec:
   selector:
     matchLabels:
-      app: ipxe-worker
+      app: grub-worker
   template:
     metadata:
       labels:
-        app: ipxe-worker
+        app: grub-worker
     spec:
       containers:
-        - name: ipxe-worker
-          image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-worker
+        - name: grub-worker
+          image: registry.gitlab.com/clusterplatform/clusterplatform/grub-worker
           resources:
             limits:
               memory: 500Mi
@@ -28,19 +28,19 @@ spec:
             - configMapRef:
                 name: verdaccio
             - configMapRef:
-                name: ipxe-worker
+                name: grub-worker
           volumeMounts:
-            - name: ipxe-worker
-              mountPath: /tmp/ipxe
+            - name: grub-worker
+              mountPath: /tmp/grub
       volumes:
-        - name: ipxe-worker
+        - name: grub-worker
           persistentVolumeClaim:
-            claimName: ipxe-worker
+            claimName: grub-worker
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: ipxe-worker
+  name: grub-worker
 spec:
   accessModes:
     - ReadWriteOnce
@@ -51,6 +51,6 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: ipxe-worker
+  name: grub-worker
 data:
-  MINIO_BUCKET: ipxes
+  MINIO_BUCKET: grubs
