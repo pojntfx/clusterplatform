@@ -39,7 +39,8 @@ module.exports = {
           "POST /bootmediums": "bootmedium.createOverwrite",
           "GET /bootmediums": "bootmedium.list",
           "GET /bootmediums/:id": "bootmedium.get",
-          "DELETE /bootmediums/:id": "bootmedium.remove"
+          "DELETE /bootmediums/:id": "bootmedium.remove",
+          "PUT /bootmediums/:id/iso": "bootmedium.createIso"
         }
       }
     ]

@@ -84,6 +84,83 @@ module.exports = {
         });
         return bootmedium;
       }
+    },
+    createIso: {
+      params: {
+        id: "string"
+      },
+      handler: async function(ctx) {
+        await this.logger.info(
+          "Queueing bootmedium iso subartifact creation",
+          ctx.params
+        );
+        const {
+          label,
+          ipxeUefiId,
+          ipxeBiosId,
+          grubImgId,
+          grubEfiId,
+          ldLinuxId,
+          isolinuxBinId,
+          isohdpfxBinId
+        } = await ctx.call("bootmedium.get", { id: ctx.params.id });
+        const { artifactId: ipxeUefiArtifactId } = await ctx.call(
+          "ipxe-manager.get",
+          {
+            id: ipxeUefiId
+          }
+        );
+        const { artifactId: ipxeBiosArtifactId } = await ctx.call(
+          "ipxe-manager.get",
+          {
+            id: ipxeBiosId
+          }
+        );
+        const { artifactId: grubImgArtifactId } = await ctx.call(
+          "grub-manager.get",
+          {
+            id: grubImgId
+          }
+        );
+        const { artifactId: grubEfiArtifactId } = await ctx.call(
+          "grub-manager.get",
+          {
+            id: grubEfiId
+          }
+        );
+        const { artifactId: ldLinuxArtifactId } = await ctx.call(
+          "syslinux-manager.get",
+          {
+            id: ldLinuxId
+          }
+        );
+        const { artifactId: isolinuxBinArtifactId } = await ctx.call(
+          "syslinux-manager.get",
+          {
+            id: isolinuxBinId
+          }
+        );
+        const { artifactId: isohdpfxBinArtifactId } = await ctx.call(
+          "syslinux-manager.get",
+          {
+            id: isohdpfxBinId
+          }
+        );
+        const { id: isoId } = await ctx.call("iso-manager.createOverwrite", {
+          label,
+          ipxeUefiUrl: `http://minio/ixpes/${ipxeUefiArtifactId}/ipxe.efi`,
+          ipxeBiosUrl: `http://minio/ixpes/${ipxeBiosArtifactId}/ipxe.lkrn`,
+          grubImgUrl: `http://minio/grub/${grubImgArtifactId}/grub.img`,
+          grubEfiUrl: `http://minio/grub/${grubEfiArtifactId}/grub.zip`,
+          ldLinuxUrl: `http://minio/syslinuxs/${ldLinuxArtifactId}/ldlinux.c32`,
+          isolinuxBinUrl: `http://minio/syslinuxs/${isolinuxBinArtifactId}/isolinux.bin`,
+          isohdpfxBinUrl: `http://minio/syslinuxs/${isohdpfxBinArtifactId}/isolinux.bin`
+        });
+        return await ctx.call("bootmedium.update", {
+          id: ctx.params.id,
+          isoId
+        });
+      }
     }
   },
   mixins: [Db],
