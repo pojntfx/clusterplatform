@@ -1,9 +1,21 @@
+# Setup env
 FROM node:lts-alpine
-RUN mkdir -p /app
-WORKDIR /app
+RUN mkdir -p /opt/clusterplatform/app
+WORKDIR /opt/clusterplatform/app
+
+# Add app
 COPY package.json .
+COPY src src
+
+# Setup app
 ENV SERVICEDIR=src
 ENV SERVICES=svc.js
 ENV TRANSPORTER=TCP
-COPY src src
-CMD npm set registry ${NPM_REGISTRY} && npm install && node_modules/.bin/nodemon --inspect=0.0.0.0:9229 node_modules/moleculer/bin/moleculer-runner
+
+# Run app
+CMD npm set registry ${NPM_REGISTRY}; \
+    npm install; \
+    node node_modules/nodemon/bin/nodemon.js \
+    --inspect=0.0.0.0:9229 \
+    --watch src/ \
+    node_modules/moleculer/bin/moleculer-runner.js

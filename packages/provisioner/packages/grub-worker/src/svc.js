@@ -8,9 +8,9 @@ module.exports = {
       await this.logger.info("Creating new grub artifact", job.data);
       await job.progress(0);
       const grub = new Grub({
-        downloaddir: "/tmp/grub/downloaddir",
-        builddir: `/tmp/grub/builddir`,
-        distdir: `/tmp/grub/distdir`,
+        downloaddir: "/tmp/clusterplatform/app/grub/downloaddir",
+        builddir: `/tmp/clusterplatform/app/grub/builddir`,
+        distdir: `/tmp/clusterplatform/app/grub/distdir`,
         artifactId: job.data.artifactId
       });
       await job.progress(10);

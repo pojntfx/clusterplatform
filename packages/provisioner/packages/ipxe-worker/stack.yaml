@@ -31,7 +31,7 @@ spec:
                 name: ipxe-worker
           volumeMounts:
             - name: ipxe-worker
-              mountPath: /tmp/ipxe
+              mountPath: /tmp/clusterplatform/app/ipxe
       volumes:
         - name: ipxe-worker
           persistentVolumeClaim:

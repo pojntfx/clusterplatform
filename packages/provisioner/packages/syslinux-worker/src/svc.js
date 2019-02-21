@@ -9,8 +9,8 @@ module.exports = {
       await this.logger.info("Creating new syslinux artifact", job.data);
       await job.progress(0);
       const syslinux = new Syslinux({
-        builddir: `/tmp/syslinux/builddir`,
-        distdir: `/tmp/syslinux/distdir`,
+        builddir: `/tmp/clusterplatform/app/syslinux/builddir`,
+        distdir: `/tmp/clusterplatform/app/syslinux/distdir`,
         artifactId: job.data.artifactId
       });
       await job.progress(10);

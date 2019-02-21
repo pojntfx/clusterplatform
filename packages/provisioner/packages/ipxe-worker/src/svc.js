@@ -8,9 +8,9 @@ module.exports = {
       await this.logger.info("Creating new ipxe artifact", job.data);
       await job.progress(0);
       const ipxe = new Ipxe({
-        downloaddir: "/tmp/ipxe/downloaddir",
-        builddir: `/tmp/ipxe/builddir`,
-        distdir: `/tmp/ipxe/distdir`,
+        downloaddir: "/tmp/clusterplatform/app/ipxe/downloaddir",
+        builddir: `/tmp/clusterplatform/app/ipxe/builddir`,
+        distdir: `/tmp/clusterplatform/app/ipxe/distdir`,
         artifactId: job.data.artifactId
       });
       await job.progress(10);
