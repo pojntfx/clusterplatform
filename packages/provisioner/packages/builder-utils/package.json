@@ -7,7 +7,9 @@
     "async-shelljs": "^0.1.2",
     "shelljs": "^0.8.3"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^1.18.10"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

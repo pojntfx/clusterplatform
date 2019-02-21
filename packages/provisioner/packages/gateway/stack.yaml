@@ -16,11 +16,13 @@ spec:
           image: registry.gitlab.com/clusterplatform/clusterplatform/gateway
           resources:
             limits:
-              memory: 100Mi
-              cpu: 100m
+              memory: 200Mi
+              cpu: 200m
           envFrom:
             - configMapRef:
                 name: nats
+            - configMapRef:
+                name: verdaccio
           ports:
             - containerPort: 3000
 ---

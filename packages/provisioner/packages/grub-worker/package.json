@@ -12,7 +12,9 @@
     "shelljs": "^0.8.3",
     "@clusterplatform/builder-utils": "canary"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^1.18.10"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

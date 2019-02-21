@@ -8,7 +8,9 @@
     "moleculer-web": "^0.8.5",
     "nats": "^1.2.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^1.18.10"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
