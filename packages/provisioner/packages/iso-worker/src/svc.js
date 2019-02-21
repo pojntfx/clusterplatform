@@ -8,9 +8,9 @@ module.exports = {
       await this.logger.info("Creating new iso artifact", job.data);
       await job.progress(0);
       const iso = new Iso({
-        downloaddir: "/tmp/iso/downloaddir",
-        builddir: `/tmp/iso/builddir`,
-        distdir: `/tmp/iso/distdir`,
+        downloaddir: "/tmp/clusterplatform/app/iso/downloaddir",
+        builddir: `/tmp/clusterplatform/app/iso/builddir`,
+        distdir: `/tmp/clusterplatform/app/iso/distdir`,
         artifactId: job.data.artifactId
       });
       await job.progress(10);

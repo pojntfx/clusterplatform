@@ -31,7 +31,7 @@ spec:
                 name: syslinux-worker
           volumeMounts:
             - name: syslinux-worker
-              mountPath: /tmp/syslinux
+              mountPath: /tmp/clusterplatform/app/syslinux
       volumes:
         - name: syslinux-worker
           persistentVolumeClaim:
