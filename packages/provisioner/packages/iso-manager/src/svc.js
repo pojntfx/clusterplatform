@@ -14,7 +14,8 @@ module.exports = {
         ipxeUefiUrl: "string",
         ipxeBiosUrl: "string",
         grubImgUrl: "string",
-        grubEfiUrl: "string",
+        grubEfiX64Url: "string",
+        grubEfiX86Url: "string",
         ldLinuxUrl: "string",
         isolinuxBinUrl: "string",
         isohdpfxBinUrl: "string"

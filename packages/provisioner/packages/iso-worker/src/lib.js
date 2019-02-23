@@ -23,7 +23,8 @@ module.exports = class {
     ipxeUefiUrl,
     ipxeBiosUrl,
     grubImgUrl,
-    grubEfiUrl,
+    grubEfiX64Url,
+    grubEfiX86Url,
     ldLinuxUrl,
     isolinuxBinUrl,
     isohdpfxBinUrl
@@ -32,14 +33,20 @@ module.exports = class {
       download(ipxeUefiUrl, this.ipxedownloaddir).then(() =>
         download(ipxeBiosUrl, this.ipxedownloaddir).then(() =>
           download(grubImgUrl, this.grubdownloaddir).then(() =>
-            download(grubEfiUrl, this.grubdownloaddir).then(() =>
-              download(ldLinuxUrl, this.syslinuxdownloaddir).then(() =>
-                download(isolinuxBinUrl, this.syslinuxdownloaddir).then(() =>
-                  download(isohdpfxBinUrl, this.syslinuxdownloaddir).then(() =>
-                    resolve(true)
-                  )
+            download(grubEfiX64Url, `${this.grubdownloaddir}/grubx64`).then(
+              () =>
+                download(grubEfiX86Url, `${this.grubdownloaddir}/grubx86`).then(
+                  () =>
+                    download(ldLinuxUrl, this.syslinuxdownloaddir).then(() =>
+                      download(isolinuxBinUrl, this.syslinuxdownloaddir).then(
+                        () =>
+                          download(
+                            isohdpfxBinUrl,
+                            this.syslinuxdownloaddir
+                          ).then(() => resolve(true))
+                      )
+                    )
                 )
-              )
             )
           )
         )
@@ -52,8 +59,16 @@ module.exports = class {
   }
 
   async extractGrubEfi() {
-    await zip.extractArchive(`${this.grubdownloaddir}/grub.zip`, this.builddir);
-    await shell.rm(`${this.builddir}/grub/grub.zip`);
+    await zip.extractArchive(
+      `${this.grubdownloaddir}/grubx64/grub.zip`,
+      this.builddir
+    );
+    await zip.extractArchive(
+      `${this.grubdownloaddir}/grubx86/grub.zip`,
+      this.builddir
+    );
+    await shell.rm("-rf", `${this.builddir}/grub/grubx64`);
+    await shell.rm("-rf", `${this.builddir}/grub/grubx86`);
   }
 
   async configureGrub({ label }) {
