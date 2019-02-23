@@ -3,7 +3,7 @@ const Adapter = require("moleculer-db-adapter-sequelize");
 const Orm = require("sequelize");
 
 module.exports = {
-  name: "bootmedium",
+  name: "bootruntime",
   actions: {
     createOverwrite: {
       params: {
@@ -12,7 +12,7 @@ module.exports = {
       },
       handler: async function(ctx) {
         await this.logger.info(
-          "Queueing bootmedium subartifacts creation",
+          "Queueing bootruntime subartifacts creation",
           ctx.params
         );
         const { id: ipxeUefiId } = await ctx.call(
@@ -38,7 +38,7 @@ module.exports = {
           {
             label: ctx.params.label,
             platform: "x86_64-efi",
-            architecture: "x86",
+            architecture: "x64",
             extension: "efi",
             fragment: "img"
           }
@@ -81,7 +81,7 @@ module.exports = {
             fragment: "isohdpfx.bin"
           }
         );
-        const bootmedium = await ctx.call("bootmedium.create", {
+        const bootruntime = await ctx.call("bootruntime.create", {
           ...ctx.params,
           ipxeUefiId,
           ipxeBiosId,
@@ -93,7 +93,7 @@ module.exports = {
           isohdpfxBinId,
           isoId: 0
         });
-        return bootmedium;
+        return bootruntime;
       }
     },
     createIso: {
@@ -102,7 +102,7 @@ module.exports = {
       },
       handler: async function(ctx) {
         await this.logger.info(
-          "Queueing bootmedium iso subartifact creation",
+          "Queueing bootruntime iso subartifact creation",
           ctx.params
         );
         const {
@@ -115,7 +115,7 @@ module.exports = {
           ldLinuxId,
           isolinuxBinId,
           isohdpfxBinId
-        } = await ctx.call("bootmedium.get", { id: ctx.params.id });
+        } = await ctx.call("bootruntime.get", { id: ctx.params.id });
         const { artifactId: ipxeUefiArtifactId } = await ctx.call(
           "ipxe-manager.get",
           {
@@ -175,7 +175,7 @@ module.exports = {
           isolinuxBinUrl: `http://minio:9000/syslinuxs/${isolinuxBinArtifactId}/isolinux.bin`,
           isohdpfxBinUrl: `http://minio:9000/syslinuxs/${isohdpfxBinArtifactId}/isohdpfx.bin`
         });
-        return await ctx.call("bootmedium.update", {
+        return await ctx.call("bootruntime.update", {
           id: ctx.params.id,
           isoId
         });
@@ -185,7 +185,7 @@ module.exports = {
   mixins: [Db],
   adapter: new Adapter(process.env.POSTGRES_URI),
   model: {
-    name: "bootmedium",
+    name: "bootruntime",
     define: {
       script: Orm.STRING,
       label: Orm.STRING,

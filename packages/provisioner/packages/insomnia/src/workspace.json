@@ -76,7 +76,7 @@
 			"environment": {},
 			"metaSortKey": -1550602303775,
 			"modified": 1550602303775,
-			"name": "bootmediums",
+			"name": "bootruntimes",
 			"parentId": "wrk_e9ac3126193f4dc6ad90a16bcdaf97fd",
 			"_type": "request_group"
 		},
@@ -325,7 +325,7 @@
 			"metaSortKey": -1550410145607,
 			"method": "GET",
 			"modified": 1550602327790,
-			"name": "bootmediums",
+			"name": "bootruntimes",
 			"parameters": [],
 			"parentId": "fld_e3e0e9dead174eeab8c8b0e6de2a5ba6",
 			"settingDisableRenderRequestBody": false,
@@ -334,7 +334,7 @@
 			"settingRebuildPath": true,
 			"settingSendCookies": true,
 			"settingStoreCookies": true,
-			"url": "{{ gateway  }}/bootmediums",
+			"url": "{{ gateway  }}/bootruntimes",
 			"_type": "request"
 		},
 		{
@@ -357,7 +357,7 @@
 			"metaSortKey": -1550410145657,
 			"method": "POST",
 			"modified": 1550604130911,
-			"name": "bootmediums",
+			"name": "bootruntimes",
 			"parameters": [],
 			"parentId": "fld_e3e0e9dead174eeab8c8b0e6de2a5ba6",
 			"settingDisableRenderRequestBody": false,
@@ -366,7 +366,7 @@
 			"settingRebuildPath": true,
 			"settingSendCookies": true,
 			"settingStoreCookies": true,
-			"url": "{{ gateway  }}/bootmediums",
+			"url": "{{ gateway  }}/bootruntimes",
 			"_type": "request"
 		},
 		{
@@ -380,7 +380,7 @@
 			"metaSortKey": -1550410145507,
 			"method": "GET",
 			"modified": 1550603829054,
-			"name": "bootmedium",
+			"name": "bootruntime",
 			"parameters": [],
 			"parentId": "fld_e3e0e9dead174eeab8c8b0e6de2a5ba6",
 			"settingDisableRenderRequestBody": false,
@@ -389,7 +389,7 @@
 			"settingRebuildPath": true,
 			"settingSendCookies": true,
 			"settingStoreCookies": true,
-			"url": "{{ gateway  }}/bootmediums/{% prompt 'ID', '', '', '', false %}",
+			"url": "{{ gateway  }}/bootruntimes/{% prompt 'ID', '', '', '', false %}",
 			"_type": "request"
 		}
 	]
