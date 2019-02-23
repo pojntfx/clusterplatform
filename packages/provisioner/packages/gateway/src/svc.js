@@ -12,7 +12,7 @@ module.exports = {
           "grub-manager.*",
           "syslinux-manager.*",
           "iso-manager.*",
-          "bootmedium.*"
+          "bootruntime.*"
         ],
         aliases: {
           // ipxes
@@ -35,12 +35,12 @@ module.exports = {
           "GET /isos": "iso-manager.list",
           "GET /isos/:id": "iso-manager.get",
           "DELETE /isos/:id": "iso-manager.remove",
-          // bootmediums
-          "POST /bootmediums": "bootmedium.createOverwrite",
-          "GET /bootmediums": "bootmedium.list",
-          "GET /bootmediums/:id": "bootmedium.get",
-          "DELETE /bootmediums/:id": "bootmedium.remove",
-          "PUT /bootmediums/:id/iso": "bootmedium.createIso"
+          // bootruntimes
+          "POST /bootruntimes": "bootruntime.createOverwrite",
+          "GET /bootruntimes": "bootruntime.list",
+          "GET /bootruntimes/:id": "bootruntime.get",
+          "DELETE /bootruntimes/:id": "bootruntime.remove",
+          "PUT /bootruntimes/:id/iso": "bootruntime.createIso"
         }
       }
     ]

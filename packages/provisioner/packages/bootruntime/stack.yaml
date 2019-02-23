@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bootmedium
+  name: bootruntime
 spec:
   selector:
     matchLabels:
-      app: bootmedium
+      app: bootruntime
   template:
     metadata:
       labels:
-        app: bootmedium
+        app: bootruntime
     spec:
       containers:
-        - name: bootmedium
-          image: registry.gitlab.com/clusterplatform/clusterplatform/bootmedium
+        - name: bootruntime
+          image: registry.gitlab.com/clusterplatform/clusterplatform/bootruntime
           resources:
             limits:
               memory: 200Mi
