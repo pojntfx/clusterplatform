@@ -148,13 +148,13 @@ module.exports = {
         );
         const { id: isoId } = await ctx.call("iso-manager.createOverwrite", {
           label,
-          ipxeUefiUrl: `http://minio/ixpes/${ipxeUefiArtifactId}/ipxe.efi`,
-          ipxeBiosUrl: `http://minio/ixpes/${ipxeBiosArtifactId}/ipxe.lkrn`,
-          grubImgUrl: `http://minio/grub/${grubImgArtifactId}/grub.img`,
-          grubEfiUrl: `http://minio/grub/${grubEfiArtifactId}/grub.zip`,
-          ldLinuxUrl: `http://minio/syslinuxs/${ldLinuxArtifactId}/ldlinux.c32`,
-          isolinuxBinUrl: `http://minio/syslinuxs/${isolinuxBinArtifactId}/isolinux.bin`,
-          isohdpfxBinUrl: `http://minio/syslinuxs/${isohdpfxBinArtifactId}/isolinux.bin`
+          ipxeUefiUrl: `http://minio:9000/ipxes/${ipxeUefiArtifactId}/ipxe.efi`,
+          ipxeBiosUrl: `http://minio:9000/ipxes/${ipxeBiosArtifactId}/ipxe.lkrn`,
+          grubImgUrl: `http://minio:9000/grubs/${grubImgArtifactId}/grub.img`,
+          grubEfiUrl: `http://minio:9000/grubs/${grubEfiArtifactId}/grub.zip`,
+          ldLinuxUrl: `http://minio:9000/syslinuxs/${ldLinuxArtifactId}/ldlinux.c32`,
+          isolinuxBinUrl: `http://minio:9000/syslinuxs/${isolinuxBinArtifactId}/isolinux.bin`,
+          isohdpfxBinUrl: `http://minio:9000/syslinuxs/${isohdpfxBinArtifactId}/isohdpfx.bin`
         });
         return await ctx.call("bootmedium.update", {
           id: ctx.params.id,

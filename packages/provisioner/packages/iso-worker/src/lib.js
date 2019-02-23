@@ -1,24 +1,25 @@
 const download = require("download");
 const { zip, fs, xorriso } = require("@clusterplatform/builder-utils");
 const shell = require("async-shelljs");
+const { Client } = require("minio");
 
 module.exports = class {
   constructor({ artifactId, downloaddir, builddir, distdir }) {
     this.artifactId = artifactId;
-    this.downloaddir = downloaddir;
+    this.downloaddir = `${downloaddir}/${this.artifactId}`;
     this.builddir = `${builddir}/${this.artifactId}`;
     this.distdir = `${distdir}/${this.artifactId}`;
-    this.ipxedir = `${this.downloaddir}/ipxe`;
-    this.grubdir = `${this.downloaddir}/grub`;
-    this.syslinuxdir = `${this.downloaddir}/isolinux`;
-    shell.mkdir("-p", this.ipxedir);
-    shell.mkdir("-p", this.grubdir);
-    shell.mkdir("-p", this.syslinuxdir);
+    this.ipxedownloaddir = `${this.downloaddir}/ipxe`;
+    this.grubdownloaddir = `${this.downloaddir}/grub`;
+    this.syslinuxdownloaddir = `${this.downloaddir}/isolinux`;
+    shell.mkdir("-p", this.ipxedownloaddir);
+    shell.mkdir("-p", this.grubdownloaddir);
+    shell.mkdir("-p", this.syslinuxdownloaddir);
     shell.mkdir("-p", this.builddir);
     shell.mkdir("-p", this.distdir);
   }
 
-  async download({
+  download({
     ipxeUefiUrl,
     ipxeBiosUrl,
     grubImgUrl,
@@ -27,28 +28,38 @@ module.exports = class {
     isolinuxBinUrl,
     isohdpfxBinUrl
   }) {
-    await download(ipxeUefiUrl, this.ipxedir);
-    await download(ipxeBiosUrl, this.ipxedir);
-    await download(grubImgUrl, this.grubdir);
-    await download(grubEfiUrl, this.grubdir);
-    await download(ldLinuxUrl, this.syslinuxdir);
-    await download(isolinuxBinUrl, this.syslinuxdir);
-    await download(isohdpfxBinUrl, this.syslinuxdir);
+    return new Promise(resolve => {
+      download(ipxeUefiUrl, this.ipxedownloaddir).then(() =>
+        download(ipxeBiosUrl, this.ipxedownloaddir).then(() =>
+          download(grubImgUrl, this.grubdownloaddir).then(() =>
+            download(grubEfiUrl, this.grubdownloaddir).then(() =>
+              download(ldLinuxUrl, this.syslinuxdownloaddir).then(() =>
+                download(isolinuxBinUrl, this.syslinuxdownloaddir).then(() =>
+                  download(isohdpfxBinUrl, this.syslinuxdownloaddir).then(() =>
+                    resolve(true)
+                  )
+                )
+              )
+            )
+          )
+        )
+      );
+    });
   }
 
   async build() {
-    await shell.cp("-r", this.downloaddir, this.builddir);
+    await shell.cp("-r", `${this.downloaddir}/*`, this.builddir);
   }
 
   async extractGrubEfi() {
-    await zip.extractArchive(`${this.grubdir}/grub.zip`, this.downloaddir);
-    await shell.rm(`${this.grubdir}/grub.zip`);
+    await zip.extractArchive(`${this.grubdownloaddir}/grub.zip`, this.builddir);
+    await shell.rm(`${this.builddir}/grub/grub.zip`);
   }
 
   async configureGrub({ label }) {
     this.label = label;
     await fs.writeFile(
-      `${this.grubdir}/grub.cfg`,
+      `${this.builddir}/grub/grub.cfg`,
       `set default=1
 set timeout=1
 
@@ -57,7 +68,7 @@ chainloader /ipxe/ipxe.efi
 }`
     );
     await shell.touch(
-      `${this.builddir}/${label
+      `${this.builddir}/${this.label
         .split(" ")
         .join("_")
         .toLowerCase()}`
@@ -66,7 +77,7 @@ chainloader /ipxe/ipxe.efi
 
   async configureSyslinux() {
     await fs.writeFile(
-      `${this.syslinuxdir}/isolinux.cfg`,
+      `${this.builddir}/isolinux/isolinux.cfg`,
       `default iPXE
             label iPXE
 kernel /ipxe/ipxe.lkrn`
@@ -81,7 +92,7 @@ kernel /ipxe/ipxe.lkrn`
       isohdpfxBinPath: `${this.builddir}/isolinux/isohdpfx.bin`,
       bootCatPath: `isolinux/boot.cat`,
       isolinuxBinPath: "isolinux/isolinux.bin",
-      isolinuxBinPath: "grub/grub.img",
+      grubImgPath: "grub/grub.img",
       label: this.label,
       dest: `${this.distdir}/${this.localFilename}`
     });
