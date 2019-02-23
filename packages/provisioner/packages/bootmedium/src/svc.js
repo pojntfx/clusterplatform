@@ -48,7 +48,7 @@ module.exports = {
           {
             label: ctx.params.label,
             platform: "x86_64-efi",
-            architecture: "x86",
+            architecture: "x64",
             extension: "efi",
             fragment: "efi"
           }
