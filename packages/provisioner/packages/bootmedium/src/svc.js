@@ -43,12 +43,22 @@ module.exports = {
             fragment: "img"
           }
         );
-        const { id: grubEfiId } = await ctx.call(
+        const { id: grubEfiX64Id } = await ctx.call(
           "grub-manager.createOverwrite",
           {
             label: ctx.params.label,
             platform: "x86_64-efi",
             architecture: "x64",
+            extension: "efi",
+            fragment: "efi"
+          }
+        );
+        const { id: grubEfiX86Id } = await ctx.call(
+          "grub-manager.createOverwrite",
+          {
+            label: ctx.params.label,
+            platform: "x86_64-efi",
+            architecture: "x86",
             extension: "efi",
             fragment: "efi"
           }
@@ -76,7 +86,8 @@ module.exports = {
           ipxeUefiId,
           ipxeBiosId,
           grubImgId,
-          grubEfiId,
+          grubEfiX64Id,
+          grubEfiX86Id,
           ldLinuxId,
           isolinuxBinId,
           isohdpfxBinId,
@@ -99,7 +110,8 @@ module.exports = {
           ipxeUefiId,
           ipxeBiosId,
           grubImgId,
-          grubEfiId,
+          grubEfiX64Id,
+          grubEfiX86Id,
           ldLinuxId,
           isolinuxBinId,
           isohdpfxBinId
@@ -122,10 +134,16 @@ module.exports = {
             id: grubImgId
           }
         );
-        const { artifactId: grubEfiArtifactId } = await ctx.call(
+        const { artifactId: grubEfiX64ArtifactId } = await ctx.call(
           "grub-manager.get",
           {
-            id: grubEfiId
+            id: grubEfiX64Id
+          }
+        );
+        const { artifactId: grubEfiX86ArtifactId } = await ctx.call(
+          "grub-manager.get",
+          {
+            id: grubEfiX86Id
           }
         );
         const { artifactId: ldLinuxArtifactId } = await ctx.call(
@@ -151,7 +169,8 @@ module.exports = {
           ipxeUefiUrl: `http://minio:9000/ipxes/${ipxeUefiArtifactId}/ipxe.efi`,
           ipxeBiosUrl: `http://minio:9000/ipxes/${ipxeBiosArtifactId}/ipxe.lkrn`,
           grubImgUrl: `http://minio:9000/grubs/${grubImgArtifactId}/grub.img`,
-          grubEfiUrl: `http://minio:9000/grubs/${grubEfiArtifactId}/grub.zip`,
+          grubEfiX64Url: `http://minio:9000/grubs/${grubEfiX64ArtifactId}/grub.zip`,
+          grubEfiX86Url: `http://minio:9000/grubs/${grubEfiX86ArtifactId}/grub.zip`,
           ldLinuxUrl: `http://minio:9000/syslinuxs/${ldLinuxArtifactId}/ldlinux.c32`,
           isolinuxBinUrl: `http://minio:9000/syslinuxs/${isolinuxBinArtifactId}/isolinux.bin`,
           isohdpfxBinUrl: `http://minio:9000/syslinuxs/${isohdpfxBinArtifactId}/isohdpfx.bin`
@@ -173,7 +192,8 @@ module.exports = {
       ipxeUefiId: Orm.INTEGER,
       ipxeBiosId: Orm.INTEGER,
       grubImgId: Orm.INTEGER,
-      grubEfiId: Orm.INTEGER,
+      grubEfiX64Id: Orm.INTEGER,
+      grubEfiX86Id: Orm.INTEGER,
       ldLinuxId: Orm.INTEGER,
       isolinuxBinId: Orm.INTEGER,
       isohdpfxBinId: Orm.INTEGER,
@@ -187,7 +207,8 @@ module.exports = {
       ipxeUefiId: "number",
       ipxeBiosId: "number",
       grubImgId: "number",
-      grubEfiId: "number",
+      grubEfiX64Id: "number",
+      grubEfiX86Id: "number",
       ldLinuxId: "number",
       isolinuxBinId: "number",
       isohdpfxBinId: "number",
