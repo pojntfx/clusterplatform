@@ -8,7 +8,7 @@
       "address": "localhost",
       "port": 9229,
       "localRoot": "${fileDirname}",
-      "remoteRoot": "/"
+      "remoteRoot": "/opt/clusterplatform/app"
     }
   ]
 }
