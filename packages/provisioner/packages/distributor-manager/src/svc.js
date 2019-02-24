@@ -29,6 +29,24 @@ module.exports = {
         });
       }
       return await ctx.call("distributor-manager.list");
+    },
+    updateDistributor: {
+      params: {
+        ipxePxeUefiUrl: "string",
+        ipxePxeBiosUrl: "string",
+        id: "number",
+        device: "string",
+        domain: "string"
+      },
+      handler: async function(ctx) {
+        const distributor = await ctx.call("distributor-manager.get", {
+          id: ctx.params.id
+        });
+        await ctx.call("distributor-worker.update", ctx.params, {
+          nodeId: distributor.nodeId
+        });
+        return distributor;
+      }
     }
   },
   settings: {

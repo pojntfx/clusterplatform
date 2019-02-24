@@ -14,21 +14,40 @@ module.exports = {
           .call("$node.list")
           .filter(node => (node.hostname = localNode.hostname)))[0];
         if (localNodeData.id) {
-          await this.broker.call("distributor-manager.create", {
-            nodeId: localNodeData.id,
-            tag: process.env.CLUSTERPLATFORM_DISTRIBUTOR_TAG
-          });
-          didRegister = true;
+          if (
+            await this.broker.call("distributor-manager.create", {
+              nodeId: localNodeData.id,
+              tag: process.env.CLUSTERPLATFORM_DISTRIBUTOR_TAG
+            })
+          ) {
+            didRegister = true;
+          } else {
+            await sleep(2000);
+          }
         } else {
           await sleep(2000);
         }
       } catch (e) {
         await this.logger.warning(
-          "Distributor-worker can't connect to distributor-manager. Retrying ..."
+          "Distributor-worker can't connect to distributor-manager. Retrying every 2 seconds ..."
         );
         await sleep(2000);
       }
     }
   },
-  actions: {}
+  actions: {
+    update: {
+      params: {
+        ipxePxeUefiUrl: "string",
+        ipxePxeBiosUrl: "string",
+        device: "string",
+        domain: "string"
+      },
+      handler: async function(ctx) {
+        await this.logger.info(
+          `Updating distributor with data ${JSON.stringify(ctx.params)}`
+        );
+      }
+    }
+  }
 };
