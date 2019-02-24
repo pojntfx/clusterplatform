@@ -1,0 +1,22 @@
+# Setup env
+FROM fedora:29
+RUN mkdir -p /opt/clusterplatform/app
+WORKDIR /opt/clusterplatform/app
+RUN dnf install -y npm iproute dnsmasq bind-utils
+
+# Add app
+COPY package.json .
+COPY src src
+
+# Setup app
+ENV SERVICEDIR=src
+ENV SERVICES=svc.js
+ENV TRANSPORTER=TCP
+
+# Run app
+CMD npm set registry ${NPM_REGISTRY}; \
+    npm install; \
+    node node_modules/nodemon/bin/nodemon.js \
+    --inspect=0.0.0.0:9229 \
+    --watch src/ \
+    node_modules/moleculer/bin/moleculer-runner.js

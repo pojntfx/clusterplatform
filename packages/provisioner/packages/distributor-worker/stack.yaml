@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: distributor-worker
+spec:
+  selector:
+    matchLabels:
+      app: distributor-worker
+  template:
+    metadata:
+      labels:
+        app: distributor-worker
+    spec:
+      containers:
+        - name: distributor-worker
+          image: registry.gitlab.com/clusterplatform/clusterplatform/distributor-worker
+          resources:
+            limits:
+              memory: 200Mi
+              cpu: 200m
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+          envFrom:
+            - configMapRef:
+                name: nats-public
+            - configMapRef:
+                name: verdaccio-public

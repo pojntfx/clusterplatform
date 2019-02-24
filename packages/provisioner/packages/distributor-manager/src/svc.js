@@ -12,6 +12,24 @@ module.exports = {
       nodeId: Orm.STRING
     }
   },
+  actions: {
+    listOverwrite: async function(ctx) {
+      const allDistributors = (await ctx.call("distributor-manager.list")).rows;
+      const nonPingableDistributors = [];
+      for (distributor of allDistributors) {
+        const pingable = await this.broker.ping(distributor.nodeId, 1000);
+        if (!pingable) {
+          nonPingableDistributors.push(distributor);
+        }
+      }
+      for (distributor of nonPingableDistributors) {
+        await ctx.call("distributor-manager.remove", {
+          id: distributor.id
+        });
+      }
+      return await ctx.call("distributor-manager.list");
+    }
+  },
   settings: {
     entityValidator: {
       nodeId: "string"
