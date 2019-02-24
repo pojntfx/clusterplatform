@@ -12,7 +12,8 @@ module.exports = {
           "grub-manager.*",
           "syslinux-manager.*",
           "iso-manager.*",
-          "bootruntime.*"
+          "bootruntime.*",
+          "distributor-manager.*"
         ],
         aliases: {
           // ipxes
@@ -43,7 +44,12 @@ module.exports = {
           "PUT /bootruntimes/:id/iso": "bootruntime.createIso",
           "PUT /bootruntimes/:id/pxe": "bootruntime.createPxe",
           // distributors
-          "REST /distributors": "distributor-manager"
+          "POST /distributors": "distributor-manager.create",
+          "GET /distributors": "distributor-manager.listOverwrite",
+          "GET /distributors/:id": "distributor-manager.get",
+          "DELETE /distributors/:id": "distributor-manager.remove",
+          "PUT /distributors/:id/iso": "distributor-manager.createIso",
+          "PUT /distributors/:id/pxe": "distributor-manager.createPxe"
         }
       }
     ]
