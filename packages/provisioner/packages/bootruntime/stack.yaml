@@ -25,3 +25,5 @@ spec:
                 name: postgres
             - configMapRef:
                 name: verdaccio
+            - configMapRef:
+                name: minio-public

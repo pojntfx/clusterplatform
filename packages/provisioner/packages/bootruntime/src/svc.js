@@ -327,8 +327,12 @@ module.exports = {
               ...ctx.params,
               id: distributorId,
               artifactId: parseInt(ctx.params.id),
-              ipxePxeUefiUrl: `http://minio:9000/ipxes/${ipxePxeUefiArtifactId}/ipxe.efi`,
-              ipxePxeBiosUrl: `http://minio:9000/ipxes/${ipxePxeBiosArtifactId}/ipxe.kpxe`
+              ipxePxeUefiUrl: `http://${process.env.MINIO_ENDPOINT}:${
+                process.env.MINIO_PORT
+              }/ipxes/${ipxePxeUefiArtifactId}/ipxe.efi`,
+              ipxePxeBiosUrl: `http://${process.env.MINIO_ENDPOINT}:${
+                process.env.MINIO_PORT
+              }/ipxes/${ipxePxeBiosArtifactId}/ipxe.kpxe`
             });
           }
           return await ctx.call("bootruntime.update", {
