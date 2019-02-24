@@ -63,7 +63,7 @@ module.exports = {
         await distributor.build();
         await distributor.package();
         await distributor.configureNetwork();
-        await distributor.configureDnsmasq();
+        await distributor.configureDnsmasq(ctx.params.domain);
         await this.logger.info(`Configured distributor!`);
         return await distributor.getScript();
       }

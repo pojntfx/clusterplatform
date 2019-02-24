@@ -44,7 +44,7 @@ module.exports = {
           id: ctx.params.id
         });
         await ctx.call("distributor-worker.update", ctx.params, {
-          nodeId: distributor.nodeId
+          nodeID: distributor.nodeId
         });
         return distributor;
       }

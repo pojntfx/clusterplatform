@@ -11,6 +11,7 @@ spec:
       labels:
         app: distributor-worker
     spec:
+      hostNetwork: true
       containers:
         - name: distributor-worker
           image: registry.gitlab.com/clusterplatform/clusterplatform/distributor-worker

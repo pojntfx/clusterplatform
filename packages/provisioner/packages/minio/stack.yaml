@@ -60,3 +60,15 @@ data:
   MINIO_BUCKET: ipxes
   MINIO_ACCESS_KEY: minio-access-key
   MINIO_SECRET_KEY: minio-secret-key
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: minio-public
+data:
+  MINIO_ENDPOINT: "46.101.180.149"
+  MINIO_PORT: "30900"
+  MINIO_REGION: us-east-1
+  MINIO_BUCKET: ipxes
+  MINIO_ACCESS_KEY: minio-access-key
+  MINIO_SECRET_KEY: minio-secret-key

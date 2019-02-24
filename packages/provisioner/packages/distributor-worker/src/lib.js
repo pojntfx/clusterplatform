@@ -42,7 +42,7 @@ dhcp-match=set:ipxe,175
 dhcp-vendorclass=BIOS,PXEClient:Arch:00000
 
 # Boot file - Legacy BIOS client
-dhcp-boot=tag:!ipxe,tag:BIOS,undionly.kpxe,10.1.0.1
+dhcp-boot=tag:!ipxe,tag:BIOS,ipxe.kpxe,10.1.0.1
 
 # Boot file - EFI client
 # at the moment all non-BIOS clients are considered
@@ -97,9 +97,9 @@ module.exports = class {
   }
 
   async configureDnsmasq(domain) {
-    const script = CONFIGTMPL.replace("INTERFACE", this.device)
-      .replace("DOMAIN", domain)
-      .replace("TFTPROOT", this.packagedir);
+    const script = CONFIGTMPL.replace(/INTERFACE/g, this.device)
+      .replace(/DOMAIN/g, domain)
+      .replace(/TFTPROOT/g, this.packagedir);
     await fs.writeFile(`${this.configurationdir}/dnsmasq.conf`, script);
   }
 
