@@ -34,6 +34,7 @@ module.exports = {
       params: {
         ipxePxeUefiUrl: "string",
         ipxePxeBiosUrl: "string",
+        artifactId: "number",
         id: "number",
         device: "string",
         domain: "string"

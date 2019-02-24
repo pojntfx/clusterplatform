@@ -1,5 +1,4 @@
 const Distributor = require("./lib");
-const uuidv1 = require("uuid/v4");
 
 module.exports = {
   name: "distributor-worker",
@@ -41,22 +40,20 @@ module.exports = {
   actions: {
     update: {
       params: {
+        artifactId: "number",
         ipxePxeUefiUrl: "string",
         ipxePxeBiosUrl: "string",
         device: "string",
         domain: "string"
       },
       handler: async function(ctx) {
-        const artifactId = uuidv1();
         await this.logger.info(
           `Updating distributor with data ${JSON.stringify({
-            ...ctx.params,
-            artifactId
+            ...ctx.params
           })}`
         );
         const distributor = new Distributor({
           ...ctx.params,
-          artifactId,
           downloaddir: "/tmp/clusterplatform/app/distributor/downloaddir",
           builddir: `/tmp/clusterplatform/app/distributor/builddir`,
           packagedir: `/tmp/clusterplatform/app/distributor/packagedir`,

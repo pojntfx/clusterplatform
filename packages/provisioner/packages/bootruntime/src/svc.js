@@ -326,6 +326,7 @@ module.exports = {
             await ctx.call("distributor-manager.updateDistributor", {
               ...ctx.params,
               id: distributorId,
+              artifactId: parseInt(ctx.params.id),
               ipxePxeUefiUrl: `http://minio:9000/ipxes/${ipxePxeUefiArtifactId}/ipxe.efi`,
               ipxePxeBiosUrl: `http://minio:9000/ipxes/${ipxePxeBiosArtifactId}/ipxe.kpxe`
             });
