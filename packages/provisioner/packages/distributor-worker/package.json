@@ -5,7 +5,12 @@
   "main": "src/svc.js",
   "dependencies": {
     "moleculer": "^0.13.6",
-    "nats": "^1.2.2"
+    "nats": "^1.2.2",
+    "download": "^7.1.0",
+    "shelljs": "^0.8.3",
+    "async-shelljs": "^0.1.2",
+    "@clusterplatform/builder-utils": "canary",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "nodemon": "^1.18.10"
