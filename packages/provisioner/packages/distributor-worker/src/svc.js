@@ -67,6 +67,30 @@ module.exports = {
         await this.logger.info(`Configured distributor!`);
         return await distributor.getScript();
       }
+    },
+    updateStatus: {
+      params: {
+        artifactId: { type: "number", convert: true },
+        on: "boolean"
+      },
+      handler: async function(ctx) {
+        const distributor = new Distributor({
+          ...ctx.params,
+          downloaddir: "/tmp/clusterplatform/app/distributor/downloaddir",
+          builddir: `/tmp/clusterplatform/app/distributor/builddir`,
+          packagedir: `/tmp/clusterplatform/app/distributor/packagedir`,
+          configurationdir: `/tmp/clusterplatform/app/distributor/configurationdir`
+        });
+        if (ctx.params.on) {
+          return await distributor.start(
+            `dnsmasq-distributor-pxeboot-${ctx.params.artifactId}`
+          );
+        } else {
+          return await distributor.stop(
+            `dnsmasq-distributor-pxeboot-${ctx.params.artifactId}`
+          );
+        }
+      }
     }
   }
 };

@@ -1,7 +1,7 @@
 {
 	"_type": "export",
 	"__export_format": 3,
-	"__export_date": "2019-02-19T19:36:19.994Z",
+	"__export_date": "2019-02-24T23:49:47.032Z",
 	"__export_source": "insomnia.desktop.app:v6.3.2",
 	"resources": [
 		{
@@ -17,12 +17,10 @@
 			"_id": "env_129554519b384da1b90aefab6d71cc50",
 			"color": null,
 			"created": 1550407615327,
-			"data": {
-				"gateway": "http://localhost:3000/api"
-			},
+			"data": {},
 			"isPrivate": false,
 			"metaSortKey": 1550407615327,
-			"modified": 1550445478252,
+			"modified": 1551023853971,
 			"name": "New Environment",
 			"parentId": "wrk_e9ac3126193f4dc6ad90a16bcdaf97fd",
 			"_type": "environment"
@@ -75,10 +73,46 @@
 			"description": "",
 			"environment": {},
 			"metaSortKey": -1550602303775,
-			"modified": 1550602303775,
+			"modified": 1550931323794,
 			"name": "bootruntimes",
 			"parentId": "wrk_e9ac3126193f4dc6ad90a16bcdaf97fd",
 			"_type": "request_group"
+		},
+		{
+			"_id": "fld_6795e586cc7e4d039debb787aa2becfc",
+			"created": 1550613473414,
+			"description": "",
+			"environment": {},
+			"metaSortKey": -1549946117635.4375,
+			"modified": 1551052120777,
+			"name": "isos",
+			"parentId": "wrk_e9ac3126193f4dc6ad90a16bcdaf97fd",
+			"_type": "request_group"
+		},
+		{
+			"_id": "fld_046a3051b9a34f9e9e3f3a7139852e33",
+			"created": 1551029083442,
+			"description": "",
+			"environment": {},
+			"metaSortKey": -1549927657501.375,
+			"modified": 1551052118173,
+			"name": "distributors",
+			"parentId": "wrk_e9ac3126193f4dc6ad90a16bcdaf97fd",
+			"_type": "request_group"
+		},
+		{
+			"_id": "env_e9729ffeacc943cf84cdd52ea7fffa5e",
+			"color": "#46c51c",
+			"created": 1551023856872,
+			"data": {
+				"gateway": "http://localhost:3000/api"
+			},
+			"isPrivate": false,
+			"metaSortKey": 1551023856872,
+			"modified": 1551023925361,
+			"name": "Local Development",
+			"parentId": "env_129554519b384da1b90aefab6d71cc50",
+			"_type": "environment"
 		},
 		{
 			"_id": "req_bbeb28b2df794cbeb8f566914b9252ee",
@@ -315,6 +349,28 @@
 			"_type": "request"
 		},
 		{
+			"_id": "fld_b6913c8551004c2e984d6a5304e8dc56",
+			"created": 1550620552122,
+			"description": "",
+			"environment": {},
+			"metaSortKey": -1550620552122,
+			"modified": 1550620552122,
+			"name": "iso",
+			"parentId": "fld_e3e0e9dead174eeab8c8b0e6de2a5ba6",
+			"_type": "request_group"
+		},
+		{
+			"_id": "fld_21ea993642d747e9a02b206aa532ca44",
+			"created": 1551037280429,
+			"description": "",
+			"environment": {},
+			"metaSortKey": -1551037280429,
+			"modified": 1551037280429,
+			"name": "pxe",
+			"parentId": "fld_e3e0e9dead174eeab8c8b0e6de2a5ba6",
+			"_type": "request_group"
+		},
+		{
 			"_id": "req_fb6613848e59455e9dc9a0b896fccb2d",
 			"authentication": {},
 			"body": {},
@@ -324,7 +380,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1550410145607,
 			"method": "GET",
-			"modified": 1550602327790,
+			"modified": 1550931336933,
 			"name": "bootruntimes",
 			"parameters": [],
 			"parentId": "fld_e3e0e9dead174eeab8c8b0e6de2a5ba6",
@@ -342,7 +398,7 @@
 			"authentication": {},
 			"body": {
 				"mimeType": "application/json",
-				"text": "{\n\t\"label\": \"Cluster Platform Boot Media\",\n\t\"script\": \"#!ipxe\\ndhcp\\nchain http://boot.netboot.xyz\"\n}"
+				"text": "{\n\t\"label\": \"Cluster Platform Boot Media\",\n\t\"script\": \"#!ipxe\\ndhcp\\nchain http://boot.netboot.xyz\",\n\t\"isoArtifacts\": false,\n\t\"pxeArtifacts\": true\n}"
 			},
 			"created": 1550602311562,
 			"description": "",
@@ -356,7 +412,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1550410145657,
 			"method": "POST",
-			"modified": 1550604130911,
+			"modified": 1551047794141,
 			"name": "bootruntimes",
 			"parameters": [],
 			"parentId": "fld_e3e0e9dead174eeab8c8b0e6de2a5ba6",
@@ -379,7 +435,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1550410145507,
 			"method": "GET",
-			"modified": 1550603829054,
+			"modified": 1550931334844,
 			"name": "bootruntime",
 			"parameters": [],
 			"parentId": "fld_e3e0e9dead174eeab8c8b0e6de2a5ba6",
@@ -390,6 +446,205 @@
 			"settingSendCookies": true,
 			"settingStoreCookies": true,
 			"url": "{{ gateway  }}/bootruntimes/{% prompt 'ID', '', '', '', false %}",
+			"_type": "request"
+		},
+		{
+			"_id": "req_8226ffb174474d678eb0d46842534bd0",
+			"authentication": {},
+			"body": {
+				"mimeType": "application/json",
+				"text": "{\n\t\"label\": \"Cluster Platform Boot Media\",\n\t\"ipxeUefiUrl\": \"http://minio:9000/ixpes/4e7bfcf5-2e35-423f-ad57-8385f802a48a/ipxe.kpxe\",\n\t\"ipxeBiosUrl\": \"http://minio:9000/ixpes/9363b0e0-1046-43af-95ed-395aeec5ed9e/ipxe.lkrn\",\n\t\"grubImgUrl\": \"http://minio:9000/grub/d04c6ce7-b217-44e0-a17d-af16932403b8/grub.img\",\n\t\"grubEfiUrl\": \"http://minio:9000/grub/e0970c81-0427-4412-a3a5-963387ed5e2f/grub.zip\",\n\t\"ldLinuxUrl\": \"http://minio:9000/syslinuxs/cc9d69cf-22ec-4775-b9ad-faf4a459a4c7/ldlinux.c32\",\n\t\"isolinuxBinUrl\": \"http://minio:9000/syslinuxs/e3ce1933-1c4a-43b2-b73f-4f9335f30131/isolinux.bin\",\n\t\"isohdpfxBinUrl\": \"http://minio:9000/syslinuxs/e3ce1933-1c4a-43b2-b73f-4f9335f30131/isolinux.bin\"\n}"
+			},
+			"created": 1550613473429,
+			"description": "",
+			"headers": [
+				{
+					"id": "pair_213c59c066484bb6ae44b2da93e00280",
+					"name": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"isPrivate": false,
+			"metaSortKey": -1550412539381,
+			"method": "POST",
+			"modified": 1550916048615,
+			"name": "isos",
+			"parameters": [],
+			"parentId": "fld_6795e586cc7e4d039debb787aa2becfc",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ gateway  }}/isos",
+			"_type": "request"
+		},
+		{
+			"_id": "req_22c960da62794a7f83bdb17c6f7cf8af",
+			"authentication": {},
+			"body": {},
+			"created": 1550613473438,
+			"description": "",
+			"headers": [],
+			"isPrivate": false,
+			"metaSortKey": -1550412539331,
+			"method": "GET",
+			"modified": 1551023913718,
+			"name": "isos",
+			"parameters": [],
+			"parentId": "fld_6795e586cc7e4d039debb787aa2becfc",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ gateway  }}/isos?sort=id",
+			"_type": "request"
+		},
+		{
+			"_id": "req_1f2b8302c00c45c9a1b129af355d985d",
+			"authentication": {},
+			"body": {},
+			"created": 1550613473441,
+			"description": "",
+			"headers": [],
+			"isPrivate": false,
+			"metaSortKey": -1550412539281,
+			"method": "GET",
+			"modified": 1550614841116,
+			"name": "iso",
+			"parameters": [],
+			"parentId": "fld_6795e586cc7e4d039debb787aa2becfc",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ gateway  }}/isos/{% prompt 'ID', '', '', '', false %}",
+			"_type": "request"
+		},
+		{
+			"_id": "req_186d941c1cae4909aa1b667bbd331dac",
+			"authentication": {},
+			"body": {},
+			"created": 1551029089697,
+			"description": "",
+			"headers": [],
+			"isPrivate": false,
+			"metaSortKey": -1551029089697,
+			"method": "GET",
+			"modified": 1551029094567,
+			"name": "distributors",
+			"parameters": [],
+			"parentId": "fld_046a3051b9a34f9e9e3f3a7139852e33",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ gateway  }}/distributors",
+			"_type": "request"
+		},
+		{
+			"_id": "req_c5ac56d697444c5b96f954ae30603a42",
+			"authentication": {},
+			"body": {},
+			"created": 1550620567775,
+			"description": "",
+			"headers": [],
+			"isPrivate": false,
+			"metaSortKey": -1550620567775,
+			"method": "PUT",
+			"modified": 1551038672057,
+			"name": "iso",
+			"parameters": [],
+			"parentId": "fld_b6913c8551004c2e984d6a5304e8dc56",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ gateway  }}/bootruntimes/{% prompt 'ID', '', '', '', false %}/iso",
+			"_type": "request"
+		},
+		{
+			"_id": "fld_15a64c56b80549e9a7a9a8700d28ba98",
+			"created": 1551051062795,
+			"description": "",
+			"environment": {},
+			"metaSortKey": -1551051062795,
+			"modified": 1551051062795,
+			"name": "status",
+			"parentId": "fld_21ea993642d747e9a02b206aa532ca44",
+			"_type": "request_group"
+		},
+		{
+			"_id": "req_4dd5575131bd456aa41b9ca61d55525d",
+			"authentication": {},
+			"body": {
+				"mimeType": "application/json",
+				"text": "{\n\t\"distributorIds\": [\n\t\t43,\n\t\t44\n\t],\n\t\"device\": \"enp0s25\",\n\t\"domain\": \"sol-earth-eu-de-bw-fds-bbronn-hirschkopfweg-8-local\"\n}"
+			},
+			"created": 1551037288677,
+			"description": "",
+			"headers": [
+				{
+					"id": "pair_a3158204a4f24cbc8ed0d5d6772d9ca3",
+					"name": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"isPrivate": false,
+			"metaSortKey": -1551037288677,
+			"method": "PUT",
+			"modified": 1551052137638,
+			"name": "pxe",
+			"parameters": [],
+			"parentId": "fld_21ea993642d747e9a02b206aa532ca44",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ gateway  }}/bootruntimes/{% prompt 'ID', '', '', '', false %}/pxe",
+			"_type": "request"
+		},
+		{
+			"_id": "req_17304462d7bf4a45a06963357348005a",
+			"authentication": {},
+			"body": {
+				"mimeType": "application/json",
+				"text": "{\n\t\"on\": false\n}"
+			},
+			"created": 1551051071599,
+			"description": "",
+			"headers": [
+				{
+					"id": "pair_dfd30e09edf74468b6f78038fe487e35",
+					"name": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"isPrivate": false,
+			"metaSortKey": -1551051071599,
+			"method": "PUT",
+			"modified": 1551052151096,
+			"name": "status",
+			"parameters": [],
+			"parentId": "fld_15a64c56b80549e9a7a9a8700d28ba98",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ gateway  }}/bootruntimes/{% prompt 'ID', '', '', '', false %}/pxe/status",
 			"_type": "request"
 		}
 	]
