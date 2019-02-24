@@ -15,7 +15,7 @@ module.exports = {
       },
       handler: async function(ctx) {
         await this.logger.info(
-          "Queueing bootruntime subartifacts creation",
+          "Queueing boot runtime subartifacts creation",
           ctx.params
         );
         if (ctx.params.isoArtifacts) {
@@ -32,7 +32,8 @@ module.exports = {
               ...bootruntimeIsoArtifacts,
               ipxePxeUefiId: 0,
               ipxePxeBiosId: 0,
-              isoId: 0
+              isoId: 0,
+              distributorIds: [0]
             });
           } else {
             const bootruntimePxeArtifacts = await ctx.call(
@@ -45,7 +46,8 @@ module.exports = {
               ...ctx.params,
               ...bootruntimeIsoArtifacts,
               ...bootruntimePxeArtifacts,
-              isoId: 0
+              isoId: 0,
+              distributorIds: [0]
             });
           }
         }
@@ -68,7 +70,8 @@ module.exports = {
               ldLinuxId: 0,
               isolinuxBinId: 0,
               isohdpfxBinId: 0,
-              isoId: 0
+              isoId: 0,
+              distributorIds: [0]
             });
           } else {
             const bootruntimeIsoArtifacts = await ctx.call(
@@ -82,7 +85,8 @@ module.exports = {
               ...ctx.params,
               ...bootruntimePxeArtifacts,
               ...bootruntimeIsoArtifacts,
-              isoId: 0
+              isoId: 0,
+              distributorIds: [0]
             });
           }
         }
@@ -99,18 +103,19 @@ module.exports = {
             isohdpfxBinId: 0,
             ipxePxeUefiId: 0,
             ipxePxeBiosId: 0,
-            isoId: 0
+            isoId: 0,
+            distributorIds: [0]
           });
         }
       }
     },
     createIso: {
       params: {
-        id: "string"
+        id: { type: "number", convert: true }
       },
       handler: async function(ctx) {
         await this.logger.info(
-          "Queueing bootruntime iso subartifact creation",
+          "Queueing boot runtime iso subartifact creation",
           ctx.params
         );
         const {
@@ -282,6 +287,56 @@ module.exports = {
         };
       }
     },
+    createPxe: {
+      params: {
+        id: { type: "number", convert: true },
+        distributorIds: "array",
+        device: "string",
+        domain: "string"
+      },
+      handler: async function(ctx) {
+        await this.logger.info(
+          "Queueing boot runtime pxe subartifact application",
+          ctx.params
+        );
+        const { ipxePxeUefiId, ipxePxeBiosId, pxeArtifacts } = await ctx.call(
+          "bootruntime.get",
+          { id: ctx.params.id }
+        );
+        if (!pxeArtifacts) {
+          throw new MoleculerError(
+            "PXE Artifacts have not been created for this boot runtime",
+            422,
+            "ERR_PXE_ARTIFACTS_NOT_CREATED"
+          );
+        } else {
+          for (distributorId of ctx.params.distributorIds) {
+            const { artifactId: ipxePxeUefiArtifactId } = await ctx.call(
+              "ipxe-manager.get",
+              {
+                id: ipxePxeUefiId
+              }
+            );
+            const { artifactId: ipxePxeBiosArtifactId } = await ctx.call(
+              "ipxe-manager.get",
+              {
+                id: ipxePxeBiosId
+              }
+            );
+            await ctx.call("distributor-manager.updateDistributor", {
+              ...ctx.params,
+              id: distributorId,
+              ipxePxeUefiUrl: `http://minio:9000/ipxes/${ipxePxeUefiArtifactId}/ipxe.efi`,
+              ipxePxeBiosUrl: `http://minio:9000/ipxes/${ipxePxeBiosArtifactId}/ipxe.kpxe`
+            });
+          }
+          return await ctx.call("bootruntime.update", {
+            id: ctx.params.id,
+            distributorIds: ctx.params.distributorIds
+          });
+        }
+      }
+    },
     createPxeArtifacts: {
       params: {
         script: "string"
@@ -330,6 +385,7 @@ module.exports = {
       ipxePxeUefiId: Orm.INTEGER,
       ipxePxeBiosId: Orm.INTEGER,
       isoId: Orm.INTEGER,
+      distributorIds: Orm.ARRAY(Orm.INTEGER),
       isoArtifacts: Orm.BOOLEAN,
       pxeArtifacts: Orm.BOOLEAN
     }
@@ -349,6 +405,7 @@ module.exports = {
       ipxePxeUefiId: "number",
       ipxePxeBiosId: "number",
       isoId: "number",
+      distributorIds: "array",
       isoArtifacts: "boolean",
       pxeArtifacts: "boolean"
     }
