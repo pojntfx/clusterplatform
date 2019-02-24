@@ -9,7 +9,8 @@ module.exports = {
   model: {
     name: "distributor",
     define: {
-      nodeId: Orm.STRING
+      nodeId: Orm.STRING,
+      tag: Orm.STRING
     }
   },
   actions: {
@@ -32,7 +33,8 @@ module.exports = {
   },
   settings: {
     entityValidator: {
-      nodeId: "string"
+      nodeId: "string",
+      tag: "string"
     }
   }
 };
