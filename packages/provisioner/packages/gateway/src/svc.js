@@ -43,13 +43,13 @@ module.exports = {
           "DELETE /bootruntimes/:id": "bootruntime.remove",
           "PUT /bootruntimes/:id/iso": "bootruntime.createIso",
           "PUT /bootruntimes/:id/pxe": "bootruntime.createPxe",
+          "PUT /bootruntimes/:id/pxe/status":
+            "bootruntime.updateDistributorStatus",
           // distributors
           "POST /distributors": "distributor-manager.create",
           "GET /distributors": "distributor-manager.listOverwrite",
           "GET /distributors/:id": "distributor-manager.get",
-          "DELETE /distributors/:id": "distributor-manager.remove",
-          "PUT /distributors/:id/iso": "distributor-manager.createIso",
-          "PUT /distributors/:id/pxe": "distributor-manager.createPxe"
+          "DELETE /distributors/:id": "distributor-manager.remove"
         }
       }
     ]

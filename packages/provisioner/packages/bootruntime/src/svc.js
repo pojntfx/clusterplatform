@@ -370,6 +370,27 @@ module.exports = {
           ipxePxeBiosId
         };
       }
+    },
+    updateDistributorStatus: {
+      params: {
+        id: { type: "number", convert: true },
+        on: "boolean"
+      },
+      handler: async function(ctx) {
+        const bootruntime = await ctx.call("bootruntime.get", {
+          id: ctx.params.id
+        });
+        for (distributorId of bootruntime.distributorIds) {
+          await ctx.call("distributor-manager.updateDistributorStatus", {
+            id: distributorId,
+            artifactId: parseInt(bootruntime.id),
+            on: ctx.params.on
+          });
+        }
+        return await ctx.call("bootruntime.get", {
+          id: ctx.params.id
+        });
+      }
     }
   },
   mixins: [Db],

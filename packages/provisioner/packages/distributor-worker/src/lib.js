@@ -2,6 +2,7 @@ const shell = require("shelljs");
 const download = require("download");
 const ip = require("./ip");
 const { fs } = require("@clusterplatform/builder-utils");
+const pm2 = require("pm2");
 
 const CONFIGTMPL = `# enable logs if required
 #log-queries
@@ -105,5 +106,34 @@ module.exports = class {
 
   async getScript() {
     return await shell.cat(`${this.configurationdir}/dnsmasq.conf`);
+  }
+
+  async start(name) {
+    return new Promise(resolve => {
+      pm2.connect(() => {
+        pm2.start(
+          {
+            script: "dnsmasq",
+            args: `-k -C "${this.configurationdir}/dnsmasq.conf"`,
+            name
+          },
+          (_, res) => {
+            pm2.disconnect();
+            resolve(res);
+          }
+        );
+      });
+    });
+  }
+
+  async stop(name) {
+    return new Promise(resolve => {
+      pm2.connect(() => {
+        pm2.stop(name, (_, res) => {
+          pm2.disconnect();
+          resolve(res);
+        });
+      });
+    });
   }
 };

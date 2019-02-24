@@ -9,7 +9,8 @@
     "download": "^7.1.0",
     "shelljs": "^0.8.3",
     "async-shelljs": "^0.1.2",
-    "@clusterplatform/builder-utils": "canary"
+    "@clusterplatform/builder-utils": "canary",
+    "pm2": "^3.3.1"
   },
   "devDependencies": {
     "nodemon": "^1.18.10"
