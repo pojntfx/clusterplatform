@@ -1,3 +1,6 @@
+const Distributor = require("./lib");
+const uuidv1 = require("uuid/v4");
+
 module.exports = {
   name: "distributor-worker",
   started: async function() {
@@ -44,9 +47,28 @@ module.exports = {
         domain: "string"
       },
       handler: async function(ctx) {
+        const artifactId = uuidv1();
         await this.logger.info(
-          `Updating distributor with data ${JSON.stringify(ctx.params)}`
+          `Updating distributor with data ${JSON.stringify({
+            ...ctx.params,
+            artifactId
+          })}`
         );
+        const distributor = new Distributor({
+          ...ctx.params,
+          artifactId,
+          downloaddir: "/tmp/clusterplatform/app/distributor/downloaddir",
+          builddir: `/tmp/clusterplatform/app/distributor/builddir`,
+          packagedir: `/tmp/clusterplatform/app/distributor/packagedir`,
+          configurationdir: `/tmp/clusterplatform/app/distributor/configurationdir`
+        });
+        await distributor.download(ctx.params);
+        await distributor.build();
+        await distributor.package();
+        await distributor.configureNetwork();
+        await distributor.configureDnsmasq();
+        await this.logger.info(`Configured distributor!`);
+        return await distributor.getScript();
       }
     }
   }
