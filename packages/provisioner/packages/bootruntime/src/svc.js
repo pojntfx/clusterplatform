@@ -26,12 +26,67 @@ module.exports = {
               label: ctx.params.label
             }
           );
-          return await ctx.call("bootruntime.create", {
-            ...ctx.params,
-            ...bootruntimeIsoArtifacts,
-            isoId: 0
-          });
-        } else {
+          if (!ctx.params.pxeArtifacts) {
+            return await ctx.call("bootruntime.create", {
+              ...ctx.params,
+              ...bootruntimeIsoArtifacts,
+              ipxePxeUefiId: 0,
+              ipxePxeBiosId: 0,
+              isoId: 0
+            });
+          } else {
+            const bootruntimePxeArtifacts = await ctx.call(
+              "bootruntime.createPxeArtifacts",
+              {
+                script: ctx.params.script
+              }
+            );
+            return await ctx.call("bootruntime.create", {
+              ...ctx.params,
+              ...bootruntimeIsoArtifacts,
+              ...bootruntimePxeArtifacts,
+              isoId: 0
+            });
+          }
+        }
+        if (ctx.params.pxeArtifacts) {
+          const bootruntimePxeArtifacts = await ctx.call(
+            "bootruntime.createPxeArtifacts",
+            {
+              script: ctx.params.script
+            }
+          );
+          if (!ctx.params.isoArtifacts) {
+            return await ctx.call("bootruntime.create", {
+              ...ctx.params,
+              ...bootruntimePxeArtifacts,
+              ipxeUefiId: 0,
+              ipxeBiosId: 0,
+              grubImgId: 0,
+              grubEfiX64Id: 0,
+              grubEfiX86Id: 0,
+              ldLinuxId: 0,
+              isolinuxBinId: 0,
+              isohdpfxBinId: 0,
+              isoId: 0
+            });
+          } else {
+            const bootruntimeIsoArtifacts = await ctx.call(
+              "bootruntime.createIsoArtifacts",
+              {
+                script: ctx.params.script,
+                label: ctx.params.label
+              }
+            );
+            return await ctx.call("bootruntime.create", {
+              ...ctx.params,
+              ...bootruntimePxeArtifacts,
+              ...bootruntimeIsoArtifacts,
+              isoId: 0
+            });
+          }
+        }
+        if (!ctx.params.isoArtifacts && !ctx.params.pxeArtifacts) {
           return await ctx.call("bootruntime.create", {
             ...ctx.params,
             ipxeUefiId: 0,
@@ -42,93 +97,11 @@ module.exports = {
             ldLinuxId: 0,
             isolinuxBinId: 0,
             isohdpfxBinId: 0,
+            ipxePxeUefiId: 0,
+            ipxePxeBiosId: 0,
             isoId: 0
           });
         }
-      }
-    },
-    createIsoArtifacts: {
-      params: {
-        script: "string",
-        label: "string"
-      },
-      handler: async function(ctx) {
-        const { id: ipxeUefiId } = await ctx.call(
-          "ipxe-manager.createOverwrite",
-          {
-            script: ctx.params.script,
-            platform: "bin-x86_64-efi",
-            driver: "ipxe",
-            extension: "efi"
-          }
-        );
-        const { id: ipxeBiosId } = await ctx.call(
-          "ipxe-manager.createOverwrite",
-          {
-            script: ctx.params.script,
-            platform: "bin",
-            driver: "ipxe",
-            extension: "lkrn"
-          }
-        );
-        const { id: grubImgId } = await ctx.call(
-          "grub-manager.createOverwrite",
-          {
-            label: ctx.params.label,
-            platform: "x86_64-efi",
-            architecture: "x64",
-            extension: "efi",
-            fragment: "img"
-          }
-        );
-        const { id: grubEfiX64Id } = await ctx.call(
-          "grub-manager.createOverwrite",
-          {
-            label: ctx.params.label,
-            platform: "x86_64-efi",
-            architecture: "x64",
-            extension: "efi",
-            fragment: "efi"
-          }
-        );
-        const { id: grubEfiX86Id } = await ctx.call(
-          "grub-manager.createOverwrite",
-          {
-            label: ctx.params.label,
-            platform: "x86_64-efi",
-            architecture: "x86",
-            extension: "efi",
-            fragment: "efi"
-          }
-        );
-        const { id: ldLinuxId } = await ctx.call(
-          "syslinux-manager.createOverwrite",
-          {
-            fragment: "ldlinux.c32"
-          }
-        );
-        const { id: isolinuxBinId } = await ctx.call(
-          "syslinux-manager.createOverwrite",
-          {
-            fragment: "isolinux.bin"
-          }
-        );
-        const { id: isohdpfxBinId } = await ctx.call(
-          "syslinux-manager.createOverwrite",
-          {
-            fragment: "isohdpfx.bin"
-          }
-        );
-        return {
-          ipxeUefiId,
-          ipxeBiosId,
-          grubImgId,
-          grubEfiX64Id,
-          grubEfiX86Id,
-          ldLinuxId,
-          isolinuxBinId,
-          isohdpfxBinId
-        };
       }
     },
     createIso: {
@@ -224,6 +197,119 @@ module.exports = {
           });
         }
       }
+    },
+    createIsoArtifacts: {
+      params: {
+        script: "string",
+        label: "string"
+      },
+      handler: async function(ctx) {
+        const { id: ipxeUefiId } = await ctx.call(
+          "ipxe-manager.createOverwrite",
+          {
+            script: ctx.params.script,
+            platform: "bin-x86_64-efi",
+            driver: "ipxe",
+            extension: "efi"
+          }
+        );
+        const { id: ipxeBiosId } = await ctx.call(
+          "ipxe-manager.createOverwrite",
+          {
+            script: ctx.params.script,
+            platform: "bin",
+            driver: "ipxe",
+            extension: "lkrn"
+          }
+        );
+        const { id: grubImgId } = await ctx.call(
+          "grub-manager.createOverwrite",
+          {
+            label: ctx.params.label,
+            platform: "x86_64-efi",
+            architecture: "x64",
+            extension: "efi",
+            fragment: "img"
+          }
+        );
+        const { id: grubEfiX64Id } = await ctx.call(
+          "grub-manager.createOverwrite",
+          {
+            label: ctx.params.label,
+            platform: "x86_64-efi",
+            architecture: "x64",
+            extension: "efi",
+            fragment: "efi"
+          }
+        );
+        const { id: grubEfiX86Id } = await ctx.call(
+          "grub-manager.createOverwrite",
+          {
+            label: ctx.params.label,
+            platform: "x86_64-efi",
+            architecture: "x86",
+            extension: "efi",
+            fragment: "efi"
+          }
+        );
+        const { id: ldLinuxId } = await ctx.call(
+          "syslinux-manager.createOverwrite",
+          {
+            fragment: "ldlinux.c32"
+          }
+        );
+        const { id: isolinuxBinId } = await ctx.call(
+          "syslinux-manager.createOverwrite",
+          {
+            fragment: "isolinux.bin"
+          }
+        );
+        const { id: isohdpfxBinId } = await ctx.call(
+          "syslinux-manager.createOverwrite",
+          {
+            fragment: "isohdpfx.bin"
+          }
+        );
+        return {
+          ipxeUefiId,
+          ipxeBiosId,
+          grubImgId,
+          grubEfiX64Id,
+          grubEfiX86Id,
+          ldLinuxId,
+          isolinuxBinId,
+          isohdpfxBinId
+        };
+      }
+    },
+    createPxeArtifacts: {
+      params: {
+        script: "string"
+      },
+      handler: async function(ctx) {
+        const { id: ipxePxeUefiId } = await ctx.call(
+          "ipxe-manager.createOverwrite",
+          {
+            script: ctx.params.script,
+            platform: "bin-x86_64-efi",
+            driver: "ipxe",
+            extension: "efi"
+          }
+        );
+        const { id: ipxePxeBiosId } = await ctx.call(
+          "ipxe-manager.createOverwrite",
+          {
+            script: ctx.params.script,
+            platform: "bin-x86_64-pcbios",
+            driver: "ipxe",
+            extension: "kpxe"
+          }
+        );
+        return {
+          ipxePxeUefiId,
+          ipxePxeBiosId
+        };
+      }
     }
   },
   mixins: [Db],
@@ -241,6 +327,8 @@ module.exports = {
       ldLinuxId: Orm.INTEGER,
       isolinuxBinId: Orm.INTEGER,
       isohdpfxBinId: Orm.INTEGER,
+      ipxePxeUefiId: Orm.INTEGER,
+      ipxePxeBiosId: Orm.INTEGER,
       isoId: Orm.INTEGER,
       isoArtifacts: Orm.BOOLEAN,
       pxeArtifacts: Orm.BOOLEAN
@@ -258,6 +346,8 @@ module.exports = {
       ldLinuxId: "number",
       isolinuxBinId: "number",
       isohdpfxBinId: "number",
+      ipxePxeUefiId: "number",
+      ipxePxeBiosId: "number",
       isoId: "number",
       isoArtifacts: "boolean",
       pxeArtifacts: "boolean"

@@ -40,7 +40,10 @@ module.exports = {
           "GET /bootruntimes": "bootruntime.list",
           "GET /bootruntimes/:id": "bootruntime.get",
           "DELETE /bootruntimes/:id": "bootruntime.remove",
-          "PUT /bootruntimes/:id/iso": "bootruntime.createIso"
+          "PUT /bootruntimes/:id/iso": "bootruntime.createIso",
+          "PUT /bootruntimes/:id/pxe": "bootruntime.createPxe",
+          // distributors
+          "REST /distributors": "distributor-manager"
         }
       }
     ]

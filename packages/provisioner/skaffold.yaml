@@ -62,6 +62,12 @@ build:
         dockerfile: Dockerfile.dev
       sync:
         "src/*.js": /opt/clusterplatform/app/src
+    - image: registry.gitlab.com/clusterplatform/clusterplatform/distributor-manager
+      context: packages/distributor-manager
+      docker:
+        dockerfile: Dockerfile.dev
+      sync:
+        "src/*.js": /opt/clusterplatform/app/src
     - image: registry.gitlab.com/clusterplatform/clusterplatform/gateway
       context: packages/gateway
       docker:
@@ -86,4 +92,5 @@ deploy:
       - packages/iso-manager/stack.yaml
       - packages/iso-worker/stack.yaml
       - packages/bootruntime/stack.yaml
+      - packages/distributor-manager/stack.yaml
       - packages/gateway/stack.yaml
