@@ -27,3 +27,12 @@ spec:
                 name: nats-public
             - configMapRef:
                 name: verdaccio-public
+            - configMapRef:
+                name: distributor-worker
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: distributor-worker
+data:
+  CLUSTERPLATFORM_DISTRIBUTOR_TAG: sol-earth-eu-de-bw-fds-bbronn-hirschkopfweg-8

@@ -15,7 +15,8 @@ module.exports = {
           .filter(node => (node.hostname = localNode.hostname)))[0];
         if (localNodeData.id) {
           await this.broker.call("distributor-manager.create", {
-            nodeId: localNodeData.id
+            nodeId: localNodeData.id,
+            tag: process.env.CLUSTERPLATFORM_DISTRIBUTOR_TAG
           });
           didRegister = true;
         } else {
