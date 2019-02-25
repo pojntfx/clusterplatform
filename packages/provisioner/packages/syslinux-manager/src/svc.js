@@ -21,7 +21,7 @@ module.exports = {
         const jobInDb = await ctx.call("syslinux-manager.create", {
           artifactId,
           progress: "0",
-          status: "preparing"
+          status: "queued"
         });
         await this.createJob("syslinux-worker.create", {
           ...ctx.params,

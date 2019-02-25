@@ -18,8 +18,8 @@ All these services have been implemented as individual, horizontally scalable mi
 ## Usage
 
 ```bash
-# Run in Kubernetes
-skaffold dev
+# Run development version in Kubernetes
+cd ../../ && skaffold dev -p provisioner--dev
 ```
 
 Now, you can either use the REST api directly on [localhost:3000/api](http://localhost:3000/api) or import the [Insomnia Export](./packages/insomnia/src/workspace.json) into [Insomnia](https://insomnia.rest/).
@@ -28,10 +28,10 @@ If you want to run a `distributor-worker` standalone and then connect to the res
 
 ```bash
 # Some values below might be outdated or have to adapted
-docker run --env TRANSPORTER=nats://46.101.180.149:30002 --env NPM_USER=verdaccio-user --env NPM_PASS=verdaccio-password --env NPM_EMAIL=verdaccio-user@example.com --env NPM_REGISTRY=http://46.101.180.149:30004 --env CLUSTERPLATFORM_DISTRIBUTOR_TAG=sol-earth-eu-de-bw-fds-bbronn-hirschkopfweg-8-local --cap-add=NET_ADMIN --net=host registry.gitlab.com/clusterplatform/clusterplatform/distributor-worker:085e550-dirty
+docker run --env TRANSPORTER=nats://68.183.74.65:30002 --env NPM_USER=verdaccio-user --env NPM_PASS=verdaccio-password --env NPM_EMAIL=verdaccio-user@example.com --env NPM_REGISTRY=http://68.183.74.65:30004 --env CLUSTERPLATFORM_DISTRIBUTOR_TAG=sol-earth-eu-de-bw-fds-bbronn-hirschkopfweg-8-pojtinger-felicitas-local --cap-add=NET_ADMIN --net=host registry.gitlab.com/clusterplatform/clusterplatform/distributor-worker:085e550-dirty
 ```
 
-Artifacts can be downloaded from `http://46.101.180.149:30900/${artifactName}/${artifactId}/${filename}`, where `46.101.180.149` is one of the Kubernetes nodes' IP, `${artifactName}` is the plural of an artifact such as `grubs` or `syslinuxs`, `{artifactId}` is the artifact's ID which can be found using the corresponding artifact's REST endpoint and `${filename}` is the actual file's name, such as `ipxe.efi`.
+Artifacts can be downloaded from `http://68.183.74.65:30900/${artifactName}/${artifactId}/${filename}`, where `68.183.74.65` is one of the Kubernetes nodes' IP, `${artifactName}` is the plural of an artifact such as `grubs` or `syslinuxs`, `{artifactId}` is the artifact's ID which can be found using the corresponding artifact's REST endpoint and `${filename}` is the actual file's name, such as `ipxe.efi`.
 
 ## More
 

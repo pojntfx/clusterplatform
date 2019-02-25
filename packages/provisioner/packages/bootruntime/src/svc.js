@@ -33,7 +33,7 @@ module.exports = {
               ipxePxeUefiId: 0,
               ipxePxeBiosId: 0,
               isoId: 0,
-              distributorIds: [0]
+              distributorTags: [""]
             });
           } else {
             const bootruntimePxeArtifacts = await ctx.call(
@@ -47,7 +47,7 @@ module.exports = {
               ...bootruntimeIsoArtifacts,
               ...bootruntimePxeArtifacts,
               isoId: 0,
-              distributorIds: [0]
+              distributorTags: [""]
             });
           }
         }
@@ -71,7 +71,7 @@ module.exports = {
               isolinuxBinId: 0,
               isohdpfxBinId: 0,
               isoId: 0,
-              distributorIds: [0]
+              distributorTags: [""]
             });
           } else {
             const bootruntimeIsoArtifacts = await ctx.call(
@@ -86,7 +86,7 @@ module.exports = {
               ...bootruntimePxeArtifacts,
               ...bootruntimeIsoArtifacts,
               isoId: 0,
-              distributorIds: [0]
+              distributorTags: [""]
             });
           }
         }
@@ -104,7 +104,7 @@ module.exports = {
             ipxePxeUefiId: 0,
             ipxePxeBiosId: 0,
             isoId: 0,
-            distributorIds: [0]
+            distributorTags: [""]
           });
         }
       }
@@ -290,7 +290,7 @@ module.exports = {
     createPxe: {
       params: {
         id: { type: "number", convert: true },
-        distributorIds: "array",
+        distributorTags: "array",
         device: "string",
         domain: "string"
       },
@@ -310,34 +310,39 @@ module.exports = {
             "ERR_PXE_ARTIFACTS_NOT_CREATED"
           );
         } else {
-          for (distributorId of ctx.params.distributorIds) {
-            const { artifactId: ipxePxeUefiArtifactId } = await ctx.call(
-              "ipxe-manager.get",
-              {
-                id: ipxePxeUefiId
-              }
-            );
-            const { artifactId: ipxePxeBiosArtifactId } = await ctx.call(
-              "ipxe-manager.get",
-              {
-                id: ipxePxeBiosId
-              }
-            );
-            await ctx.call("distributor-manager.updateDistributor", {
-              ...ctx.params,
-              id: distributorId,
-              artifactId: parseInt(ctx.params.id),
-              ipxePxeUefiUrl: `http://${process.env.MINIO_ENDPOINT}:${
-                process.env.MINIO_PORT
-              }/ipxes/${ipxePxeUefiArtifactId}/ipxe.efi`,
-              ipxePxeBiosUrl: `http://${process.env.MINIO_ENDPOINT}:${
-                process.env.MINIO_PORT
-              }/ipxes/${ipxePxeBiosArtifactId}/ipxe.kpxe`
+          for (distributorTag of ctx.params.distributorTags) {
+            const distributors = await ctx.call("distributor-manager.find", {
+              query: { tag: distributorTag }
             });
+            for (distributor of distributors) {
+              const { artifactId: ipxePxeUefiArtifactId } = await ctx.call(
+                "ipxe-manager.get",
+                {
+                  id: ipxePxeUefiId
+                }
+              );
+              const { artifactId: ipxePxeBiosArtifactId } = await ctx.call(
+                "ipxe-manager.get",
+                {
+                  id: ipxePxeBiosId
+                }
+              );
+              await ctx.call("distributor-manager.updateDistributor", {
+                ...ctx.params,
+                id: distributor.id,
+                artifactId: parseInt(ctx.params.id),
+                ipxePxeUefiUrl: `http://${process.env.MINIO_ENDPOINT}:${
+                  process.env.MINIO_PORT
+                }/ipxes/${ipxePxeUefiArtifactId}/ipxe.efi`,
+                ipxePxeBiosUrl: `http://${process.env.MINIO_ENDPOINT}:${
+                  process.env.MINIO_PORT
+                }/ipxes/${ipxePxeBiosArtifactId}/ipxe.kpxe`
+              });
+            }
           }
           return await ctx.call("bootruntime.update", {
             id: ctx.params.id,
-            distributorIds: ctx.params.distributorIds
+            distributorTags: ctx.params.distributorTags
           });
         }
       }
@@ -380,12 +385,17 @@ module.exports = {
         const bootruntime = await ctx.call("bootruntime.get", {
           id: ctx.params.id
         });
-        for (distributorId of bootruntime.distributorIds) {
-          await ctx.call("distributor-manager.updateDistributorStatus", {
-            id: distributorId,
-            artifactId: parseInt(bootruntime.id),
-            on: ctx.params.on
+        for (distributorTag of bootruntime.distributorTags) {
+          const distributors = await ctx.call("distributor-manager.find", {
+            query: { tag: distributorTag }
           });
+          for (distributor of distributors) {
+            await ctx.call("distributor-manager.updateDistributorStatus", {
+              id: distributor.id,
+              artifactId: parseInt(bootruntime.id),
+              on: ctx.params.on
+            });
+          }
         }
         return await ctx.call("bootruntime.get", {
           id: ctx.params.id
@@ -411,7 +421,7 @@ module.exports = {
       ipxePxeUefiId: Orm.INTEGER,
       ipxePxeBiosId: Orm.INTEGER,
       isoId: Orm.INTEGER,
-      distributorIds: Orm.ARRAY(Orm.INTEGER),
+      distributorTags: Orm.ARRAY(Orm.STRING),
       isoArtifacts: Orm.BOOLEAN,
       pxeArtifacts: Orm.BOOLEAN
     }
@@ -431,7 +441,7 @@ module.exports = {
       ipxePxeUefiId: "number",
       ipxePxeBiosId: "number",
       isoId: "number",
-      distributorIds: "array",
+      distributorTags: "array",
       isoArtifacts: "boolean",
       pxeArtifacts: "boolean"
     }

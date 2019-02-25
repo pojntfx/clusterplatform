@@ -29,7 +29,7 @@ module.exports = {
         const jobInDb = await ctx.call("iso-manager.create", {
           artifactId,
           progress: "0",
-          status: "preparing"
+          status: "queued"
         });
         await this.createJob("iso-worker.create", {
           ...ctx.params,
