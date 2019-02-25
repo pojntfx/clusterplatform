@@ -25,7 +25,7 @@ module.exports = {
         const jobInDb = await ctx.call("grub-manager.create", {
           artifactId,
           progress: "0",
-          status: "preparing"
+          status: "queued"
         });
         await this.createJob("grub-worker.create", {
           ...ctx.params,

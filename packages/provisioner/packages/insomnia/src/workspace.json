@@ -1,7 +1,7 @@
 {
 	"_type": "export",
 	"__export_format": 3,
-	"__export_date": "2019-02-24T23:49:47.032Z",
+	"__export_date": "2019-02-25T19:23:15.588Z",
 	"__export_source": "insomnia.desktop.app:v6.3.2",
 	"resources": [
 		{
@@ -588,7 +588,7 @@
 			"authentication": {},
 			"body": {
 				"mimeType": "application/json",
-				"text": "{\n\t\"distributorIds\": [\n\t\t43,\n\t\t44\n\t],\n\t\"device\": \"enp0s25\",\n\t\"domain\": \"sol-earth-eu-de-bw-fds-bbronn-hirschkopfweg-8-local\"\n}"
+				"text": "{\n\t\"distributorTags\": [\n\t\t\"sol-earth-eu-de-bw-fds-bbronn-hirschkopfweg-8-local\"\n\t],\n\t\"device\": \"enp0s25\",\n\t\"domain\": \"sol-earth-eu-de-bw-fds-bbronn-hirschkopfweg-8-local\"\n}"
 			},
 			"created": 1551037288677,
 			"description": "",
@@ -602,7 +602,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1551037288677,
 			"method": "PUT",
-			"modified": 1551052137638,
+			"modified": 1551121684637,
 			"name": "pxe",
 			"parameters": [],
 			"parentId": "fld_21ea993642d747e9a02b206aa532ca44",

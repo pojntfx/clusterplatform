@@ -66,7 +66,7 @@ kind: ConfigMap
 metadata:
   name: minio-public
 data:
-  MINIO_ENDPOINT: "46.101.180.149"
+  MINIO_ENDPOINT: "68.183.74.65"
   MINIO_PORT: "30900"
   MINIO_REGION: us-east-1
   MINIO_BUCKET: ipxes

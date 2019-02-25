@@ -24,7 +24,7 @@ module.exports = {
         const jobInDb = await ctx.call("ipxe-manager.create", {
           artifactId,
           progress: "0",
-          status: "preparing"
+          status: "queued"
         });
         await this.createJob("ipxe-worker.create", {
           ...ctx.params,
