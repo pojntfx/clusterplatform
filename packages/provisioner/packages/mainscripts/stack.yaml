@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mainscripts
+spec:
+  selector:
+    matchLabels:
+      app: mainscripts
+  template:
+    metadata:
+      labels:
+        app: mainscripts
+    spec:
+      containers:
+        - name: mainscripts
+          image: registry.gitlab.com/clusterplatform/clusterplatform/mainscripts
+          resources:
+            limits:
+              memory: 200Mi
+              cpu: 200m
+          envFrom:
+            - configMapRef:
+                name: nats
+            - configMapRef:
+                name: postgres
+            - configMapRef:
+                name: verdaccio

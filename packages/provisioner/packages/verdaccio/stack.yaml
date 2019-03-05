@@ -89,4 +89,4 @@ data:
   NPM_USER: verdaccio-user
   NPM_PASS: verdaccio-password
   NPM_EMAIL: verdaccio-user@example.com
-  NPM_REGISTRY: http://68.183.74.65:30004
+  NPM_REGISTRY: http://46.101.114.216:30004
