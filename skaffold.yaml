@@ -82,6 +82,36 @@ profiles:
             dockerfile: Dockerfile.dev
           sync:
             src/*.js: /opt/clusterplatform/app/src
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/subscripts
+          context: packages/provisioner/packages/subscripts
+          docker:
+            dockerfile: Dockerfile.dev
+          sync:
+            src/*.js: /opt/clusterplatform/app/src
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/kickstarts
+          context: packages/provisioner/packages/kickstarts
+          docker:
+            dockerfile: Dockerfile.dev
+          sync:
+            src/*.js: /opt/clusterplatform/app/src
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/prebootscripts
+          context: packages/provisioner/packages/prebootscripts
+          docker:
+            dockerfile: Dockerfile.dev
+          sync:
+            src/*.js: /opt/clusterplatform/app/src
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/postbootscripts
+          context: packages/provisioner/packages/postbootscripts
+          docker:
+            dockerfile: Dockerfile.dev
+          sync:
+            src/*.js: /opt/clusterplatform/app/src
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/sshkeys
+          context: packages/provisioner/packages/sshkeys
+          docker:
+            dockerfile: Dockerfile.dev
+          sync:
+            src/*.js: /opt/clusterplatform/app/src
         - image: registry.gitlab.com/clusterplatform/clusterplatform/gateway
           context: packages/provisioner/packages/gateway
           docker:
@@ -109,4 +139,9 @@ profiles:
           - packages/provisioner/packages/distributor-manager/stack.yaml
           - packages/provisioner/packages/distributor-worker/stack.yaml
           - packages/provisioner/packages/mainscripts/stack.yaml
+          - packages/provisioner/packages/subscripts/stack.yaml
+          - packages/provisioner/packages/kickstarts/stack.yaml
+          - packages/provisioner/packages/prebootscripts/stack.yaml
+          - packages/provisioner/packages/postbootscripts/stack.yaml
+          - packages/provisioner/packages/sshkeys/stack.yaml
           - packages/provisioner/packages/gateway/stack.yaml

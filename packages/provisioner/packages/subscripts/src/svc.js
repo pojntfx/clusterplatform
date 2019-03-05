@@ -3,7 +3,7 @@ import Orm from "sequelize";
 import Db from "moleculer-db";
 
 export default {
-  name: "mainscripts",
+  name: "subscripts",
   actions: {
     getOverwrite: {
       params: {
@@ -21,7 +21,7 @@ export default {
   mixins: [Db],
   adapter: new Adapter(process.env.POSTGRES_URI),
   model: {
-    name: "mainscript",
+    name: "subscript",
     define: {
       text: Orm.TEXT
     }

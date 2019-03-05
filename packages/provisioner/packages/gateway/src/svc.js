@@ -13,7 +13,13 @@ module.exports = {
           "syslinux-manager.*",
           "iso-manager.*",
           "bootruntime.*",
-          "distributor-manager.*"
+          "distributor-manager.*",
+          "mainscripts.*",
+          "subscripts.*",
+          "kickstarts.*",
+          "prebootscripts.*",
+          "postbootscripts.*",
+          "sshkeys.*"
         ],
         aliases: {
           // ipxes
@@ -49,7 +55,43 @@ module.exports = {
           "POST /distributors": "distributor-manager.create",
           "GET /distributors": "distributor-manager.listOverwrite",
           "GET /distributors/:id": "distributor-manager.get",
-          "DELETE /distributors/:id": "distributor-manager.remove"
+          "DELETE /distributors/:id": "distributor-manager.remove",
+          // mainscripts
+          "POST /mainscripts": "mainscripts.create",
+          "GET /mainscripts": "mainscripts.list",
+          "GET /mainscripts/:id": "mainscripts.getOverwrite",
+          "PUT /mainscripts/:id": "mainscripts.update",
+          "DELETE /mainscripts/:id": "mainscripts.remove",
+          // subscripts
+          "POST /subscripts": "subscripts.create",
+          "GET /subscripts": "subscripts.list",
+          "GET /subscripts/:id": "subscripts.getOverwrite",
+          "PUT /subscripts/:id": "subscripts.update",
+          "DELETE /subscripts/:id": "subscripts.remove",
+          // kickstarts
+          "POST /kickstarts": "kickstarts.create",
+          "GET /kickstarts": "kickstarts.list",
+          "GET /kickstarts/:id": "kickstarts.getOverwrite",
+          "PUT /kickstarts/:id": "kickstarts.update",
+          "DELETE /kickstarts/:id": "kickstarts.remove",
+          // prebootscripts
+          "POST /prebootscripts": "prebootscripts.create",
+          "GET /prebootscripts": "prebootscripts.list",
+          "GET /prebootscripts/:id": "prebootscripts.getOverwrite",
+          "PUT /prebootscripts/:id": "prebootscripts.update",
+          "DELETE /prebootscripts/:id": "prebootscripts.remove",
+          // postbootscripts
+          "POST /postbootscripts": "postbootscripts.create",
+          "GET /postbootscripts": "postbootscripts.list",
+          "GET /postbootscripts/:id": "postbootscripts.getOverwrite",
+          "PUT /postbootscripts/:id": "postbootscripts.update",
+          "DELETE /postbootscripts/:id": "postbootscripts.remove",
+          // sshkeys
+          "POST /sshkeys": "sshkeys.create",
+          "GET /sshkeys": "sshkeys.list",
+          "GET /sshkeys/:id": "sshkeys.getOverwrite",
+          "PUT /sshkeys/:id": "sshkeys.update",
+          "DELETE /sshkeys/:id": "sshkeys.remove"
         }
       }
     ]
