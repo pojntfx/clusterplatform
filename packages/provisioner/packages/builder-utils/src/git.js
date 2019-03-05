@@ -1,9 +1,11 @@
-const shell = require("async-shelljs");
+import * as shell from "async-shelljs";
 
-module.exports = class {
+export default class {
   static async cloneOrPullRepo(remote, dest) {
-    return await shell.ls("-A", dest).find(file => file === ".git")
-      ? await shell.exec(`git --git-dir="${dest}/.git" --work-tree="${dest}" pull`)
+    return (await shell.ls("-A", dest).find(file => file === ".git"))
+      ? await shell.exec(
+          `git --git-dir="${dest}/.git" --work-tree="${dest}" pull`
+        )
       : await shell.exec(`git clone ${remote} "${dest}"`);
   }
-};
+}

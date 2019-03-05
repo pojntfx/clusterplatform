@@ -1,6 +1,6 @@
-const shell = require("async-shelljs");
+import * as shell from "async-shelljs";
 
-module.exports = class {
+export default class {
   static async createBootableIso({
     src,
     isohdpfxBinPath,
@@ -28,4 +28,4 @@ module.exports = class {
     -o "${dest}" "${src}"
   `);
   }
-};
+}

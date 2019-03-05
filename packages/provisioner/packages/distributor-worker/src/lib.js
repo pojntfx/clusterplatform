@@ -1,8 +1,8 @@
-const shell = require("shelljs");
-const download = require("download");
-const ip = require("./ip");
-const { fs } = require("@clusterplatform/builder-utils");
-const pm2 = require("pm2");
+import shell from "shelljs";
+import download from "download";
+import ip from "./ip";
+import { fs } from "@clusterplatform/builder-utils";
+import pm2 from "pm2";
 
 const CONFIGTMPL = `port=0
 dhcp-range=RANGE,proxy,255.255.255.0
@@ -13,7 +13,7 @@ pxe-service=X86-64_EFI, "Boot iPXE", ipxe.efi
 enable-tftp
 tftp-root=TFTPROOT`;
 
-module.exports = class {
+export default class {
   constructor({
     artifactId,
     device,
@@ -99,4 +99,4 @@ module.exports = class {
       });
     });
   }
-};
+}

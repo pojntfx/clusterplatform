@@ -4,6 +4,7 @@
   "description": "",
   "main": "src/index.js",
   "dependencies": {
+    "esm": "^3.2.10",
     "async-shelljs": "^0.1.2",
     "shelljs": "^0.8.3"
   },
@@ -14,5 +15,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Felicitas Pojtinger <felicitas@pojtinger.com>",
-  "license": "AGPL-3.0"
+  "license": "AGPL-3.0",
+  "esm": {
+    "cjs": {
+      "dedefault": true
+    }
+  }
 }

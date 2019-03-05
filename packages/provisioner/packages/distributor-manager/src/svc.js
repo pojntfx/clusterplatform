@@ -1,8 +1,8 @@
-const Db = require("moleculer-db");
-const Adapter = require("moleculer-db-adapter-sequelize");
-const Orm = require("sequelize");
+import Db from "moleculer-db";
+import Adapter from "moleculer-db-adapter-sequelize";
+import Orm from "sequelize";
 
-module.exports = {
+export default {
   name: "distributor-manager",
   mixins: [Db],
   adapter: new Adapter(process.env.POSTGRES_URI),
@@ -17,13 +17,13 @@ module.exports = {
     listOverwrite: async function(ctx) {
       const allDistributors = (await ctx.call("distributor-manager.list")).rows;
       const nonPingableDistributors = [];
-      for (distributor of allDistributors) {
+      for (let distributor of allDistributors) {
         const pingable = await this.broker.ping(distributor.nodeId, 1000);
         if (!pingable) {
           nonPingableDistributors.push(distributor);
         }
       }
-      for (distributor of nonPingableDistributors) {
+      for (let distributor of nonPingableDistributors) {
         await ctx.call("distributor-manager.remove", {
           id: distributor.id
         });

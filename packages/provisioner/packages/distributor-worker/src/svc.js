@@ -1,6 +1,6 @@
-const Distributor = require("./lib");
+import Distributor from "./lib";
 
-module.exports = {
+export default {
   name: "distributor-worker",
   started: async function() {
     function sleep(ms) {

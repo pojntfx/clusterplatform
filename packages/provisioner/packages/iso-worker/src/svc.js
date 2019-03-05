@@ -1,7 +1,7 @@
-const Queue = require("moleculer-bull");
-const Iso = require("./lib");
+import Queue from "moleculer-bull";
+import Iso from "./lib";
 
-module.exports = {
+export default {
   name: "iso-worker",
   queues: {
     "iso-worker.create": async function(job) {

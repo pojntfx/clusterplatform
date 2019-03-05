@@ -18,4 +18,5 @@ CMD npm set registry ${NPM_REGISTRY}; \
     node node_modules/nodemon/bin/nodemon.js \
     --inspect=0.0.0.0:9229 \
     --watch src/ \
+    -r esm \
     node_modules/moleculer/bin/moleculer-runner.js

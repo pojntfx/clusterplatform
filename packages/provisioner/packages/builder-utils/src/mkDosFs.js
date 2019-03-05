@@ -1,6 +1,6 @@
-const shell = require("async-shelljs");
+import * as shell from "async-shelljs";
 
-module.exports = class {
+export default class {
   static async makeDosFilesystem({ label, dest, size }) {
     return shell.exec(
       `mkdosfs -F12 -n "${label
@@ -9,4 +9,4 @@ module.exports = class {
         .toUpperCase()}_EFI" -C ${dest} ${size}`
     );
   }
-};
+}

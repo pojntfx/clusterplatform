@@ -1,8 +1,8 @@
-const Queue = require("moleculer-bull");
-const Syslinux = require("./lib");
-const { MoleculerError } = require("moleculer").Errors;
+import Queue from "moleculer-bull";
+import Syslinux from "./lib";
+import { Errors } from "moleculer";
 
-module.exports = {
+export default {
   name: "syslinux-worker",
   queues: {
     "syslinux-worker.create": async function(job) {
@@ -17,7 +17,7 @@ module.exports = {
       const builded = await syslinux.build(job.data);
       if (!builded) {
         this.logger.error("ERR_FRAGMENT_NOT_FOUND", job.data);
-        throw new MoleculerError(
+        throw new Errors.MoleculerError(
           "Fragment not found",
           404,
           "ERR_FRAGMENT_NOT_FOUND"

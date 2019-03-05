@@ -1,6 +1,6 @@
-const Gateway = require("moleculer-web");
+import Gateway from "moleculer-web";
 
-module.exports = {
+export default {
   name: "gateway",
   mixins: [Gateway],
   settings: {

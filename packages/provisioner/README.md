@@ -58,15 +58,7 @@ http://46.101.114.216:30300/api/subscripts
 Run this on a node/multiple nodes that is/are in the same network as the hosts you want to provision. You may run as many instances of `distributor-worker` as you like; when deploying a bootruntime, all distributors with the specified `CLUSTERPLATFORM_DISTRIBUTOR_TAG` will be used.
 
 ```bash
-docker run --env TRANSPORTER=nats://46.101.114.216:30002 --env NPM_USER=verdaccio-user --env NPM_PASS=verdaccio-password --env NPM_EMAIL=verdaccio-user@example.com --env NPM_REGISTRY=http://46.101.114.216:30004 --env CLUSTERPLATFORM_DISTRIBUTOR_TAG=sol-earth-eu-de-bw-fds-bbronn-hirschkopfweg-8-pojtinger-felicitas-local --cap-add=NET_ADMIN --net=host registry.gitlab.com/clusterplatform/clusterplatform/distributor-worker:bed18c1-dirty
-```
-
-### Get Distributor(s)
-
-Look for whether the `CLUSTERPLATFORM_DISTRIBUTOR_TAG` from above can be seen here.
-
-```bash
-curl http://46.101.114.216:30300/api/distributors
+docker run --env TRANSPORTER=nats://46.101.114.216:30002 --env NPM_USER=verdaccio-user --env NPM_PASS=verdaccio-password --env NPM_EMAIL=verdaccio-user@example.com --env NPM_REGISTRY=http://46.101.114.216:30004 --env CLUSTERPLATFORM_DISTRIBUTOR_TAG=sol-earth-eu-de-bw-fds-bbronn-hirschkopfweg-8-pojtinger-felicitas-local --cap-add=NET_ADMIN --net=host registry.gitlab.com/clusterplatform/clusterplatform/distributor-worker:9a4392e-dirty
 ```
 
 ### Get Bootruntime Status
@@ -76,6 +68,14 @@ Both should include `"progress":"100"`.
 ```bash
 curl http://46.101.114.216:30300/api/ipxes/1
 curl http://46.101.114.216:30300/api/ipxes/2
+```
+
+### Get Distributor(s)
+
+Look for whether the `CLUSTERPLATFORM_DISTRIBUTOR_TAG` from above can be seen here.
+
+```bash
+curl http://46.101.114.216:30300/api/distributors
 ```
 
 ### Deploy Bootruntime to Distributor(s)
@@ -122,7 +122,7 @@ Now, you can either use the REST api directly on [localhost:3000/api](http://loc
 If you want to run a `distributor-worker` standalone and then connect to the rest of the services (i.e. to provision machines in your home network, a remote location etc. while still doing all the heavy lifting (i.e. building the necessary artifacts) in a powerful cloud Kubernetes cluster), run the following:
 
 ```bash
-docker run --env TRANSPORTER=nats://46.101.114.216:30002 --env NPM_USER=verdaccio-user --env NPM_PASS=verdaccio-password --env NPM_EMAIL=verdaccio-user@example.com --env NPM_REGISTRY=http://46.101.114.216:30004 --env CLUSTERPLATFORM_DISTRIBUTOR_TAG=sol-earth-eu-de-bw-fds-bbronn-hirschkopfweg-8-pojtinger-felicitas-local --cap-add=NET_ADMIN --net=host registry.gitlab.com/clusterplatform/clusterplatform/distributor-worker:bed18c1-dirty
+docker run --env TRANSPORTER=nats://46.101.114.216:30002 --env NPM_USER=verdaccio-user --env NPM_PASS=verdaccio-password --env NPM_EMAIL=verdaccio-user@example.com --env NPM_REGISTRY=http://46.101.114.216:30004 --env CLUSTERPLATFORM_DISTRIBUTOR_TAG=sol-earth-eu-de-bw-fds-bbronn-hirschkopfweg-8-pojtinger-felicitas-local --cap-add=NET_ADMIN --net=host registry.gitlab.com/clusterplatform/clusterplatform/distributor-worker:9a4392e-dirty
 ```
 
 Artifacts can be downloaded from `http://46.101.114.216:30900/${artifactName}/${artifactId}/${filename}`, where `46.101.114.216` is one of the Kubernetes nodes' IP, `${artifactName}` is the plural of an artifact such as `grubs` or `syslinuxs`, `{artifactId}` is the artifact's ID which can be found using the corresponding artifact's REST endpoint and `${filename}` is the actual file's name, such as `ipxe.efi`.

@@ -1,6 +1,6 @@
-const shell = require("async-shelljs");
+import * as shell from "async-shelljs";
 
-module.exports = class {
+export default class {
   static async getAllInterfaces() {
     return shell.exec("ip a");
   }
@@ -10,4 +10,4 @@ module.exports = class {
   static async setInterfaceStatus(status, device) {
     return shell.exec(`ip link set ${device} ${status}`);
   }
-};
+}

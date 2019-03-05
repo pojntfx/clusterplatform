@@ -1,9 +1,9 @@
-const Db = require("moleculer-db");
-const Adapter = require("moleculer-db-adapter-sequelize");
-const Orm = require("sequelize");
-const { MoleculerError } = require("moleculer").Errors;
+import Db from "moleculer-db";
+import Adapter from "moleculer-db-adapter-sequelize";
+import Orm from "sequelize";
+import { Errors } from "moleculer";
 
-module.exports = {
+export default {
   name: "bootruntime",
   actions: {
     createOverwrite: {
@@ -131,7 +131,7 @@ module.exports = {
           isoArtifacts
         } = await ctx.call("bootruntime.get", { id: ctx.params.id });
         if (!isoArtifacts) {
-          throw new MoleculerError(
+          throw new Errors.MoleculerError(
             "ISO Artifacts have not been created for this boot runtime",
             422,
             "ERR_ISO_ARTIFACTS_NOT_CREATED"
@@ -304,17 +304,17 @@ module.exports = {
           { id: ctx.params.id }
         );
         if (!pxeArtifacts) {
-          throw new MoleculerError(
+          throw new Errors.MoleculerError(
             "PXE Artifacts have not been created for this boot runtime",
             422,
             "ERR_PXE_ARTIFACTS_NOT_CREATED"
           );
         } else {
-          for (distributorTag of ctx.params.distributorTags) {
+          for (let distributorTag of ctx.params.distributorTags) {
             const distributors = await ctx.call("distributor-manager.find", {
               query: { tag: distributorTag }
             });
-            for (distributor of distributors) {
+            for (let distributor of distributors) {
               const { artifactId: ipxePxeUefiArtifactId } = await ctx.call(
                 "ipxe-manager.get",
                 {
@@ -385,11 +385,11 @@ module.exports = {
         const bootruntime = await ctx.call("bootruntime.get", {
           id: ctx.params.id
         });
-        for (distributorTag of bootruntime.distributorTags) {
+        for (let distributorTag of bootruntime.distributorTags) {
           const distributors = await ctx.call("distributor-manager.find", {
             query: { tag: distributorTag }
           });
-          for (distributor of distributors) {
+          for (let distributor of distributors) {
             await ctx.call("distributor-manager.updateDistributorStatus", {
               id: distributor.id,
               artifactId: parseInt(bootruntime.id),
