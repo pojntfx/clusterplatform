@@ -44,7 +44,7 @@ module.exports = {
         ipxePxeUefiUrl: "string",
         ipxePxeBiosUrl: "string",
         device: "string",
-        domain: "string"
+        range: "string"
       },
       handler: async function(ctx) {
         await this.logger.info(
@@ -63,7 +63,7 @@ module.exports = {
         await distributor.build();
         await distributor.package();
         await distributor.configureNetwork();
-        await distributor.configureDnsmasq(ctx.params.domain);
+        await distributor.configureDnsmasq(ctx.params.range);
         await this.logger.info(`Configured distributor!`);
         return await distributor.getScript();
       }
