@@ -37,7 +37,7 @@ module.exports = {
         artifactId: "number",
         id: "number",
         device: "string",
-        domain: "string"
+        range: "string"
       },
       handler: async function(ctx) {
         const distributor = await ctx.call("distributor-manager.get", {

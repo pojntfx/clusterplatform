@@ -292,7 +292,7 @@ module.exports = {
         id: { type: "number", convert: true },
         distributorTags: "array",
         device: "string",
-        domain: "string"
+        range: "string"
       },
       handler: async function(ctx) {
         await this.logger.info(
@@ -408,7 +408,7 @@ module.exports = {
   model: {
     name: "bootruntime",
     define: {
-      script: Orm.STRING,
+      script: Orm.TEXT,
       label: Orm.STRING,
       ipxeUefiId: Orm.INTEGER,
       ipxeBiosId: Orm.INTEGER,

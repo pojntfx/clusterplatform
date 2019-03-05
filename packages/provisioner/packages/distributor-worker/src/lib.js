@@ -4,51 +4,14 @@ const ip = require("./ip");
 const { fs } = require("@clusterplatform/builder-utils");
 const pm2 = require("pm2");
 
-const CONFIGTMPL = `# enable logs if required
-#log-queries
-#log-dhcp
-
-# disable DNS server
-# port=0
-
-# listen on PXEBOOT vlan (vlan110) only
-listen-address=10.0.0.1
-interface=INTERFACE
-
-# enable built-in tftp server
+const CONFIGTMPL = `port=0
+dhcp-range=RANGE,proxy,255.255.255.0
+dhcp-option=vendor:PXEClient,6,2b
+dhcp-no-override
+pxe-service=X86PC, "Boot iPXE", ipxe.kpxe
+pxe-service=X86-64_EFI, "Boot iPXE", ipxe.efi
 enable-tftp
-tftp-root=TFTPROOT
-
-
-# DHCP range 10.0.0.200 ~ 10.0.0.250
-dhcp-range=10.0.0.200,10.0.0.250,255.255.255.0,24h
-
-# Default gateway
-dhcp-option=3,10.0.0.1
-
-# Domain name - DOMAIN
-dhcp-option=15,DOMAIN
-
-# Broadcast address
-dhcp-option=28,10.0.0.255
-
-# Set interface MTU to 9000 bytes (jumbo frame)
-# Enable only when your network supports it
-# dhcp-option=26,9000
-
-# Tag dhcp request from iPXE
-dhcp-match=set:ipxe,175
-
-# inspect the vendor class string and tag BIOS client
-dhcp-vendorclass=BIOS,PXEClient:Arch:00000
-
-# Boot file - Legacy BIOS client
-dhcp-boot=tag:!ipxe,tag:BIOS,ipxe.kpxe,10.1.0.1
-
-# Boot file - EFI client
-# at the moment all non-BIOS clients are considered
-# EFI client
-dhcp-boot=tag:!ipxe,tag:!BIOS,ipxe.efi,10.1.0.1`;
+tftp-root=TFTPROOT`;
 
 module.exports = class {
   constructor({
@@ -97,9 +60,9 @@ module.exports = class {
     await ip.setInterfaceStatus("up", this.device);
   }
 
-  async configureDnsmasq(domain) {
+  async configureDnsmasq(range) {
     const script = CONFIGTMPL.replace(/INTERFACE/g, this.device)
-      .replace(/DOMAIN/g, domain)
+      .replace(/RANGE/g, range)
       .replace(/TFTPROOT/g, this.packagedir);
     await fs.writeFile(`${this.configurationdir}/dnsmasq.conf`, script);
   }
