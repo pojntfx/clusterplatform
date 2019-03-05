@@ -9,79 +9,85 @@ profiles:
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            "src/*.js": /opt/clusterplatform/app/src
+            src/*.js: /opt/clusterplatform/app/src
         - image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-manager
           context: packages/provisioner/packages/ipxe-manager
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            "src/*.js": /opt/clusterplatform/app/src
+            src/*.js: /opt/clusterplatform/app/src
         - image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-worker
           context: packages/provisioner/packages/ipxe-worker
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            "src/*.js": /opt/clusterplatform/app/src
+            src/*.js: /opt/clusterplatform/app/src
         - image: registry.gitlab.com/clusterplatform/clusterplatform/grub-manager
           context: packages/provisioner/packages/grub-manager
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            "src/*.js": /opt/clusterplatform/app/src
+            src/*.js: /opt/clusterplatform/app/src
         - image: registry.gitlab.com/clusterplatform/clusterplatform/grub-worker
           context: packages/provisioner/packages/grub-worker
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            "src/*.js": /opt/clusterplatform/app/src
+            src/*.js: /opt/clusterplatform/app/src
         - image: registry.gitlab.com/clusterplatform/clusterplatform/syslinux-manager
           context: packages/provisioner/packages/syslinux-manager
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            "src/*.js": /opt/clusterplatform/app/src
+            src/*.js: /opt/clusterplatform/app/src
         - image: registry.gitlab.com/clusterplatform/clusterplatform/syslinux-worker
           context: packages/provisioner/packages/syslinux-worker
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            "src/*.js": /opt/clusterplatform/app/src
+            src/*.js: /opt/clusterplatform/app/src
         - image: registry.gitlab.com/clusterplatform/clusterplatform/iso-manager
           context: packages/provisioner/packages/iso-manager
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            "src/*.js": /opt/clusterplatform/app/src
+            src/*.js: /opt/clusterplatform/app/src
         - image: registry.gitlab.com/clusterplatform/clusterplatform/iso-worker
           context: packages/provisioner/packages/iso-worker
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            "src/*.js": /opt/clusterplatform/app/src
+            src/*.js: /opt/clusterplatform/app/src
         - image: registry.gitlab.com/clusterplatform/clusterplatform/bootruntime
           context: packages/provisioner/packages/bootruntime
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            "src/*.js": /opt/clusterplatform/app/src
+            src/*.js: /opt/clusterplatform/app/src
         - image: registry.gitlab.com/clusterplatform/clusterplatform/distributor-manager
           context: packages/provisioner/packages/distributor-manager
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            "src/*.js": /opt/clusterplatform/app/src
+            src/*.js: /opt/clusterplatform/app/src
         - image: registry.gitlab.com/clusterplatform/clusterplatform/distributor-worker
           context: packages/provisioner/packages/distributor-worker
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            "src/*.js": /opt/clusterplatform/app/src
+            src/*.js: /opt/clusterplatform/app/src
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/mainscripts
+          context: packages/provisioner/packages/mainscripts
+          docker:
+            dockerfile: Dockerfile.dev
+          sync:
+            src/*.js: /opt/clusterplatform/app/src
         - image: registry.gitlab.com/clusterplatform/clusterplatform/gateway
           context: packages/provisioner/packages/gateway
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            "src/*.js": /opt/clusterplatform/app/src
+            src/*.js: /opt/clusterplatform/app/src
     deploy:
       kubectl:
         manifests:
@@ -102,4 +108,5 @@ profiles:
           - packages/provisioner/packages/bootruntime/stack.yaml
           - packages/provisioner/packages/distributor-manager/stack.yaml
           - packages/provisioner/packages/distributor-worker/stack.yaml
+          - packages/provisioner/packages/mainscripts/stack.yaml
           - packages/provisioner/packages/gateway/stack.yaml

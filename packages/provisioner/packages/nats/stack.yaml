@@ -55,4 +55,4 @@ kind: ConfigMap
 metadata:
   name: nats-public
 data:
-  TRANSPORTER: nats://68.183.74.65:30002
+  TRANSPORTER: nats://46.101.114.216:30002
