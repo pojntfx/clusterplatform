@@ -1,6 +1,6 @@
-const shell = require("async-shelljs");
+import * as shell from "async-shelljs";
 
-module.exports = class {
+export default class {
   static async autogen(path) {
     return await shell.exec(`${path ? path : "."}/autogen.sh`);
   }
@@ -12,9 +12,11 @@ module.exports = class {
     );
   }
   static async make(target, args) {
-    return await shell.exec(`make${target && ` ${target}`}${args && ` ${args}`}`);
+    return await shell.exec(
+      `make${target && ` ${target}`}${args && ` ${args}`}`
+    );
   }
   static async makeInstall() {
     return await shell.exec("make install");
   }
-};
+}

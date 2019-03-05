@@ -1,9 +1,21 @@
-module.exports.autotools = require("./autotools");
-module.exports.fs = require("./fs");
-module.exports.git = require("./git");
-module.exports.syncQueueWithDb = require("./syncQueueWithDb");
-module.exports.grubMkImage = require("./grubMkImage");
-module.exports.zip = require("./zip");
-module.exports.mkDosFs = require("./mkDosFs");
-module.exports.mcopy = require("./mcopy");
-module.exports.xorriso = require("./xorriso");
+import autotools from "./autotools";
+import fs from "./fs";
+import git from "./git";
+import syncQueueWithDb from "./syncQueueWithDb";
+import grubMkImage from "./grubMkImage";
+import zip from "./zip";
+import mkDosFs from "./mkDosFs";
+import mcopy from "./mcopy";
+import xorriso from "./xorriso";
+
+export {
+  autotools,
+  fs,
+  git,
+  syncQueueWithDb,
+  grubMkImage,
+  zip,
+  mkDosFs,
+  mcopy,
+  xorriso
+};

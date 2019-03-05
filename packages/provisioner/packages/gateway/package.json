@@ -4,6 +4,7 @@
   "description": "",
   "main": "src/svc.js",
   "dependencies": {
+    "esm": "^3.2.10",
     "moleculer": "^0.13.6",
     "moleculer-web": "^0.8.5",
     "nats": "^1.2.2"
@@ -15,5 +16,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Felix Pojtinger <felix@pojtinger.com>",
-  "license": "AGPL-3.0"
+  "license": "AGPL-3.0",
+  "esm": {
+    "cjs": {
+      "dedefault": true
+    }
+  }
 }

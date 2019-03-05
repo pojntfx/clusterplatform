@@ -1,11 +1,11 @@
-const Queue = require("moleculer-bull");
-const Db = require("moleculer-db");
-const Adapter = require("moleculer-db-adapter-sequelize");
-const Orm = require("sequelize");
-const uuidv1 = require("uuid/v4");
-const { syncQueueWithDb } = require("@clusterplatform/builder-utils");
+import Queue from "moleculer-bull";
+import Db from "moleculer-db";
+import Adapter from "moleculer-db-adapter-sequelize";
+import Orm from "sequelize";
+import uuidv1 from "uuid/v4";
+import { syncQueueWithDb } from "@clusterplatform/builder-utils";
 
-module.exports = {
+export default {
   name: "grub-manager",
   actions: {
     createOverwrite: {

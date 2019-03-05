@@ -1,4 +1,4 @@
-module.exports = async ({ queueName, managerName, service, artifact, ctx }) => {
+export default async ({ queueName, managerName, service, artifact, ctx }) => {
   const queue = service.getQueue(queueName);
   queue.on("global:progress", async (jobInQueueId, progress) => {
     const jobInQueue = await queue.getJob(jobInQueueId);

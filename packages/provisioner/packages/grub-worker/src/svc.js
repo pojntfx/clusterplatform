@@ -1,7 +1,7 @@
-const Queue = require("moleculer-bull");
-const Grub = require("./lib");
+import Queue from "moleculer-bull";
+import Grub from "./lib";
 
-module.exports = {
+export default {
   name: "grub-worker",
   queues: {
     "grub-worker.create": async function(job) {

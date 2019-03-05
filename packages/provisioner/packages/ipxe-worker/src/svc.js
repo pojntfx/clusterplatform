@@ -1,7 +1,7 @@
-const Queue = require("moleculer-bull");
-const Ipxe = require("./lib");
+import Queue from "moleculer-bull";
+import Ipxe from "./lib";
 
-module.exports = {
+export default {
   name: "ipxe-worker",
   queues: {
     "ipxe-worker.create": async function(job) {

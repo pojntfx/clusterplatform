@@ -1,9 +1,9 @@
-const download = require("download");
-const { zip, fs, xorriso } = require("@clusterplatform/builder-utils");
-const shell = require("async-shelljs");
-const { Client } = require("minio");
+import download from "download";
+import { zip, fs, xorriso } from "@clusterplatform/builder-utils";
+import * as shell from "async-shelljs";
+import { Client } from "minio";
 
-module.exports = class {
+export default class {
   constructor({ artifactId, downloaddir, builddir, distdir }) {
     this.artifactId = artifactId;
     this.downloaddir = `${downloaddir}/${this.artifactId}`;
@@ -176,4 +176,4 @@ kernel /ipxe/ipxe.lkrn`
       )
     );
   }
-};
+}

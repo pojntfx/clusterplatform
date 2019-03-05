@@ -1,7 +1,7 @@
-const shell = require("shelljs");
+import shell from "shelljs";
 
-module.exports = class {
+export default class {
   static async mcopy({ src, dest }) {
     return shell.exec(`mcopy -s -i ${dest} ${src} ::`);
   }
-};
+}

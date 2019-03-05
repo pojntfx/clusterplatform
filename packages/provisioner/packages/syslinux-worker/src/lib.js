@@ -1,8 +1,8 @@
-const { Client } = require("minio");
-const shell = require("async-shelljs");
-const { fs } = require("@clusterplatform/builder-utils");
+import { Client } from "minio";
+import * as shell from "async-shelljs";
+import { fs } from "@clusterplatform/builder-utils";
 
-module.exports = class {
+export default class {
   constructor({ artifactId, builddir, distdir }) {
     this.artifactId = artifactId;
     this.builddir = `${builddir}/${this.artifactId}`;
@@ -89,4 +89,4 @@ module.exports = class {
       )
     );
   }
-};
+}

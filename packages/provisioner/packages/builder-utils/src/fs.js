@@ -1,5 +1,5 @@
-const fs = require("fs");
-const { promisify } = require("util");
+import fs from "fs";
+import { promisify } from "util";
 const fsStat = promisify(fs.stat);
 
 const access = async file =>
@@ -15,7 +15,7 @@ const access = async file =>
       })
   );
 
-module.exports = {
+export default {
   ...fs,
   writeFile: promisify(fs.writeFile),
   exists: async path => await access(path)
