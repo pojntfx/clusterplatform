@@ -1,5 +1,5 @@
 {
-  "name": "@clusterplatform/localnodes",
+  "name": "@clusterplatform/localnode-manager",
   "version": "0.0.1-alpha1",
   "description": "",
   "main": "src/svc.js",

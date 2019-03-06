@@ -36,4 +36,4 @@ kind: ConfigMap
 metadata:
   name: distributor-worker
 data:
-  CLUSTERPLATFORM_DISTRIBUTOR_TAG: sol-earth-eu-de-bw-fds-bbronn-hirschkopfweg-8
+  CLUSTERPLATFORM_DISTRIBUTOR_ARTIFACTID: sol-earth-eu-de-bw-fds-bbronn-hirschkopfweg-8

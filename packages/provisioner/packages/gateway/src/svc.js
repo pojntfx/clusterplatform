@@ -20,7 +20,7 @@ export default {
           "prebootscripts.*",
           "postbootscripts.*",
           "sshkeys.*",
-          "localnodes.*"
+          "localnode-manager.*"
         ],
         aliases: {
           // ipxes
@@ -56,7 +56,6 @@ export default {
           "POST /distributors": "distributor-manager.create",
           "GET /distributors": "distributor-manager.listOverwrite",
           "GET /distributors/:id": "distributor-manager.get",
-          "DELETE /distributors/:id": "distributor-manager.remove",
           // mainscripts
           "POST /mainscripts": "mainscripts.create",
           "GET /mainscripts": "mainscripts.list",
@@ -94,8 +93,9 @@ export default {
           "PUT /sshkeys/:id": "sshkeys.update",
           "DELETE /sshkeys/:id": "sshkeys.remove",
           // localnodes
-          "POST /localnodes": "localnodes.create",
-          "GET /localnodes": "localnodes.listOverwrite"
+          "POST /localnodes": "localnode-manager.create",
+          "GET /localnodes": "localnode-manager.listOverwrite",
+          "GET /localnodes/:id": "localnode-manager.get"
         }
       }
     ]

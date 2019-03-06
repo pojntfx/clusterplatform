@@ -3,16 +3,17 @@ import Orm from "sequelize";
 import Db from "moleculer-db";
 
 export default {
-  name: "localnodes",
+  name: "localnode-manager",
   mixins: [Db],
   adapter: new Adapter(process.env.POSTGRES_URI),
   actions: {
     listOverwrite: async function(ctx) {
-      const nodes = (await ctx.call("localnodes.list")).rows;
+      const nodes = (await ctx.call("localnode-manager.list")).rows;
       let nonPingableNodes = [];
+      let pingableNodes = [];
       for (let node of nodes) {
         const distributor = (await ctx.call("distributor-manager.find", {
-          query: { tag: node.tag }
+          query: { artifactId: node.artifactId }
         }))[0];
         if (!distributor) {
           nonPingableNodes.push(node);
@@ -26,26 +27,39 @@ export default {
           );
           if (!pingable) {
             nonPingableNodes.push(node);
+          } else {
+            pingableNodes.push(node);
           }
         }
       }
-      for (let nonPinableNode of nonPingableNodes) {
-        await ctx.call("localnodes.remove", { id: nonPinableNode.id });
+      for (let nonPingableNode of nonPingableNodes) {
+        await ctx.call("localnode-manager.update", {
+          id: nonPingableNode.id,
+          pingable: false
+        });
       }
-      return await ctx.call("localnodes.list");
+      for (let pingableNode of pingableNodes) {
+        await ctx.call("localnode-manager.update", {
+          id: pingableNode.id,
+          pingable: true
+        });
+      }
+      return await ctx.call("localnode-manager.list");
     }
   },
   model: {
     name: "localnode",
     define: {
       ip: Orm.STRING,
-      tag: Orm.STRING
+      artifactId: Orm.STRING,
+      pingable: Orm.BOOLEAN
     }
   },
   settings: {
     entityValidator: {
       ip: "string",
-      tag: "string"
+      artifactId: "string",
+      pingable: { type: "boolean", convert: true }
     }
   }
 };

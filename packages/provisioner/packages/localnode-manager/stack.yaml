@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: localnodes
+  name: localnode-manager
 spec:
   selector:
     matchLabels:
-      app: localnodes
+      app: localnode-manager
   template:
     metadata:
       labels:
-        app: localnodes
+        app: localnode-manager
     spec:
       containers:
-        - name: localnodes
-          image: registry.gitlab.com/clusterplatform/clusterplatform/localnodes
+        - name: localnode-manager
+          image: registry.gitlab.com/clusterplatform/clusterplatform/localnode-manager
           resources:
             limits:
               memory: 200Mi

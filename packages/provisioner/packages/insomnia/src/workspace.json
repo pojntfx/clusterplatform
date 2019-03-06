@@ -1,7 +1,7 @@
 {
 	"_type": "export",
 	"__export_format": 3,
-	"__export_date": "2019-03-05T13:28:01.793Z",
+	"__export_date": "2019-03-06T18:31:39.116Z",
 	"__export_source": "insomnia.desktop.app:v6.3.2",
 	"resources": [
 		{
@@ -94,8 +94,8 @@
 			"created": 1551029083442,
 			"description": "",
 			"environment": {},
-			"metaSortKey": -1549927657501.375,
-			"modified": 1551052118173,
+			"metaSortKey": -1550907504911.086,
+			"modified": 1551893313314,
 			"name": "distributors",
 			"parentId": "wrk_e9ac3126193f4dc6ad90a16bcdaf97fd",
 			"_type": "request_group"
@@ -160,9 +160,20 @@
 			"created": 1551792027082,
 			"description": "",
 			"environment": {},
-			"metaSortKey": -1551074132885.7812,
-			"modified": 1551792035207,
+			"metaSortKey": -1551327903884.375,
+			"modified": 1551893349296,
 			"name": "sshkeys",
+			"parentId": "wrk_e9ac3126193f4dc6ad90a16bcdaf97fd",
+			"_type": "request_group"
+		},
+		{
+			"_id": "fld_1708113aad5b43f5bf122069849ab297",
+			"created": 1551879799290,
+			"description": "",
+			"environment": {},
+			"metaSortKey": -1550740876936.3906,
+			"modified": 1551879809304,
+			"name": "localnodes",
 			"parentId": "wrk_e9ac3126193f4dc6ad90a16bcdaf97fd",
 			"_type": "request_group"
 		},
@@ -464,7 +475,7 @@
 			"authentication": {},
 			"body": {
 				"mimeType": "application/json",
-				"text": "{\n\t\"label\": \"Cluster Platform Boot Media\",\n\t\"script\": \"#!ipxe\\ndhcp\\nchain http://boot.netboot.xyz\",\n\t\"isoArtifacts\": false,\n\t\"pxeArtifacts\": true\n}"
+				"text": "{\n\t\"label\": \"Cluster Platform Boot Media\",\n\t\"script\": \"#!ipxe\\ndhcp\\nset base http://mirror.centos.org/centos/7/os/x86_64\\n  \\n  prompt -k 0x197e -t 2000 Press F12 to install CentOS... || exit\\n  kernel ${base}/images/pxeboot/vmlinuz initrd=initrd.img repo=${base}\\n  initrd ${base}/images/pxeboot/initrd.img\\n  boot\",\n\t\"isoArtifacts\": false,\n\t\"pxeArtifacts\": true\n}"
 			},
 			"created": 1550602311562,
 			"description": "",
@@ -478,7 +489,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1550410145657,
 			"method": "POST",
-			"modified": 1551126666768,
+			"modified": 1551806315359,
 			"name": "bootruntimes",
 			"parameters": [],
 			"parentId": "fld_e3e0e9dead174eeab8c8b0e6de2a5ba6",
@@ -616,6 +627,29 @@
 			"_type": "request"
 		},
 		{
+			"_id": "req_474a2547a3a0457794ba143d46957e0d",
+			"authentication": {},
+			"body": {},
+			"created": 1551886759412,
+			"description": "",
+			"headers": [],
+			"isPrivate": false,
+			"metaSortKey": -1551029089647,
+			"method": "GET",
+			"modified": 1551886773364,
+			"name": "distributor",
+			"parameters": [],
+			"parentId": "fld_046a3051b9a34f9e9e3f3a7139852e33",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ gateway  }}/distributors/{% prompt 'ID', '', '', '', false %}",
+			"_type": "request"
+		},
+		{
 			"_id": "req_dc2d2f0dea83458dacfe102fdba97bfd",
 			"authentication": {},
 			"body": {
@@ -657,7 +691,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1551789309093,
 			"method": "GET",
-			"modified": 1551789377975,
+			"modified": 1551794949114,
 			"name": "mainscripts",
 			"parameters": [],
 			"parentId": "fld_ae2e8d33a1fd47deaf4544695b0555d0",
@@ -698,7 +732,7 @@
 			"authentication": {},
 			"body": {
 				"mimeType": "application/json",
-				"text": "{\n\t\"text\": \"#!ipxe\\ndhcp\\nchain http://boot.netboot.xyz\"\n}"
+				"text": "{\"text\":\"#!ipxe\\nmenu Choose Script\\nitem mainsubscriptserver_fedora29 Main Sub Script Server Fedora 29\\nchoose --default mainsubscriptserver_fedora29 --timeout 3000 server &&  goto ${server}\\n:mainsubscriptserver_fedora29\\nchain http://134.209.52.222:30300/api/subscripts/1\"}"
 			},
 			"created": 1551789414957,
 			"description": "",
@@ -712,7 +746,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1551789308993,
 			"method": "PUT",
-			"modified": 1551789429902,
+			"modified": 1551811523905,
 			"name": "mainscript",
 			"parameters": [],
 			"parentId": "fld_ae2e8d33a1fd47deaf4544695b0555d0",
@@ -831,7 +865,7 @@
 			"authentication": {},
 			"body": {
 				"mimeType": "application/json",
-				"text": "{\n\t\"text\": \"#!ipxe\\ndhcp\\nchain http://boot.netboot.xyz\"\n}"
+				"text": "{\"text\":\"#!ipxe\\nmenu Choose Script\\nitem subscript Fedora 29\\nchoose --default subscript --timeout 3000 subscript && goto ${subscript}\\n:subscript\\nset base http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\\nkernel ${base}/images/pxeboot/vmlinuz initrd=initrd.img inst.repo=${base} inst.ks=http://134.209.52.222:30300/api/kickstarts/1\\ninitrd ${base}/images/pxeboot/initrd.img\\nboot\\n\"}"
 			},
 			"created": 1551791837752,
 			"description": "",
@@ -845,7 +879,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1551789308993,
 			"method": "PUT",
-			"modified": 1551791880622,
+			"modified": 1551829356352,
 			"name": "subscript",
 			"parameters": [],
 			"parentId": "fld_0ae38bbdfb6444edb32fd376bae4c84c",
@@ -964,7 +998,7 @@
 			"authentication": {},
 			"body": {
 				"mimeType": "application/json",
-				"text": "{\n\t\"text\": \"#!ipxe\\ndhcp\\nchain http://boot.netboot.xyz\"\n}"
+				"text": "{\"text\":\"#platform=x86, AMD64, or Intel EM64T\\n#version=DEVEL\\n# Keyboard layouts\\nkeyboard 'us'\\n# Root password\\nrootpw --plaintext asdfasdf123$$44\\n# System language\\nlang en_US\\n# Reboot after installation\\nreboot\\n# System timezone\\ntimezone Europe/Berlin\\n# Use text mode install\\ntext\\n# Network information\\nnetwork  --bootproto=dhcp --device=enp0s25\\n# Use network installation\\nurl --url=\\\"http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\\\"\\n# System authorization information\\nauth  --useshadow  --passalgo=sha512\\n# Firewall configuration\\nfirewall --disabled\\n# SELinux configuration\\nselinux --enforcing\\n# Do not configure the X Window System\\nskipx\\n\\n# System bootloader configuration\\nbootloader --location=mbr\\n# Clear the Master Boot Record\\nzerombr\\n# Partition clearing information\\nclearpart --all\\n# Disk partitioning information\\npart /boot --asprimary --fstype=\\\"ext4\\\" --size=512\\npart / --asprimary --fstype=\\\"ext4\\\" --grow --size=1\\n\\n%pre\\ncurl http://134.209.52.222:30300/api/prebootscripts/1 | bash\\n%end\\n\\n%post\\ncurl http://134.209.52.222:30300/api/postbootscripts/1 | bash\\n%end\\n\\n%packages\\n@standard\\n\\n%end\\n\"}"
 			},
 			"created": 1551791891642,
 			"description": "",
@@ -978,7 +1012,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1551789308993,
 			"method": "PUT",
-			"modified": 1551791944363,
+			"modified": 1551830110351,
 			"name": "kickstart",
 			"parameters": [],
 			"parentId": "fld_3b8e582ed3134d0c94743bfa23a35103",
@@ -1230,7 +1264,7 @@
 			"authentication": {},
 			"body": {
 				"mimeType": "application/json",
-				"text": "{\n\t\"text\": \"#!ipxe\\ndhcp\\nchain http://boot.netboot.xyz\"\n}"
+				"text": "{\"text\": \"sudo dnf install openssh-server -y\\nmkdir -p ~/.ssh\\ncurl http://134.209.52.222:30300/api/sshkeys/1 >> ~/.ssh/authorized_keys\\nsystemctl enable sshd\\ncurl --request POST --header \\\"Content-Type: application/json\\\" --data \\\"{\\\"ip\\\": \\\"$(ip -4 addr show enp0s25 | grep -oP '(?<=inets)d+(.d+){3}' | head -n 1)\\\",\\\"tag\\\":\\\"felicitas.pojtinger.swabia.sol-nodes\\\"}\\\" http://134.209.52.222:30300/api/localnodes\"}"
 			},
 			"created": 1551791992245,
 			"description": "",
@@ -1244,7 +1278,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1551789308993,
 			"method": "PUT",
-			"modified": 1551792016968,
+			"modified": 1551880620152,
 			"name": "postbootscript",
 			"parameters": [],
 			"parentId": "fld_facf635b4d7244e0be3683393daa5428",
@@ -1285,7 +1319,7 @@
 			"authentication": {},
 			"body": {
 				"mimeType": "application/json",
-				"text": "{\n\t\"text\": \"#!ipxe\\ndhcp\\nchain http://boot.netboot.xyz\"\n}"
+				"text": "{\n\t\"text\": \"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC0DLQNNfDrcjrqEiIuDXcTWNhO7Hg5eMosrsjW0HDndC+cNjQ+RAMGWEy50PtvTnujXtnl1kXBdzS2dNVmtanBPKt0B4Dl3WmgaO3LNv72Bj2pLnF8ZcSE6WRcvW4TghzRp2akYaNyV2cRID/9nEv6uOXf7aRWGYAxpMYX/JuuIEorY6OshV/OfM5EgPJTWhnD33dy6yeafHproG23PpXRG2hGItEtzSuq6bJohJKZmeP/sila3WSyr40DIojW7d533gys10kDkEa173I762dkbxjIlJC5RyN1xAVIDk3wWATRkDOZzHyeR0ZcSXGJ6/lquhfteHnsaDtdiPnz2f8D pojntfx@linux.fritz.box\"\n}"
 			},
 			"created": 1551792027085,
 			"description": "",
@@ -1299,7 +1333,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1551789309143,
 			"method": "POST",
-			"modified": 1551792061162,
+			"modified": 1551828067710,
 			"name": "sshkeys",
 			"parameters": [],
 			"parentId": "fld_f55842eef41a4afe82f0311783839bc8",
@@ -1414,6 +1448,52 @@
 			"_type": "request"
 		},
 		{
+			"_id": "req_bd20391725df45518440ae42cbcdab33",
+			"authentication": {},
+			"body": {},
+			"created": 1551879799444,
+			"description": "",
+			"headers": [],
+			"isPrivate": false,
+			"metaSortKey": -1551789309093,
+			"method": "GET",
+			"modified": 1551879836174,
+			"name": "localnodes",
+			"parameters": [],
+			"parentId": "fld_1708113aad5b43f5bf122069849ab297",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ gateway  }}/localnodes",
+			"_type": "request"
+		},
+		{
+			"_id": "req_bdd23fc7c3a6447696bb67757454a289",
+			"authentication": {},
+			"body": {},
+			"created": 1551879799446,
+			"description": "",
+			"headers": [],
+			"isPrivate": false,
+			"metaSortKey": -1551789309043,
+			"method": "GET",
+			"modified": 1551879831590,
+			"name": "localnode",
+			"parameters": [],
+			"parentId": "fld_1708113aad5b43f5bf122069849ab297",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ gateway  }}/localnodes/{% prompt 'ID', '', '', '', false %}",
+			"_type": "request"
+		},
+		{
 			"_id": "req_c5ac56d697444c5b96f954ae30603a42",
 			"authentication": {},
 			"body": {},
@@ -1452,7 +1532,7 @@
 			"authentication": {},
 			"body": {
 				"mimeType": "application/json",
-				"text": "{\n\t\"distributorTags\": [\n\t\t\"sol-earth-eu-de-bw-fds-bbronn-hirschkopfweg-8-pojtinger-felicitas-local\"\n\t],\n\t\"device\": \"enp0s25\",\n\t\"domain\": \"sol-earth-eu-de-bw-fds-bbronn-hirschkopfweg-8-pojtinger-felicitas-local\"\n}"
+				"text": "{\n\t\"distributorTags\": [\n\t\t\"felicitas.pojtinger.swabia.sol\"\n\t],\n\t\"device\": \"enp0s25\",\n\t\"range\": \"192.168.178.1\"\n}"
 			},
 			"created": 1551037288677,
 			"description": "",
@@ -1466,7 +1546,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1551037288677,
 			"method": "PUT",
-			"modified": 1551126253149,
+			"modified": 1551812082559,
 			"name": "pxe",
 			"parameters": [],
 			"parentId": "fld_21ea993642d747e9a02b206aa532ca44",
@@ -1498,7 +1578,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1551051071599,
 			"method": "PUT",
-			"modified": 1551126429292,
+			"modified": 1551811054947,
 			"name": "status",
 			"parameters": [],
 			"parentId": "fld_15a64c56b80549e9a7a9a8700d28ba98",
