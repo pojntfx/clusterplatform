@@ -99,7 +99,7 @@ export default {
       },
       handler: async function(ctx) {
         return (await shell.exec(
-          `ping -w 5 ${ctx.params.nodeIp} -c 1`
+          `ping -w 1 ${ctx.params.nodeIp} -c 1`
         )).stdout.includes("1 received")
           ? true
           : false;

@@ -18,7 +18,7 @@ export default {
       const allDistributors = (await ctx.call("distributor-manager.list")).rows;
       const nonPingableDistributors = [];
       for (let distributor of allDistributors) {
-        const pingable = await this.broker.ping(distributor.nodeId, 5000);
+        const pingable = await this.broker.ping(distributor.nodeId, 1000);
         if (!pingable) {
           nonPingableDistributors.push(distributor);
         }

@@ -1,7 +1,7 @@
 {
 	"_type": "export",
 	"__export_format": 3,
-	"__export_date": "2019-03-06T18:31:39.116Z",
+	"__export_date": "2019-03-06T20:16:32.563Z",
 	"__export_source": "insomnia.desktop.app:v6.3.2",
 	"resources": [
 		{
@@ -732,7 +732,7 @@
 			"authentication": {},
 			"body": {
 				"mimeType": "application/json",
-				"text": "{\"text\":\"#!ipxe\\nmenu Choose Script\\nitem mainsubscriptserver_fedora29 Main Sub Script Server Fedora 29\\nchoose --default mainsubscriptserver_fedora29 --timeout 3000 server &&  goto ${server}\\n:mainsubscriptserver_fedora29\\nchain http://134.209.52.222:30300/api/subscripts/1\"}"
+				"text": "{\"text\":\"#!ipxe\\nmenu Choose Script\\nitem mainsubscriptserver_fedora29 Main Sub Script Server Fedora 29\\nchoose --default mainsubscriptserver_fedora29 --timeout 3000 server &&  goto ${server}\\n:mainsubscriptserver_fedora29\\nchain http://46.101.114.216:30300/api/subscripts/1\"}"
 			},
 			"created": 1551789414957,
 			"description": "",
@@ -865,7 +865,7 @@
 			"authentication": {},
 			"body": {
 				"mimeType": "application/json",
-				"text": "{\"text\":\"#!ipxe\\nmenu Choose Script\\nitem subscript Fedora 29\\nchoose --default subscript --timeout 3000 subscript && goto ${subscript}\\n:subscript\\nset base http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\\nkernel ${base}/images/pxeboot/vmlinuz initrd=initrd.img inst.repo=${base} inst.ks=http://134.209.52.222:30300/api/kickstarts/1\\ninitrd ${base}/images/pxeboot/initrd.img\\nboot\\n\"}"
+				"text": "{\"text\":\"#!ipxe\\nmenu Choose Script\\nitem subscript Fedora 29\\nchoose --default subscript --timeout 3000 subscript && goto ${subscript}\\n:subscript\\nset base http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\\nkernel ${base}/images/pxeboot/vmlinuz initrd=initrd.img inst.repo=${base} inst.ks=http://46.101.114.216:30300/api/kickstarts/1\\ninitrd ${base}/images/pxeboot/initrd.img\\nboot\\n\"}"
 			},
 			"created": 1551791837752,
 			"description": "",
@@ -998,7 +998,7 @@
 			"authentication": {},
 			"body": {
 				"mimeType": "application/json",
-				"text": "{\"text\":\"#platform=x86, AMD64, or Intel EM64T\\n#version=DEVEL\\n# Keyboard layouts\\nkeyboard 'us'\\n# Root password\\nrootpw --plaintext asdfasdf123$$44\\n# System language\\nlang en_US\\n# Reboot after installation\\nreboot\\n# System timezone\\ntimezone Europe/Berlin\\n# Use text mode install\\ntext\\n# Network information\\nnetwork  --bootproto=dhcp --device=enp0s25\\n# Use network installation\\nurl --url=\\\"http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\\\"\\n# System authorization information\\nauth  --useshadow  --passalgo=sha512\\n# Firewall configuration\\nfirewall --disabled\\n# SELinux configuration\\nselinux --enforcing\\n# Do not configure the X Window System\\nskipx\\n\\n# System bootloader configuration\\nbootloader --location=mbr\\n# Clear the Master Boot Record\\nzerombr\\n# Partition clearing information\\nclearpart --all\\n# Disk partitioning information\\npart /boot --asprimary --fstype=\\\"ext4\\\" --size=512\\npart / --asprimary --fstype=\\\"ext4\\\" --grow --size=1\\n\\n%pre\\ncurl http://134.209.52.222:30300/api/prebootscripts/1 | bash\\n%end\\n\\n%post\\ncurl http://134.209.52.222:30300/api/postbootscripts/1 | bash\\n%end\\n\\n%packages\\n@standard\\n\\n%end\\n\"}"
+				"text": "{\"text\":\"#platform=x86, AMD64, or Intel EM64T\\n#version=DEVEL\\n# Keyboard layouts\\nkeyboard 'us'\\n# Root password\\nrootpw --plaintext asdfasdf123$$44\\n# System language\\nlang en_US\\n# Reboot after installation\\nreboot\\n# System timezone\\ntimezone Europe/Berlin\\n# Use text mode install\\ntext\\n# Network information\\nnetwork  --bootproto=dhcp --device=enp0s25\\n# Use network installation\\nurl --url=\\\"http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\\\"\\n# System authorization information\\nauth  --useshadow  --passalgo=sha512\\n# Firewall configuration\\nfirewall --disabled\\n# SELinux configuration\\nselinux --enforcing\\n# Do not configure the X Window System\\nskipx\\n\\n# System bootloader configuration\\nbootloader --location=mbr\\n# Clear the Master Boot Record\\nzerombr\\n# Partition clearing information\\nclearpart --all\\n# Disk partitioning information\\npart /boot --asprimary --fstype=\\\"ext4\\\" --size=512\\npart / --asprimary --fstype=\\\"ext4\\\" --grow --size=1\\n\\n%pre\\ncurl http://46.101.114.216:30300/api/prebootscripts/1 | bash\\n%end\\n\\n%post\\ncurl http://46.101.114.216:30300/api/postbootscripts/1 | bash\\n%end\\n\\n%packages\\n@standard\\n\\n%end\\n\"}"
 			},
 			"created": 1551791891642,
 			"description": "",
@@ -1264,7 +1264,7 @@
 			"authentication": {},
 			"body": {
 				"mimeType": "application/json",
-				"text": "{\"text\": \"sudo dnf install openssh-server -y\\nmkdir -p ~/.ssh\\ncurl http://134.209.52.222:30300/api/sshkeys/1 >> ~/.ssh/authorized_keys\\nsystemctl enable sshd\\ncurl --request POST --header \\\"Content-Type: application/json\\\" --data \\\"{\\\"ip\\\": \\\"$(ip -4 addr show enp0s25 | grep -oP '(?<=inets)d+(.d+){3}' | head -n 1)\\\",\\\"tag\\\":\\\"felix.pojtinger.swabia.sol-nodes\\\"}\\\" http://134.209.52.222:30300/api/localnodes\"}"
+				"text": "{\"text\": \"sudo dnf install openssh-server -y\\nmkdir -p ~/.ssh\\ncurl http://46.101.114.216:30300/api/sshkeys/1 >> ~/.ssh/authorized_keys\\nsystemctl enable sshd\\ncurl --request POST --header \\\"Content-Type: application/json\\\" --data \\\"{\\\"ip\\\": \\\"$(ip -4 addr show enp0s25 | grep -oP '(?<=inets)d+(.d+){3}' | head -n 1)\\\",\\\"tag\\\":\\\"sol-earth-eu-de-bw-fds-bbronn-hirschkopfweg-8-pojtinger-felix-local-nodes\\\"}\\\" http://46.101.114.216:30300/api/localnodes\"}"
 			},
 			"created": 1551791992245,
 			"description": "",
@@ -1494,6 +1494,29 @@
 			"_type": "request"
 		},
 		{
+			"_id": "req_262a3cc38a824e379ba998b0fb950b69",
+			"authentication": {},
+			"body": {},
+			"created": 1551903336926,
+			"description": "",
+			"headers": [],
+			"isPrivate": false,
+			"metaSortKey": -1551789308993,
+			"method": "DELETE",
+			"modified": 1551903345421,
+			"name": "localnode",
+			"parameters": [],
+			"parentId": "fld_1708113aad5b43f5bf122069849ab297",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingMaxTimelineDataSize": 1000,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ gateway  }}/localnodes/{% prompt 'ID', '', '', '', false %}",
+			"_type": "request"
+		},
+		{
 			"_id": "req_c5ac56d697444c5b96f954ae30603a42",
 			"authentication": {},
 			"body": {},
@@ -1532,7 +1555,7 @@
 			"authentication": {},
 			"body": {
 				"mimeType": "application/json",
-				"text": "{\n\t\"distributorTags\": [\n\t\t\"felix.pojtinger.swabia.sol\"\n\t],\n\t\"device\": \"enp0s25\",\n\t\"range\": \"192.168.178.1\"\n}"
+				"text": "{\n\t\"distributorTags\": [\n\t\t\"sol-earth-eu-de-bw-fds-bbronn-hirschkopfweg-8-pojtinger-felix-local\"\n\t],\n\t\"device\": \"enp0s25\",\n\t\"range\": \"192.168.178.1\"\n}"
 			},
 			"created": 1551037288677,
 			"description": "",
