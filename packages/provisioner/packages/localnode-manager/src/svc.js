@@ -44,7 +44,7 @@ export default {
           pingable: true
         });
       }
-      return await ctx.call("localnode-manager.list");
+      return await ctx.call("localnode-manager.list", ctx.params);
     }
   },
   model: {
