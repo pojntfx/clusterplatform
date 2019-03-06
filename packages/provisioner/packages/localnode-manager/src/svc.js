@@ -8,6 +8,26 @@ export default {
   adapter: new Adapter(process.env.POSTGRES_URI),
   actions: {
     listOverwrite: async function(ctx) {
+      const allNodes = (await ctx.call("localnode-manager.list")).rows;
+      let duplicateNodes = [];
+      for (let nodeA of allNodes) {
+        for (let nodeB of allNodes) {
+          if (nodeA.id !== nodeB.id && nodeA.ip === nodeB.ip) {
+            duplicateNodes.push(nodeA);
+          }
+        }
+      }
+      for (let duplicateNode of duplicateNodes) {
+        if (
+          await ctx.call("localnode-manager.get", {
+            id: duplicateNode.id
+          })
+        ) {
+          await ctx.call("localnode-manager.remove", {
+            id: duplicateNode.id
+          });
+        }
+      }
       const nodes = (await ctx.call("localnode-manager.list")).rows;
       let nonPingableNodes = [];
       let pingableNodes = [];
