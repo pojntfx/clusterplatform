@@ -18,7 +18,7 @@ export default {
       const allDistributors = (await ctx.call("distributor-manager.list")).rows;
       const nonPingableDistributors = [];
       for (let distributor of allDistributors) {
-        const pingable = await this.broker.ping(distributor.nodeId, 1000);
+        const pingable = await this.broker.ping(distributor.nodeId, 5000);
         if (!pingable) {
           nonPingableDistributors.push(distributor);
         }
@@ -63,6 +63,36 @@ export default {
           nodeID: distributor.nodeId
         });
         return distributor;
+      }
+    },
+    updateDistributorStatus: {
+      params: {
+        id: { type: "number", convert: true },
+        artifactId: { type: "number", convert: true },
+        on: "boolean"
+      },
+      handler: async function(ctx) {
+        const distributor = await ctx.call("distributor-manager.get", {
+          id: ctx.params.id
+        });
+        await ctx.call("distributor-worker.updateStatus", ctx.params, {
+          nodeID: distributor.nodeId
+        });
+        return distributor;
+      }
+    },
+    pingNodeFromDistributorWorker: {
+      params: {
+        nodeIp: "string",
+        distributorId: { type: "number", convert: true }
+      },
+      handler: async function(ctx) {
+        const distributor = await ctx.call("distributor-manager.get", {
+          id: ctx.params.distributorId
+        });
+        return await ctx.call("distributor-worker.pingNode", ctx.params, {
+          nodeID: distributor.nodeId
+        });
       }
     }
   },
