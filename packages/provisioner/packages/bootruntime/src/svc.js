@@ -312,7 +312,7 @@ export default {
         } else {
           for (let distributorTag of ctx.params.distributorTags) {
             const distributors = await ctx.call("distributor-manager.find", {
-              query: { tag: distributorTag }
+              query: { artifactId: distributorTag }
             });
             for (let distributor of distributors) {
               const { artifactId: ipxePxeUefiArtifactId } = await ctx.call(
@@ -387,7 +387,7 @@ export default {
         });
         for (let distributorTag of bootruntime.distributorTags) {
           const distributors = await ctx.call("distributor-manager.find", {
-            query: { tag: distributorTag }
+            query: { artifactId: distributorTag }
           });
           for (let distributor of distributors) {
             await ctx.call("distributor-manager.updateDistributorStatus", {

@@ -10,7 +10,7 @@ export default {
     name: "distributor",
     define: {
       nodeId: Orm.STRING,
-      tag: Orm.STRING
+      artifactId: Orm.STRING
     }
   },
   actions: {
@@ -99,7 +99,7 @@ export default {
   settings: {
     entityValidator: {
       nodeId: "string",
-      tag: "string"
+      artifactId: "string"
     }
   }
 };

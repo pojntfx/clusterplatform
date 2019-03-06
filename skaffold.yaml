@@ -112,8 +112,8 @@ profiles:
             dockerfile: Dockerfile.dev
           sync:
             src/*.js: /opt/clusterplatform/app/src
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/localnodes
-          context: packages/provisioner/packages/localnodes
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/localnode-manager
+          context: packages/provisioner/packages/localnode-manager
           docker:
             dockerfile: Dockerfile.dev
           sync:
@@ -150,5 +150,5 @@ profiles:
           - packages/provisioner/packages/prebootscripts/stack.yaml
           - packages/provisioner/packages/postbootscripts/stack.yaml
           - packages/provisioner/packages/sshkeys/stack.yaml
-          - packages/provisioner/packages/localnodes/stack.yaml
+          - packages/provisioner/packages/localnode-manager/stack.yaml
           - packages/provisioner/packages/gateway/stack.yaml

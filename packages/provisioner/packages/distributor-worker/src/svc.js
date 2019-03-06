@@ -20,7 +20,7 @@ export default {
           if (
             await this.broker.call("distributor-manager.create", {
               nodeId: localNodeData.id,
-              tag: process.env.CLUSTERPLATFORM_DISTRIBUTOR_TAG
+              artifactId: process.env.CLUSTERPLATFORM_DISTRIBUTOR_ARTIFACTID
             })
           ) {
             didRegister = true;
