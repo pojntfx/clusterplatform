@@ -133,7 +133,7 @@ http://134.209.52.222:30300/api/prebootscripts
 curl \
 --request POST \
 --header "Content-Type: application/json" \
---data '{"text": "sudo dnf install openssh-server -y;\nmkdir -p ~/.ssh;\nsystemctl enable sshd;\nip=$(echo $(ip -4 addr show | grep -Eo \"inet (addr:)?([0-9]*\\.){3}[0-9]*\" | grep -Eo \"([0-9]*\\.){3}[0-9]*\" | grep -v \"127.0.0.1\") | cut -d \" \" -f 1);\ncurl --request POST \"http://134.209.52.222:30300/api/localnodes?ip=${ip}&artifactId=felix.pojtinger.swabia.sol&pingable=true\"\n"}' \
+--data '{"text": "#!/bin/bash\nsudo dnf install openssh-server -y;\nmkdir -p ~/.ssh;\nsystemctl enable sshd;\nip=$(echo $(ip -4 addr show | grep -Eo \"inet (addr:)?([0-9]*\\.){3}[0-9]*\" | grep -Eo \"([0-9]*\\.){3}[0-9]*\" | grep -v \"127.0.0.1\") | cut -d \" \" -f 1);\ncurl --request POST \"http://134.209.52.222:30300/api/localnodes?ip=${ip}&artifactId=felix.pojtinger.swabia.sol&pingable=true\"\n"}' \
 http://134.209.52.222:30300/api/postbootscripts
 ```
 
