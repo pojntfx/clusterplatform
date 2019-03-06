@@ -95,7 +95,8 @@ export default {
           // localnodes
           "POST /localnodes": "localnode-manager.create",
           "GET /localnodes": "localnode-manager.listOverwrite",
-          "GET /localnodes/:id": "localnode-manager.get"
+          "GET /localnodes/:id": "localnode-manager.get",
+          "DELETE /localnodes/:id": "localnode-manager.remove"
         }
       }
     ]
