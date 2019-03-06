@@ -10,11 +10,11 @@ export default {
         id: "string"
       },
       handler: async function(ctx) {
-        const res = await this.actions.find({
+        const res = await ctx.call("mainscripts.get", {
           id: ctx.params.id
         });
         ctx.meta.$responseType = "text/plain";
-        return res[0].text;
+        return res.text;
       }
     }
   },

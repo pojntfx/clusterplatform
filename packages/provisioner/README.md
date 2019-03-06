@@ -55,26 +55,26 @@ http://46.101.114.216:30300/api/subscripts
 
 ### Add SSH Key
 
-You can get your's with `cat ~/.ssh/id_rsa.pub`.
+You can get your SSH key with `cat ~/.ssh/id_rsa.pub`. We will not use this right here (as the first SSH key will be specified in the kickstart file), but you'll want to use this SSH key later on.
 
 ```bash
 curl \
 --request POST \
 --header "Content-Type: application/json" \
---data '{"text":"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC0DLQNNfDrcjrqEiIuDXcTWNhO7Hg5eMosrsjW0HDndC+cNjQ+RAMGWEy50PtvTnujXtnl1kXBdzS2dNVmtanBPKt0B4Dl3WmgaO3LNv72Bj2pLnF8ZcSE6WRcvW4TghzRp2akYaNyV2cRID/9nEv6uOXf7aRWGYAxpMYX/JuuIEorY6OshV/OfM5EgPJTWhnD33dy6yeafHproG23PpXRG2hGItEtzSuq6bJohJKZmeP/sila3WSyr40DIojW7d533gys10kDkEa173I762dkbxjIlJC5RyN1xAVIDk3wWATRkDOZzHyeR0ZcSXGJ6/lquhfteHnsaDtdiPnz2f8D pojntfx@linux.fritz.box
-"}' \
+--data '{"text":"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC0DLQNNfDrcjrqEiIuDXcTWNhO7Hg5eMosrsjW0HDndC+cNjQ+RAMGWEy50PtvTnujXtnl1kXBdzS2dNVmtanBPKt0B4Dl3WmgaO3LNv72Bj2pLnF8ZcSE6WRcvW4TghzRp2akYaNyV2cRID/9nEv6uOXf7aRWGYAxpMYX/JuuIEorY6OshV/OfM5EgPJTWhnD33dy6yeafHproG23PpXRG2hGItEtzSuq6bJohJKZmeP/sila3WSyr40DIojW7d533gys10kDkEa173I762dkbxjIlJC5RyN1xAVIDk3wWATRkDOZzHyeR0ZcSXGJ6/lquhfteHnsaDtdiPnz2f8D pojntfx@linux.fritz.box"}' \
 http://46.101.114.216:30300/api/sshkeys
 ```
 
 ### Create Kickstart
 
 A nice visual visual tool for this is `system-config-kickstart`.
+You can get your SSH key with `cat ~/.ssh/id_rsa.pub`.
 
 ```bash
 curl \
 --request POST \
 --header "Content-Type: application/json" \
---data '{"text":"#platform=x86, AMD64, or Intel EM64T\n#version=DEVEL\n# Keyboard layouts\nkeyboard 'us'\n# Root password\nrootpw --plaintext asdfasdf123$$44\n# System language\nlang en_US\n# Reboot after installation\nreboot\n# System timezone\ntimezone Europe/Berlin\n# Use text mode install\ntext\n# Network information\nnetwork  --bootproto=dhcp --device=enp0s25\n# Use network installation\nurl --url=\"http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\"\n# System authorization information\nauth  --useshadow  --passalgo=sha512\n# Firewall configuration\nfirewall --disabled\n# SELinux configuration\nselinux --enforcing\n# Do not configure the X Window System\nskipx\n\n# System bootloader configuration\nbootloader --location=mbr\n# Clear the Master Boot Record\nzerombr\n# Partition clearing information\nclearpart --all\n# Disk partitioning information\npart /boot --asprimary --fstype=\"ext4\" --size=512\npart / --asprimary --fstype=\"ext4\" --grow --size=1\n\n%pre\ncurl http://46.101.114.216:30300/api/prebootscripts/1 | bash\n%end\n\n%post\ncurl http://46.101.114.216:30300/api/postbootscripts/1 | bash\n%end\n\n%packages\n@standard\n\n%end\n"}' \
+--data '{"text":"#platform=x86, AMD64, or Intel EM64T\n#version=DEVEL\n# Keyboard layouts\nkeyboard us\n# Root password\nrootpw --plaintext asdfasdf123$$44\nsshkey --username=root \"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC0DLQNNfDrcjrqEiIuDXcTWNhO7Hg5eMosrsjW0HDndC+cNjQ+RAMGWEy50PtvTnujXtnl1kXBdzS2dNVmtanBPKt0B4Dl3WmgaO3LNv72Bj2pLnF8ZcSE6WRcvW4TghzRp2akYaNyV2cRID/9nEv6uOXf7aRWGYAxpMYX/JuuIEorY6OshV/OfM5EgPJTWhnD33dy6yeafHproG23PpXRG2hGItEtzSuq6bJohJKZmeP/sila3WSyr40DIojW7d533gys10kDkEa173I762dkbxjIlJC5RyN1xAVIDk3wWATRkDOZzHyeR0ZcSXGJ6/lquhfteHnsaDtdiPnz2f8D pojntfx@linux.fritz.box\"\n# System language\nlang en_US\n# Reboot after installation\nreboot\n# System timezone\ntimezone Europe/Berlin\n# Use text mode install\ntext\n# Network information\nnetwork  --bootproto=dhcp --device=enp0s25\n# Use network installation\nurl --url=\"http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\"\n# System authorization information\nauth  --useshadow  --passalgo=sha512\n# Firewall configuration\nfirewall --disabled\n# SELinux configuration\nselinux --enforcing\n# Do not configure the X Window System\nskipx\n\n# System bootloader configuration\nbootloader --location=mbr\n# Clear the Master Boot Record\nzerombr\n# Partition clearing information\nclearpart --all\n# Disk partitioning information\npart /boot --asprimary --fstype=\"ext4\" --size=512\npart / --asprimary --fstype=\"ext4\" --grow --size=1\n\n%pre\ncurl http://46.101.114.216:30300/api/prebootscripts/1 | bash\n%end\n\n%post\ncurl http://46.101.114.216:30300/api/postbootscripts/1 | bash\n%end\n\n%packages\n@standard\n\n%end\n"}' \
 http://46.101.114.216:30300/api/kickstarts
 ```
 
@@ -94,7 +94,7 @@ http://46.101.114.216:30300/api/prebootscripts
 curl \
 --request POST \
 --header "Content-Type: application/json" \
---data '{"text":"sudo dnf install openssh-server -y\nmkdir -p ~/.ssh\ncurl http://46.101.114.216:30300/api/sshkeys/1 >> ~/.ssh/authorized_keys\nsystemctl enable sshd --now"}' \
+--data '{"text": "sudo dnf install openssh-server -y;\nmkdir -p ~/.ssh;\nsystemctl enable sshd;\nip=$(echo $(ip -4 addr show | grep -Eo \"inet (addr:)?([0-9]*\\.){3}[0-9]*\" | grep -Eo \"([0-9]*\\.){3}[0-9]*\" | grep -v \"127.0.0.1\") | cut -d \" \" -f 1);\ncurl --request POST \"http://46.101.114.216:30300/api/localnodes?ip=${ip}&tag=sol-earth-eu-de-bw-fds-bbronn-hirschkopfweg-8-pojtinger-felicitas-local\"\n"}' \
 http://46.101.114.216:30300/api/postbootscripts
 ```
 
