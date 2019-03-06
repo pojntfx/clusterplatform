@@ -94,7 +94,8 @@ export default {
           "PUT /sshkeys/:id": "sshkeys.update",
           "DELETE /sshkeys/:id": "sshkeys.remove",
           // localnodes
-          "REST /localnodes": "localnodes"
+          "POST /localnodes": "localnodes.create",
+          "GET /localnodes": "localnodes.listOverwrite"
         }
       }
     ]
