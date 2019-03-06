@@ -49,8 +49,53 @@ http://46.101.114.216:30300/api/mainscripts
 curl \
 --request POST \
 --header "Content-Type: application/json" \
---data '{"text":"#!ipxe\nmenu Choose Script\nitem subscript Fedora 29\nchoose --default subscript --timeout 3000 subscript && goto ${subscript}\n:subscript\nset base http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\nkernel ${base}/images/pxeboot/vmlinuz initrd=initrd.img repo=${base}\ninitrd ${base}/images/pxeboot/initrd.img\nboot\n"}' \
+--data '{"text":"#!ipxe\nmenu Choose Script\nitem subscript Fedora 29\nchoose --default subscript --timeout 3000 subscript && goto ${subscript}\n:subscript\nset base http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\nkernel ${base}/images/pxeboot/vmlinuz initrd=initrd.img inst.repo=${base} inst.ks=http://46.101.114.216:30300/api/kickstarts/1\ninitrd ${base}/images/pxeboot/initrd.img\nboot\n"}' \
 http://46.101.114.216:30300/api/subscripts
+```
+
+### Add SSH Key
+
+You can get your's with `cat ~/.ssh/id_rsa.pub`.
+
+```bash
+curl \
+--request POST \
+--header "Content-Type: application/json" \
+--data '{"text":"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC0DLQNNfDrcjrqEiIuDXcTWNhO7Hg5eMosrsjW0HDndC+cNjQ+RAMGWEy50PtvTnujXtnl1kXBdzS2dNVmtanBPKt0B4Dl3WmgaO3LNv72Bj2pLnF8ZcSE6WRcvW4TghzRp2akYaNyV2cRID/9nEv6uOXf7aRWGYAxpMYX/JuuIEorY6OshV/OfM5EgPJTWhnD33dy6yeafHproG23PpXRG2hGItEtzSuq6bJohJKZmeP/sila3WSyr40DIojW7d533gys10kDkEa173I762dkbxjIlJC5RyN1xAVIDk3wWATRkDOZzHyeR0ZcSXGJ6/lquhfteHnsaDtdiPnz2f8D pojntfx@linux.fritz.box
+"}' \
+http://46.101.114.216:30300/api/sshkeys
+```
+
+### Create Kickstart
+
+A nice visual visual tool for this is `system-config-kickstart`.
+
+```bash
+curl \
+--request POST \
+--header "Content-Type: application/json" \
+--data '{"text":"#platform=x86, AMD64, or Intel EM64T\n#version=DEVEL\n# Keyboard layouts\nkeyboard 'us'\n# Root password\nrootpw --plaintext asdfasdf123$$44\n# System language\nlang en_US\n# Reboot after installation\nreboot\n# System timezone\ntimezone Europe/Berlin\n# Use text mode install\ntext\n# Network information\nnetwork  --bootproto=dhcp --device=enp0s25\n# Use network installation\nurl --url=\"http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\"\n# System authorization information\nauth  --useshadow  --passalgo=sha512\n# Firewall configuration\nfirewall --disabled\n# SELinux configuration\nselinux --enforcing\n# Do not configure the X Window System\nskipx\n\n# System bootloader configuration\nbootloader --location=mbr\n# Clear the Master Boot Record\nzerombr\n# Partition clearing information\nclearpart --all\n# Disk partitioning information\npart /boot --asprimary --fstype=\"ext4\" --size=512\npart / --asprimary --fstype=\"ext4\" --grow --size=1\n\n%pre\ncurl http://46.101.114.216:30300/api/prebootscripts/1 | bash\n%end\n\n%post\ncurl http://46.101.114.216:30300/api/postbootscripts/1 | bash\n%end\n\n%packages\n@standard\n\n%end\n"}' \
+http://46.101.114.216:30300/api/kickstarts
+```
+
+### Create Preboot Script
+
+```bash
+curl \
+--request POST \
+--header "Content-Type: application/json" \
+--data '{"text":"echo \"This could be the Preboot Script!\""}' \
+http://46.101.114.216:30300/api/prebootscripts
+```
+
+### Create Postboot Script
+
+```bash
+curl \
+--request POST \
+--header "Content-Type: application/json" \
+--data '{"text":"sudo dnf install openssh-server -y\nmkdir -p ~/.ssh\ncurl http://46.101.114.216:30300/api/sshkeys/1 >> ~/.ssh/authorized_keys\nsystemctl enable sshd --now"}' \
+http://46.101.114.216:30300/api/postbootscripts
 ```
 
 ### Run Distributor(s)
@@ -108,7 +153,8 @@ curl \
 http://46.101.114.216:30300/api/bootruntimes/1/pxe/status
 ```
 
-Now, connect hosts to the network, set them to `Network Boot` and turn them on.
+Now, connect hosts to the network, set them to `Network Boot` and turn them on; they will perform a fully automated installation and be exposed using the root password that you've set above as well as the SSH key. In the future, they will `POST` to a `localnode-manager` for easy gathering of the IPs.
+If you are using VirtualBox VMs, set `Network` / `Adapter 1` / `Attached to` to `Bridged Adapter` and `Name` to the network interface the distributor uses (probably `enp0s25`). Also, set `System` / `Motherboard` / `Base Memory` to at least `1500 MB`; otherwise the install will fail because the ramdisk would be to big to fit into the RAM.
 
 ## Technical Overview
 
