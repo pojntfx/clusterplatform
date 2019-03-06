@@ -19,7 +19,8 @@ export default {
           "kickstarts.*",
           "prebootscripts.*",
           "postbootscripts.*",
-          "sshkeys.*"
+          "sshkeys.*",
+          "localnodes.*"
         ],
         aliases: {
           // ipxes
@@ -91,7 +92,9 @@ export default {
           "GET /sshkeys": "sshkeys.list",
           "GET /sshkeys/:id": "sshkeys.getOverwrite",
           "PUT /sshkeys/:id": "sshkeys.update",
-          "DELETE /sshkeys/:id": "sshkeys.remove"
+          "DELETE /sshkeys/:id": "sshkeys.remove",
+          // localnodes
+          "REST /localnodes": "localnodes"
         }
       }
     ]
