@@ -11,7 +11,8 @@
     "shelljs": "^0.8.3",
     "async-shelljs": "^0.1.2",
     "@clusterplatform/builder-utils": "canary",
-    "pm2": "^3.3.1"
+    "pm2": "^3.3.1",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "nodemon": "^1.18.10"

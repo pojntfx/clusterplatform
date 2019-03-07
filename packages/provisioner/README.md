@@ -1,30 +1,43 @@
 # Cluster Platform Provisioner
 
 ```plaintext
-         ## Hosts          +------------->           # Provisioner              +------------->              ## Nodes
+         +----------+                                +---------------+                                       +----------+
+         |          |                                |               |                                       |          |
+         | ## Hosts |        +------------->         | # Provisioner |            +------------->            | ## Nodes |
+         |          |                                |               |                                       |          |
+         +----------+                                +---------------+                                       +----------+
+```
 
-
-
-                                                                                        [
-Server 1                                                                                    {
-                                                                                                "id": 1,
-                                                                                                "artifactId": "felix.pojtinger.swabia.sol",
-                                                                                                "ip": "192.168.178.152",
-Computer 1                                                                                      "pingable": true
-                            [                                                               },
-                                {                                                           {
-                                    "id": 1,                                                    "id": 2,
-Laptop 1          +----->           "artifactId": "felix.pojtinger.swabia.sol",   +----->       "artifactId": "felix.pojtinger.swabia.sol",
-                                    "nodeId": "node1-239dj293-50"                               "ip": "192.168.178.102",
-                                }                                                               "pingable": true
-                            ]                                                               },
-Virtual Machine 1                                                                           {
-                                                                                                "id": 3,
-                                                                                                "artifactId": "felix.pojtinger.swabia.sol",
-                                                                                                "ip": "192.168.178.121",
-(...)                                                                                           "pingable": true
-                                                                                            }
-                                                                                        ]
+```plaintext
++----------+
+|          |
+| Server 1 +------------+                                                             +-----------------------------------------------------+
+|          |            |                                                             |                                                     |
++----------+            |                                                             | [                                                   |
+                        |                                                             |     {                                               |
++------------+          |                                                             |         "id": 1,                                    |
+|            |          |                                                             |         "artifactId": "felix.pojtinger.swabia.sol", |
+| Computer 1 +----------+                                                             |         "ip": "192.168.178.152",                    |
+|            |          |   +-----------------------------------------------------+   |         "pingable": true                            |
++------------+          |   |                                                     |   |     },                                              |
+                        |   | [                                                   |   |     {                                               |
++-----------+           |   |     {                                               |   |         "id": 2,                                    |
+|           |           |   |         "id": 1,                                    |   |         "artifactId": "felix.pojtinger.swabia.sol", |
+| Laptop 1  +--------------->         "artifactId": "felix.pojtinger.swabia.sol", +--->         "ip": "192.168.178.102",                    |
+|           |           |   |         "nodeId": "node1+239dj293+50"               |   |         "pingable": true                            |
++-----------+           |   |     }                                               |   |     },                                              |
+                        |   | ]                                                   |   |     {                                               |
++-------------------+   |   |                                                     |   |         "id": 3,                                    |
+|                   |   |   +-----------------------------------------------------+   |         "artifactId": "felix.pojtinger.swabia.sol", |
+| Virtual Machine 1 +---+                                                             |         "ip": "192.168.178.121",                    |
+|                   |   |                                                             |         "pingable": true                            |
++-------------------+   |                                                             |     }                                               |
+                        |                                                             | ]                                                   |
++-------+               |                                                             |                                                     |
+|       |               |                                                             +-----------------------------------------------------+
+| (...) +---------------+
+|       |
++-------+
 ```
 
 Hosts as a service.
@@ -52,7 +65,7 @@ These microservices turn a bare host (i.e. a server, computer, laptop, virtual m
 - **Artifact Instance Managers**: Manage and register the nodes after installation
   - [localnodes](./packages/localnode-manager/src/svc.js): Registry for installed nodes
 
-All these services have been implemented as individual, horizontally scalable microservices; this means that parallel builds, a seperate build and distributor infrastructure etc. is possible. You can, for example, run the build services in a powerful cloud Kubernetes cluster, but run the distributor in the local network using plain Docker, Minikube or a local Kubernetes cluster - the possibilities are endless! Non-dependency services don't require a public IP address, so you don't even need to set up port forwarding for such a use case (this excludes the `minio`, `nats`, `postgres`, `redis`, `verdaccio` and `gateway` services). See below for an example.
+All these services have been implemented as individual, horizontally scalable microservices; this means that parallel builds, a seperate build and distributor infrastructure etc. arge possible. You can, for example, run the build services in a powerful cloud Kubernetes cluster, but run the `distributor-worker` in the local network using plain Docker, Minikube or a local Kubernetes cluster - the possibilities are endless! Non-dependency services don't require a public IP address, so you don't even need to set up port forwarding for such a use case (this excludes the `minio`, `nats`, `postgres`, `redis`, `verdaccio` and `gateway` services). See below for an example.
 
 ## Usage
 
@@ -92,28 +105,48 @@ curl \
 http://134.209.52.222:30300/api/subscripts
 ```
 
-### Add SSH Key
+### Create SSH Key Pair
 
-You can get your SSH key with `cat ~/.ssh/id_rsa.pub`. We will not use this right here (as the first SSH key will be specified in the kickstart file), but you'll want to use this SSH key later on.
+```bash
+ssh-keygen -t ecdsa -N "" -f ~/.ssh/provisioner_id
+```
+
+### Add Public SSH Key
+
+We will not use this right here (as the first SSH key will be specified in the kickstart file), but you'll might want to use this SSH key later on.
+
+Get the public SSH ssh key with `cat ~/.ssh/provisioner_id.pub`.
 
 ```bash
 curl \
 --request POST \
 --header "Content-Type: application/json" \
---data '{"text":"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC0DLQNNfDrcjrqEiIuDXcTWNhO7Hg5eMosrsjW0HDndC+cNjQ+RAMGWEy50PtvTnujXtnl1kXBdzS2dNVmtanBPKt0B4Dl3WmgaO3LNv72Bj2pLnF8ZcSE6WRcvW4TghzRp2akYaNyV2cRID/9nEv6uOXf7aRWGYAxpMYX/JuuIEorY6OshV/OfM5EgPJTWhnD33dy6yeafHproG23PpXRG2hGItEtzSuq6bJohJKZmeP/sila3WSyr40DIojW7d533gys10kDkEa173I762dkbxjIlJC5RyN1xAVIDk3wWATRkDOZzHyeR0ZcSXGJ6/lquhfteHnsaDtdiPnz2f8D pojntfx@linux.fritz.box"}' \
+--data '{"text":"ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBB69xaEXw3y8PZeV6mjkTfK8X3z/0GlWe5dzuWcccD8fVHFl6W+XZ6qN+a8h0RD6OcFbk1mYTyh8sV2KbyIFNBk= pojntfx@pojntfx-x230-fedora", "artifactId": "felix.pojtinger.swabia.sol", "private": false}' \
+http://134.209.52.222:30300/api/sshkeys
+```
+
+### Add Private SSH Key
+
+Get the private SSH ssh key with `cat ~/.ssh/provisioner_id`. Make sure you don't miss the newline at the end.
+
+```bash
+curl \
+--request POST \
+--header "Content-Type: application/json" \
+--data '{"text":"-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAaAAAABNlY2RzYS\n1zaGEyLW5pc3RwMjU2AAAACG5pc3RwMjU2AAAAQQQevcWhF8N8vD2Xlepo5E3yvF98/9Bp\nVnuXc7lnHHA/H1RxZelvl2eqjfmvIdEQ+jnBW5NZmE8ofLFdim8iBTQZAAAAuPZWcbr2Vn\nG6AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBB69xaEXw3y8PZeV\n6mjkTfK8X3z/0GlWe5dzuWcccD8fVHFl6W+XZ6qN+a8h0RD6OcFbk1mYTyh8sV2KbyIFNB\nkAAAAhAOUvaCmEoMgsNL6Hl2XliKnMSvVOhXYyQqjGds21VWkKAAAAG3Bvam50ZnhAcG9q\nbnRmeC14MjMwLWZlZG9yYQECAwQ=\n-----END OPENSSH PRIVATE KEY-----\n", "artifactId": "felix.pojtinger.swabia.sol", "private": true}' \
 http://134.209.52.222:30300/api/sshkeys
 ```
 
 ### Create Kickstart
 
 A nice visual visual tool for this is `system-config-kickstart`.
-You can get your SSH key with `cat ~/.ssh/id_rsa.pub`.
+To get the public SSH key, see [Add Public SSH Key](#Add%20Public%20SSH%20Key).
 
 ```bash
 curl \
 --request POST \
 --header "Content-Type: application/json" \
---data '{"text":"#platform=x86, AMD64, or Intel EM64T\n#version=DEVEL\n# Keyboard layouts\nkeyboard us\n# Root password\nrootpw --plaintext asdfasdf123$$44\nsshkey --username=root \"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC0DLQNNfDrcjrqEiIuDXcTWNhO7Hg5eMosrsjW0HDndC+cNjQ+RAMGWEy50PtvTnujXtnl1kXBdzS2dNVmtanBPKt0B4Dl3WmgaO3LNv72Bj2pLnF8ZcSE6WRcvW4TghzRp2akYaNyV2cRID/9nEv6uOXf7aRWGYAxpMYX/JuuIEorY6OshV/OfM5EgPJTWhnD33dy6yeafHproG23PpXRG2hGItEtzSuq6bJohJKZmeP/sila3WSyr40DIojW7d533gys10kDkEa173I762dkbxjIlJC5RyN1xAVIDk3wWATRkDOZzHyeR0ZcSXGJ6/lquhfteHnsaDtdiPnz2f8D pojntfx@linux.fritz.box\"\n# System language\nlang en_US\n# Reboot after installation\nreboot\n# System timezone\ntimezone Europe/Berlin\n# Use text mode install\ntext\n# Network information\nnetwork  --bootproto=dhcp --device=enp0s25\n# Use network installation\nurl --url=\"http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\"\n# System authorization information\nauth  --useshadow  --passalgo=sha512\n# Firewall configuration\nfirewall --disabled\n# SELinux configuration\nselinux --enforcing\n# Do not configure the X Window System\nskipx\n\n# System bootloader configuration\nbootloader --location=mbr\n# Clear the Master Boot Record\nzerombr\n# Partition clearing information\nclearpart --all\n# Disk partitioning information\npart /boot --asprimary --fstype=\"ext4\" --size=512\npart / --asprimary --fstype=\"ext4\" --grow --size=1\n\n%pre\ncurl http://134.209.52.222:30300/api/prebootscripts/1 | bash\n%end\n\n%post\ncurl http://134.209.52.222:30300/api/postbootscripts/1 > /usr/local/bin/postboot.sh\nchmod 744 /usr/local/bin/postboot.sh\ncat << EOF > /etc/systemd/system/postboot.service\n[Unit]\nDescription=Run once\nRequires=network-online.target\nAfter=network-online.target\n[Service]\nExecStart=/usr/local/bin/postboot.sh\n[Install]\nWantedBy=multi-user.target\nEOF\nchmod 664 /etc/systemd/system/postboot.service\nsystemctl enable postboot\n%end\n\n%packages\n@standard\n\n%end\n"}' \
+--data '{"text":"#platform=x86, AMD64, or Intel EM64T\n#version=DEVEL\n# Keyboard layouts\nkeyboard us\n# Root password\nrootpw --plaintext asdfasdf123$$44\nsshkey --username=root \"ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBB69xaEXw3y8PZeV6mjkTfK8X3z/0GlWe5dzuWcccD8fVHFl6W+XZ6qN+a8h0RD6OcFbk1mYTyh8sV2KbyIFNBk= pojntfx@pojntfx-x230-fedora\"\n# System language\nlang en_US\n# Reboot after installation\nreboot\n# System timezone\ntimezone Europe/Berlin\n# Use text mode install\ntext\n# Network information\nnetwork  --bootproto=dhcp --device=enp0s25\n# Use network installation\nurl --url=\"http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\"\n# System authorization information\nauth  --useshadow  --passalgo=sha512\n# Firewall configuration\nfirewall --disabled\n# SELinux configuration\nselinux --enforcing\n# Do not configure the X Window System\nskipx\n\n# System bootloader configuration\nbootloader --location=mbr\n# Clear the Master Boot Record\nzerombr\n# Partition clearing information\nclearpart --all\n# Disk partitioning information\npart /boot --asprimary --fstype=\"ext4\" --size=512\npart / --asprimary --fstype=\"ext4\" --grow --size=1\n\n%pre\ncurl http://134.209.52.222:30300/api/prebootscripts/1 | bash\n%end\n\n%post\ncurl http://134.209.52.222:30300/api/postbootscripts/1 > /usr/local/bin/postboot.sh\nchmod 744 /usr/local/bin/postboot.sh\ncat << EOF > /etc/systemd/system/postboot.service\n[Unit]\nDescription=Run once\nRequires=network-online.target\nAfter=network-online.target\n[Service]\nExecStart=/usr/local/bin/postboot.sh\n[Install]\nWantedBy=multi-user.target\nEOF\nchmod 664 /etc/systemd/system/postboot.service\nsystemctl enable postboot\n%end\n\n%packages\n@standard\n\n%end\n"}' \
 http://134.209.52.222:30300/api/kickstarts
 ```
 
@@ -142,7 +175,7 @@ http://134.209.52.222:30300/api/postbootscripts
 Run this on a node/multiple nodes that is/are in the same network as the hosts you want to provision. You may run as many instances of `distributor-worker` as you like; when deploying a bootruntime, all distributors with the specified `CLUSTERPLATFORM_DISTRIBUTOR_ARTIFACTID` will be used.
 
 ```bash
-docker run --env TRANSPORTER=nats://134.209.52.222:30002 --env NPM_USER=verdaccio-user --env NPM_PASS=verdaccio-password --env NPM_EMAIL=verdaccio-user@example.com --env NPM_REGISTRY=http://134.209.52.222:30004 --env CLUSTERPLATFORM_DISTRIBUTOR_ARTIFACTID=felix.pojtinger.swabia.sol --cap-add=NET_ADMIN --net=host registry.gitlab.com/clusterplatform/clusterplatform/distributor-worker:142d430-dirty
+docker run --env TRANSPORTER=nats://134.209.52.222:30002 --env NPM_USER=verdaccio-user --env NPM_PASS=verdaccio-password --env NPM_EMAIL=verdaccio-user@example.com --env NPM_REGISTRY=http://134.209.52.222:30004 --env CLUSTERPLATFORM_DISTRIBUTOR_ARTIFACTID=felix.pojtinger.swabia.sol --cap-add=NET_ADMIN --net=host registry.gitlab.com/clusterplatform/clusterplatform/distributor-worker:03d8d86-dirty
 ```
 
 ### Get Bootruntime Status
@@ -204,6 +237,16 @@ curl http://134.209.52.222:30300/api/localnodes
 
 You should now be able to connect to all of these nodes with `ssh root@${ip}` as long as you are connected to the same network and you have the SSH key that you've specified in the kickstart above. In the future, an `exposer` service will join all nodes into a VPN so that this is no longer a requirement. Think of this as a [global ethernet switch (ZeroTier)](https://www.zerotier.com/).
 
+### Add Localnode to VPN
+
+```bash
+curl \
+--request PUT \
+--header "Content-Type: application/json" \
+--data '{"network":"1c33c1ced0d02ef9"}' \
+http://134.209.52.222:30300/api/localnodes/1/vpn
+```
+
 ## Technical Overview and Development
 
 - ```bash
@@ -216,7 +259,7 @@ You should now be able to connect to all of these nodes with `ssh root@${ip}` as
 - If you want to run a `distributor-worker` standalone and then connect to the rest of the services (i.e. to provision machines in your home network, a remote location etc. while still doing all the heavy lifting (i.e. building the necessary artifacts) in a powerful cloud Kubernetes cluster), run the following:
 
   ```bash
-  docker run --env TRANSPORTER=nats://134.209.52.222:30002 --env NPM_USER=verdaccio-user --env NPM_PASS=verdaccio-password --env NPM_EMAIL=verdaccio-user@example.com --env NPM_REGISTRY=http://134.209.52.222:30004 --env CLUSTERPLATFORM_DISTRIBUTOR_ARTIFACTID=felix.pojtinger.swabia.sol --cap-add=NET_ADMIN --net=host registry.gitlab.com/clusterplatform/clusterplatform/distributor-worker:142d430-dirty
+  docker run --env TRANSPORTER=nats://134.209.52.222:30002 --env NPM_USER=verdaccio-user --env NPM_PASS=verdaccio-password --env NPM_EMAIL=verdaccio-user@example.com --env NPM_REGISTRY=http://134.209.52.222:30004 --env CLUSTERPLATFORM_DISTRIBUTOR_ARTIFACTID=felix.pojtinger.swabia.sol --cap-add=NET_ADMIN --net=host registry.gitlab.com/clusterplatform/clusterplatform/distributor-worker:03d8d86-dirty
   ```
 
 - Artifacts can be downloaded from `http://134.209.52.222:30900/${artifactName}/${artifactId}/${filename}`, where `134.209.52.222` is one of the Kubernetes nodes' IP, `${artifactName}` is the plural of an artifact such as `grubs` or `syslinuxs`, `{artifactId}` is the artifact's ID which can be found using the corresponding artifact's REST endpoint and `${filename}` is the actual file's name, such as `ipxe.efi`.

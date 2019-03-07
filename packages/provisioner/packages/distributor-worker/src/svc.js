@@ -1,5 +1,7 @@
 import Distributor from "./lib";
 import * as shell from "async-shelljs";
+import uuidv1 from "uuid/v4";
+import { fs } from "@clusterplatform/builder-utils";
 
 export default {
   name: "distributor-worker",
@@ -31,9 +33,10 @@ export default {
           await sleep(2000);
         }
       } catch (e) {
-        await this.logger.warning(
-          "Distributor-worker can't connect to distributor-manager. Retrying every 2 seconds ..."
-        );
+        this.logger.warning &&
+          (await this.logger.warning(
+            "Distributor-worker can't connect to distributor-manager. Retrying every 2 seconds ..."
+          ));
         await sleep(2000);
       }
     }
@@ -103,6 +106,33 @@ export default {
         )).stdout.includes("1 received")
           ? true
           : false;
+      }
+    },
+    exposeNode: {
+      params: {
+        nodeIp: "string",
+        network: "string",
+        privateKey: "string"
+      },
+      handler: async function(ctx) {
+        await this.logger.info(
+          `Exposing node ${ctx.params.nodeIp} to network ${ctx.params.network}`
+        );
+        const artifactId = uuidv1();
+        await shell.mkdir("-p", `${process.env.HOME}/.ssh`);
+        const key = `${process.env.HOME}/.ssh/id_provisioner-${artifactId}`;
+        await fs.writeFileSync(key, ctx.params.privateKey);
+        await shell.chmod(700, key);
+        await shell.exec(`ssh -i "${key}" \
+        -o "PasswordAuthentication no" \
+        -o "StrictHostKeyChecking no" \
+        root@${
+          ctx.params.nodeIp
+        } "curl https://install.zerotier.com/ | sudo bash"`);
+        return await shell.exec(`ssh -i "${key}" \
+        -o "PasswordAuthentication no" \
+        -o "StrictHostKeyChecking no" \
+        root@${ctx.params.nodeIp} "zerotier-cli join ${ctx.params.network};"`);
       }
     }
   }
