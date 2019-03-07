@@ -45,6 +45,32 @@ export default {
         });
       }
       return await ctx.call("localnode-manager.list", ctx.params);
+    },
+    expose: {
+      params: {
+        id: { type: "number", convert: true },
+        network: "string"
+      },
+      handler: async function(ctx) {
+        const node = await ctx.call("localnode-manager.get", {
+          id: ctx.params.id
+        });
+        const distributor = (await ctx.call("distributor-manager.find", {
+          query: { artifactId: node.artifactId }
+        }))[0];
+        const privateKey = (await ctx.call("sshkeys.find", {
+          query: { artifactId: node.artifactId, private: true }
+        }))[0];
+        return await ctx.call(
+          "distributor-manager.exposeNodeFromDistributorWorker",
+          {
+            nodeIp: node.ip,
+            distributorId: distributor.id,
+            network: ctx.params.network,
+            privateKey: privateKey.text
+          }
+        );
+      }
     }
   },
   model: {

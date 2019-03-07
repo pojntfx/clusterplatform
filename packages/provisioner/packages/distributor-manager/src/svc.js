@@ -94,6 +94,22 @@ export default {
           nodeID: distributor.nodeId
         });
       }
+    },
+    exposeNodeFromDistributorWorker: {
+      params: {
+        nodeIp: "string",
+        distributorId: { type: "number", convert: true },
+        network: "string",
+        privateKey: "string"
+      },
+      handler: async function(ctx) {
+        const distributor = await ctx.call("distributor-manager.get", {
+          id: ctx.params.distributorId
+        });
+        return await ctx.call("distributor-worker.exposeNode", ctx.params, {
+          nodeID: distributor.nodeId
+        });
+      }
     }
   },
   settings: {

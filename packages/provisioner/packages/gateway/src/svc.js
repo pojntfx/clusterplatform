@@ -96,7 +96,8 @@ export default {
           "POST /localnodes": "localnode-manager.create",
           "GET /localnodes": "localnode-manager.listOverwrite",
           "GET /localnodes/:id": "localnode-manager.get",
-          "DELETE /localnodes/:id": "localnode-manager.remove"
+          "DELETE /localnodes/:id": "localnode-manager.remove",
+          "PUT /localnodes/:id/vpn": "localnode-manager.expose"
         }
       }
     ]

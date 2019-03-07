@@ -2,7 +2,7 @@
 FROM fedora:29
 RUN mkdir -p /opt/clusterplatform/app
 WORKDIR /opt/clusterplatform/app
-RUN dnf install -y npm iproute dnsmasq bind-utils iputils
+RUN dnf install -y npm iproute dnsmasq bind-utils iputils openssh-clients
 
 # Add app
 COPY package.json .

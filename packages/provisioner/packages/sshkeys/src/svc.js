@@ -23,12 +23,16 @@ export default {
   model: {
     name: "sshkey",
     define: {
-      text: Orm.TEXT
+      text: Orm.TEXT,
+      artifactId: Orm.STRING,
+      private: Orm.BOOLEAN
     }
   },
   settings: {
     entityValidator: {
-      text: "string"
+      text: "string",
+      artifactId: "string",
+      private: "boolean"
     }
   }
 };
