@@ -22,6 +22,7 @@ export default {
           artifactId
         });
         const jobInDb = await ctx.call("ipxe-manager.create", {
+          ...ctx.params,
           artifactId,
           progress: "0",
           status: "queued"
@@ -55,14 +56,22 @@ export default {
     define: {
       artifactId: Orm.STRING,
       progress: Orm.STRING,
-      status: Orm.STRING
+      status: Orm.STRING,
+      script: Orm.TEXT,
+      platform: Orm.STRING,
+      driver: Orm.STRING,
+      extension: Orm.STRING
     }
   },
   settings: {
     entityValidator: {
       artifactId: "string",
       progress: "string",
-      status: "string"
+      status: "string",
+      script: "string",
+      platform: "string",
+      driver: "string",
+      extension: "string"
     }
   }
 };

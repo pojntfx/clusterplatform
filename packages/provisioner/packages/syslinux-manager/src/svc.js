@@ -19,6 +19,7 @@ export default {
           artifactId
         });
         const jobInDb = await ctx.call("syslinux-manager.create", {
+          ...ctx.params,
           artifactId,
           progress: "0",
           status: "queued"
@@ -50,6 +51,7 @@ export default {
   model: {
     name: "syslinux",
     define: {
+      fragment: Orm.STRING,
       artifactId: Orm.STRING,
       progress: Orm.STRING,
       status: Orm.STRING
@@ -57,6 +59,7 @@ export default {
   },
   settings: {
     entityValidator: {
+      fragment: "string",
       artifactId: "string",
       progress: "string",
       status: "string"

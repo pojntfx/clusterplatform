@@ -68,3 +68,38 @@ POST /syslinuxs?tag=felicitas.pojtinger.swabia.sol
 POST /globalnodes?tag=felicitas.pojtinger.swabia.sol&network=felicitas.pojtinger.swabia.sol&localnodes=felicitas.pojtinger.swabia.sol
 POST /networks?tag=felicitas.pojtinger.swabia.sol
 ```
+
+## Mixed Endpoints
+
+```plaintext
+POST /ipxes
+ipxes.create(script, platform, driver, extension)
+POST /grubs
+grubs.create(platform, architecture, extension, label, fragment)
+POST /syslinuxs
+syslinuxs.create(fragment)
+POST /isos
+isos.create(label, ipxeUefiUrl, ipxeBiosUrl, grubImgUrl, grubEfiX64Url, grubEfiX86Url, ldLinuxUrl, isolinuxBinUrl, isohdpfxBinUrl)
+POST /distributors
+distributors.create(nodeId, artifactId)
+PUT /distributors
+distributors.update(ipxePxeUefiUrl, ipxePxeBiosUrl, artifactId, id, device, range)
+PUT /distributors/:id/status
+distributors.updateStatus(id, artifactId, on)
+POST /mainscripts
+mainscripts.create(text)
+POST /subscripts
+subscripts.create(text)
+POST /kickstarts
+kickstarts.create(text)
+POST /prebootscripts
+prebootscripts.create(text)
+POST /postbootscripts
+postbootscripts.create(text)
+POST /sshkeys
+sshkeys.create(text, artifactId, private)
+POST /localnodes
+localnodes.create(ip, artifactId, pingable)
+PUT /localnodes/:id/vpn
+localnodes.updateVpn(id, network)
+```
