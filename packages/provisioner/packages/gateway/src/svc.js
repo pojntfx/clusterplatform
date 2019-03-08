@@ -32,21 +32,27 @@ export default {
           // mainscripts
           "mainscripts.create",
           "mainscripts.list",
+          "mainscripts.getOverwrite",
           // subscripts
           "subscripts.create",
           "subscripts.list",
+          "subscripts.getOverwrite",
           // kickstarts
           "kickstarts.create",
           "kickstarts.list",
+          "kickstarts.getOverwrite",
           // prebootscripts
           "prebootscripts.create",
           "prebootscripts.list",
+          "prebootscripts.getOverwrite",
           // postbootscripts
           "postbootscripts.create",
           "postbootscripts.list",
+          "postbootscripts.getOverwrite",
           // sshkeys
           "sshkeys.create",
           "sshkeys.list",
+          "sshkeys.getOverwrite",
           // localnodes
           "localnode-manager.create",
           "localnode-manager.expose",
@@ -78,24 +84,30 @@ export default {
           // mainscripts
           "POST /mainscripts": "mainscripts.create",
           "GET /mainscripts": "mainscripts.list",
+          "GET /mainscripts/:id": "mainscripts.getOverwrite",
           // subscripts
           "POST /subscripts": "subscripts.create",
           "GET /subscripts": "subscripts.list",
+          "GET /subscripts/:id": "subscripts.getOverwrite",
           // kickstarts
           "POST /kickstarts": "kickstarts.create",
           "GET /kickstarts": "kickstarts.list",
+          "GET /kickstarts/:id": "kickstarts.getOverwrite",
           // prebootscripts
           "POST /prebootscripts": "prebootscripts.create",
           "GET /prebootscripts": "prebootscripts.list",
+          "GET /prebootscripts/:id": "prebootscripts.getOverwrite",
           // postbootscripts
           "POST /postbootscripts": "postbootscripts.create",
           "GET /postbootscripts": "postbootscripts.list",
+          "GET /postbootscripts/:id": "postbootscripts.getOverwrite",
           // sshkeys
           "POST /sshkeys": "sshkeys.create",
           "GET /sshkeys": "sshkeys.list",
+          "GET /sshkeys/:id": "sshkeys.getOverwrite",
           // localnodes
           "POST /localnodes": "localnode-manager.create",
-          "PUT /localnodes/:id/vpn": "localnode-manager.expose",
+          "PUT /localnodes/:id/script": "localnode-manager.runScript",
           "GET /localnodes": "localnode-manager.listOverwrite"
         }
       }
