@@ -46,10 +46,10 @@ export default {
       }
       return await ctx.call("localnode-manager.list", ctx.params);
     },
-    expose: {
+    runScript: {
       params: {
         id: { type: "number", convert: true },
-        network: "string"
+        script: "string"
       },
       handler: async function(ctx) {
         const node = await ctx.call("localnode-manager.get", {
@@ -62,11 +62,11 @@ export default {
           query: { artifactId: node.artifactId, private: true }
         }))[0];
         return await ctx.call(
-          "distributor-manager.exposeNodeFromDistributorWorker",
+          "distributor-manager.runScriptFromDistributorWorkerOnNode",
           {
             nodeIp: node.ip,
             distributorId: distributor.id,
-            network: ctx.params.network,
+            script: ctx.params.script,
             privateKey: privateKey.text
           }
         );

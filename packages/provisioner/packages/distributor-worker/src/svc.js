@@ -108,31 +108,25 @@ export default {
           : false;
       }
     },
-    exposeNode: {
+    runScriptOnNode: {
       params: {
         nodeIp: "string",
-        network: "string",
+        script: "string",
         privateKey: "string"
       },
       handler: async function(ctx) {
         await this.logger.info(
-          `Exposing node ${ctx.params.nodeIp} to network ${ctx.params.network}`
+          `Running script ${ctx.params.script} on node ${ctx.params.nodeIp}`
         );
         const artifactId = uuidv1();
         await shell.mkdir("-p", `${process.env.HOME}/.ssh`);
         const key = `${process.env.HOME}/.ssh/id_provisioner-${artifactId}`;
         await fs.writeFileSync(key, ctx.params.privateKey);
         await shell.chmod(700, key);
-        await shell.exec(`ssh -i "${key}" \
-        -o "PasswordAuthentication no" \
-        -o "StrictHostKeyChecking no" \
-        root@${
-          ctx.params.nodeIp
-        } "curl https://install.zerotier.com/ | sudo bash"`);
         return await shell.exec(`ssh -i "${key}" \
         -o "PasswordAuthentication no" \
         -o "StrictHostKeyChecking no" \
-        root@${ctx.params.nodeIp} "zerotier-cli join ${ctx.params.network};"`);
+        root@${ctx.params.nodeIp} "${ctx.params.script}"`);
       }
     }
   }
