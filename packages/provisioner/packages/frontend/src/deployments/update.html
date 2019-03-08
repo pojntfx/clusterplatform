@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Deployment "felix.pojtinger.swabia.sol" | Provisioner</title>
+  </head>
+  <body>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      }
+      textarea {
+        width: 100%;
+      }
+      label,
+      legend {
+        font-weight: bold;
+      }
+      header,
+      main {
+        max-width: 920px;
+        margin: 0 auto;
+      }
+    </style>
+    <header>
+      <h1>Provisioner</h1>
+      <nav>
+        <ul>
+          <li>
+            <a href="/deployments">
+              <b>
+                📚 Deployments
+              </b>
+            </a>
+          </li>
+          <li>
+            <a href="/distributors">🚢 Distributors</a>
+          </li>
+          <li>
+            <a href="/nodes">🖧 Nodes</a>
+          </li>
+        </ul>
+      </nav>
+      <h2>
+        <label>➕ New Deployment </label>"<input
+          type="text"
+          value="felix.pojtinger.swabia.sol"
+        />"
+      </h2>
+    </header>
+    <main>
+      <form action="/deployments" method="POST">
+        <fieldset>
+          <legend>
+            📶 Network Distributable
+          </legend>
+          <label>🚪 Embedded Script</label><br />
+          <textarea cols="30" rows="10">
+      #!ipxe
+      dhcp
+      chain http://134.209.52.222:30300/api/mainscripts/1
+      </textarea
+          ><br />
+          <fieldset>
+            <legend>🚢 Distributor Tags</legend>
+            <ul>
+              <li>
+                <input
+                  type="text"
+                  value="one.datacenter.felix.pojtinger.swabia.sol"
+                />
+                <button>➖ Remove Distributor Tag</button>
+              </li>
+              <li>
+                <input
+                  type="text"
+                  value="three.datacenter.felix.pojtinger.swabia.sol"
+                />
+                <button>➖ Remove Distributor Tag</button>
+              </li>
+            </ul>
+            <button>➕ Add Distributor Tag</button>
+          </fieldset>
+        </fieldset>
+        <fieldset>
+          <legend>📀Media Distributable</legend>
+          <label>🚪 Embedded Script</label><br />
+          <textarea cols="30" rows="10">
+      #!ipxe
+      dhcp
+      chain http://134.209.52.222:30300/api/mainscripts/1
+      </textarea
+          ><br />
+          <label>🏷 Label </label>
+          <input
+            type="text"
+            value="Felix Pojtinger, Swabia, Sol Bootmedium"
+          /><br />
+        </fieldset>
+        <label>📖 Mainscript</label><br />
+        <textarea cols="30" rows="10">
+      #!ipxe
+      menu Choose Script
+      item mainsubscriptserver_fedora29 Main Sub Script Server Fedora 29
+      choose --default mainsubscriptserver_fedora29 --timeout 3000 server &&  goto ${server}
+      :mainsubscriptserver_fedora29
+      chain http://134.209.52.222:30300/api/subscripts/1
+      </textarea
+        ><br />
+        <fieldset>
+          <legend>⚙ Subscripts</legend>
+          <br />
+          <ul>
+            <li>
+              <label>
+                Subscript 1
+              </label>
+              <button style="float: right">➖ Remove Subscript</button><br />
+              <textarea cols="30" rows="10">
+      #!ipxe
+      menu Choose Script
+      item subscript Fedora 29
+      choose --default subscript --timeout 3000 subscript && goto ${subscript}
+      :subscript
+      set base http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os
+      kernel ${base}/images/pxeboot/vmlinuz initrd=initrd.img inst.repo=${base} inst.ks=http://134.209.52.222:30300/api/kickstarts/1
+      initrd ${base}/images/pxeboot/initrd.img
+      boot
+      </textarea
+              >
+            </li>
+          </ul>
+          <button>➕ Add Subscript</button>
+        </fieldset>
+        <fieldset>
+          <legend>🔑 SSH Keys</legend>
+          <br />
+          <ul>
+            <li>
+              <label>
+                SSH Key 1
+              </label>
+              <button style="float: right">➖ Remove SSH Key</button><br />
+              <label>🔒 Private </label>
+              <input type="checkbox" /><br />
+              <label>📃 Content</label><br />
+              <textarea cols="30" rows="10">
+      ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBB69xaEXw3y8PZeV6mjkTfK8X3z/0GlWe5dzuWcccD8fVHFl6W+XZ6qN+a8h0RD6OcFbk1mYTyh8sV2KbyIFNBk= pojntfx@pojntfx-x230-fedora
+      </textarea
+              >
+            </li>
+            <li>
+              <label>
+                SSH Key 2
+              </label>
+              <button style="float: right">➖ Remove SSH Key</button><br />
+              <label>🔒 Private </label>
+              <input type="checkbox" checked /><br />
+              <label>📃 Content</label><br />
+              <textarea cols="30" rows="10">
+      -----BEGIN OPENSSH PRIVATE KEY-----
+      b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAaAAAABNlY2RzYS
+      1zaGEyLW5pc3RwMjU2AAAACG5pc3RwMjU2AAAAQQQevcWhF8N8vD2Xlepo5E3yvF98/9Bp
+      VnuXc7lnHHA/H1RxZelvl2eqjfmvIdEQ+jnBW5NZmE8ofLFdim8iBTQZAAAAuPZWcbr2Vn
+      G6AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBB69xaEXw3y8PZeV
+      6mjkTfK8X3z/0GlWe5dzuWcccD8fVHFl6W+XZ6qN+a8h0RD6OcFbk1mYTyh8sV2KbyIFNB
+      kAAAAhAOUvaCmEoMgsNL6Hl2XliKnMSvVOhXYyQqjGds21VWkKAAAAG3Bvam50ZnhAcG9q
+      bnRmeC14MjMwLWZlZG9yYQECAwQ=
+      -----END OPENSSH PRIVATE KEY-----
+      </textarea
+              >
+            </li>
+          </ul>
+          <button>➕ Add SSH Key</button>
+        </fieldset>
+        <label>🔥 Kickstart</label><br />
+        <textarea cols="30" rows="10">
+      #platform=x86, AMD64, or Intel EM64T
+      #version=DEVEL
+      # Keyboard layouts
+      keyboard us
+      # Root password
+      rootpw --plaintext asdfasdf123$$44
+      sshkey --username=root "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBB69xaEXw3y8PZeV6mjkTfK8X3z/0GlWe5dzuWcccD8fVHFl6W+XZ6qN+a8h0RD6OcFbk1mYTyh8sV2KbyIFNBk= pojntfx@pojntfx-x230-fedora"
+      # System language
+      lang en_US
+      # Reboot after installation
+      reboot
+      # System timezone
+      timezone Europe/Berlin
+      # Use text mode install
+      text
+      # Network information
+      network  --bootproto=dhcp --device=enp0s25
+      # Use network installation
+      url --url="http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os"
+      # System authorization information
+      auth  --useshadow  --passalgo=sha512
+      # Firewall configuration
+      firewall --disabled
+      # SELinux configuration
+      selinux --enforcing
+      # Do not configure the X Window System
+      skipx
+      
+      # System bootloader configuration
+      bootloader --location=mbr
+      # Clear the Master Boot Record
+      zerombr
+      # Partition clearing information
+      clearpart --all
+      # Disk partitioning information
+      part /boot --asprimary --fstype="ext4" --size=512
+      part / --asprimary --fstype="ext4" --grow --size=1
+      
+      %pre
+      curl http://134.209.52.222:30300/api/prebootscripts/1 | bash
+      %end
+      
+      %post
+      curl http://134.209.52.222:30300/api/postbootscripts/1 > /usr/local/bin/postboot.sh
+      chmod 744 /usr/local/bin/postboot.sh
+      cat << EOF > /etc/systemd/system/postboot.service
+      [Unit]
+      Description=Run once
+      Requires=network-online.target
+      After=network-online.target
+      [Service]
+      ExecStart=/usr/local/bin/postboot.sh
+      [Install]
+      WantedBy=multi-user.target
+      EOF
+      chmod 664 /etc/systemd/system/postboot.service
+      systemctl enable postboot
+      %end
+      
+      %packages
+      @standard
+      
+      %end            
+      </textarea
+        ><br />
+        <label>⏳ Preboot Script</label><br />
+        <textarea cols="30" rows="10">
+      #!/bin/bash
+      echo "This could be the preboot script!"
+      </textarea
+        ><br />
+        <label>⌛ Postboot Script</label><br />
+        <textarea cols="30" rows="10">
+      #!/bin/bash
+      sudo dnf install openssh-server -y;
+      mkdir -p ~/.ssh;
+      systemctl enable sshd;
+      ip=$(echo $(ip -4 addr show | grep -Eo "inet (addr:)?([0-9]*\.){3}[0-9]*" | grep -Eo "([0-9]*\.){3}[0-9]*" | grep -v "127.0.0.1") | cut -d " " -f 1);
+      curl --request POST "http://134.209.52.222:30300/api/localnodes?ip=${ip}&artifactId=felix.pojtinger.swabia.sol&pingable=true"              
+      </textarea
+        >
+        <button type="submit">➕ Create Deployment</button>
+      </form>
+    </main>
+  </body>
+</html>

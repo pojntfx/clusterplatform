@@ -19,9 +19,11 @@ export default {
           // syslinuxs
           "syslinux-manager.createOverwrite",
           "syslinux-manager.list",
+          "syslinux-manager.get",
           // isos
           "iso-manager.createOverwrite",
           "iso-manager.list",
+          "iso-manager.get",
           // distributors
           "distributor-manager.create",
           "distributor-manager.updateDistributor",
@@ -62,9 +64,11 @@ export default {
           // syslinuxs
           "POST /syslinuxs": "syslinux-manager.createOverwrite",
           "GET /syslinuxs": "syslinux-manager.list",
+          "GET /syslinuxs/:id": "syslinux-manager.get",
           // isos
           "POST /isos": "iso-manager.createOverwrite",
           "GET /isos": "iso-manager.list",
+          "GET /isos/:id": "iso-manager.get",
           // distributors
           "POST /distributors": "distributor-manager.create",
           "PUT /distributors/:id": "distributor-manager.updateDistributor",
