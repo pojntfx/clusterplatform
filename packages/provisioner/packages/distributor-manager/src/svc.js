@@ -15,7 +15,10 @@ export default {
   },
   actions: {
     listOverwrite: async function(ctx) {
-      const allDistributors = (await ctx.call("distributor-manager.list")).rows;
+      const allDistributors = (await ctx.call(
+        "distributor-manager.list",
+        ctx.params
+      )).rows;
       const nonPingableDistributors = [];
       for (let distributor of allDistributors) {
         const pingable = await this.broker.ping(distributor.nodeId, 1000);
@@ -28,7 +31,7 @@ export default {
           id: distributor.id
         });
       }
-      return await ctx.call("distributor-manager.list");
+      return await ctx.call("distributor-manager.list", ctx.params);
     },
     updateDistributor: {
       params: {
