@@ -1,5 +1,7 @@
 # Cluster Platform Provisioner
 
+![Cluster Platform Provisioner logo](./assets/logo.webp)
+
 Hosts as a service.
 
 ## Features
