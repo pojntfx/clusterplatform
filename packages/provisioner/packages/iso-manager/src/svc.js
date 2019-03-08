@@ -27,6 +27,7 @@ export default {
           artifactId
         });
         const jobInDb = await ctx.call("iso-manager.create", {
+          ...ctx.params,
           artifactId,
           progress: "0",
           status: "queued"
@@ -60,14 +61,32 @@ export default {
     define: {
       artifactId: Orm.STRING,
       progress: Orm.STRING,
-      status: Orm.STRING
+      status: Orm.STRING,
+      label: Orm.STRING,
+      ipxeUefiUrl: Orm.STRING,
+      ipxeBiosUrl: Orm.STRING,
+      grubImgUrl: Orm.STRING,
+      grubEfiX64Url: Orm.STRING,
+      grubEfiX86Url: Orm.STRING,
+      ldLinuxUrl: Orm.STRING,
+      isolinuxBinUrl: Orm.STRING,
+      isohdpfxBinUrl: Orm.STRING
     }
   },
   settings: {
     entityValidator: {
       artifactId: "string",
       progress: "string",
-      status: "string"
+      status: "string",
+      label: "string",
+      ipxeUefiUrl: "string",
+      ipxeBiosUrl: "string",
+      grubImgUrl: "string",
+      grubEfiX64Url: "string",
+      grubEfiX86Url: "string",
+      ldLinuxUrl: "string",
+      isolinuxBinUrl: "string",
+      isohdpfxBinUrl: "string"
     }
   }
 };

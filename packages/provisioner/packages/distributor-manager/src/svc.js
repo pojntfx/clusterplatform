@@ -35,7 +35,7 @@ export default {
         ipxePxeUefiUrl: "string",
         ipxePxeBiosUrl: "string",
         artifactId: "number",
-        id: "number",
+        id: { type: "number", convert: true },
         device: "string",
         range: "string"
       },
@@ -44,22 +44,6 @@ export default {
           id: ctx.params.id
         });
         await ctx.call("distributor-worker.update", ctx.params, {
-          nodeID: distributor.nodeId
-        });
-        return distributor;
-      }
-    },
-    updateDistributorStatus: {
-      params: {
-        id: { type: "number", convert: true },
-        artifactId: { type: "number", convert: true },
-        on: "boolean"
-      },
-      handler: async function(ctx) {
-        const distributor = await ctx.call("distributor-manager.get", {
-          id: ctx.params.id
-        });
-        await ctx.call("distributor-worker.updateStatus", ctx.params, {
           nodeID: distributor.nodeId
         });
         return distributor;

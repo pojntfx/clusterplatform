@@ -23,6 +23,7 @@ export default {
           artifactId
         });
         const jobInDb = await ctx.call("grub-manager.create", {
+          ...ctx.params,
           artifactId,
           progress: "0",
           status: "queued"
@@ -56,14 +57,24 @@ export default {
     define: {
       artifactId: Orm.STRING,
       progress: Orm.STRING,
-      status: Orm.STRING
+      status: Orm.STRING,
+      platform: Orm.STRING,
+      architecture: Orm.STRING,
+      extension: Orm.STRING,
+      label: Orm.STRING,
+      fragment: Orm.STRING
     }
   },
   settings: {
     entityValidator: {
       artifactId: "string",
       progress: "string",
-      status: "string"
+      status: "string",
+      platform: "string",
+      architecture: "string",
+      extension: "string",
+      label: "string",
+      fragment: "string"
     }
   }
 };
