@@ -6,7 +6,7 @@ Lean distribution of your platform.
 
 ### Infrastructure
 
-- [Provisioner](../provisioner/README.md): Hosts as a service
+- [Provisioner](../provisioner/README.md): Nodes as a service
 - [Runtime](../runtime/README.md): The host operating system (Fedora)
 - [Undercloud](../undercloud/README.md): Compute, networking and storage on a bare-metal/VM-level (oVirt/Ceph)
 - [Overcloud](../overcloud/README.md): Compute, networking and storage on a deployment/service/pvc level (Kubernetes)
