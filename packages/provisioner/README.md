@@ -2,7 +2,7 @@
 
 ![Cluster Platform Provisioner logo](./assets/logo.webp)
 
-Hosts as a service.
+Nodes as a service.
 
 ## Features
 
@@ -300,7 +300,7 @@ curl -H 'Content-Type: application/json' \
     'http://134.209.52.222:30300/api/sshkeys'
 ```
 
-> -"Kickstart"\*\* refers to a script that is used to automate the precloud runtime installation. It also commonly links to a prebootscript and a postbootscript.
+> - **"Kickstart"** refers to a script that is used to automate the precloud runtime installation. It also commonly links to a prebootscript and a postbootscript.
 
 ```bash
 # Create Kickstart
