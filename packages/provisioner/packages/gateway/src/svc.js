@@ -49,6 +49,8 @@ export default {
           "postbootscripts.create",
           "postbootscripts.list",
           "postbootscripts.getOverwrite",
+          // sshkey
+          "sshkey-generator.get",
           // sshkeys
           "sshkeys.create",
           "sshkeys.list",
@@ -101,6 +103,8 @@ export default {
           "POST /postbootscripts": "postbootscripts.create",
           "GET /postbootscripts": "postbootscripts.list",
           "GET /postbootscripts/:id": "postbootscripts.getOverwrite",
+          // sshkey
+          "GET /sshkey": "sshkey-generator.get",
           // sshkeys
           "POST /sshkeys": "sshkeys.create",
           "GET /sshkeys": "sshkeys.list",

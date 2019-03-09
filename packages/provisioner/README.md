@@ -213,8 +213,10 @@ curl -H 'Content-Type: application/json' \
 > - **"SSH Keys"** refers to keys for public/private key encryption.
 
 ```bash
-# Create SSH key pair
-ssh-keygen -t ecdsa -N '' -f ~/.ssh/provisioner_id
+# Get new SSH key pair
+curl -G \
+    --data-urlencode 'algorithm=ecdsa' \
+    'http://134.209.52.222:30300/api/sshkey'
 ```
 
 > - **"Public Key"** refers to a public SSH key. You may share this key to enable you to access a SSH-enabled node such as a localnode or globalnode.
@@ -423,11 +425,11 @@ curl -o 'dist.iso' \
 > - **"Node"** refers to a host that is running a precloud runtime or anything higher up the stack.
 > - **"Undercloud Runtime"** refers to an environment that runs on a node after cloud services that run on top of the precloud runtime have been installed (such as Fedora with `containerd`).
 
-#### Option 1: Distribute Precloud Runtime with the Network Distributable
+#### Option 1: Distribute Precloud Runtime with Network Distributable
 
 Plug a host into the network to which the distributor from above is connected, set it to `Network Boot` (PXEBoot) and turn it on. Note that the network will have to have a router for DHCP as the distributor works in proxy mode to prevent conflicts. If you are using virtual machines, use a bridged network and at least 1500 MB of RAM to fit the entire ramdisk. Full installation of the precloud runtime on the host and the registration of the node afterwards will take about 30 Minutes, depending on the speed of the host's internet connection.
 
-#### Option 2: Distribute Precloud Runtime with the Media Distributable
+#### Option 2: Distribute Precloud Runtime with Media Distributable
 
 Flash the ISO from above to a USB and boot from it. If you are using virtual machines, use at least 1500 MB of RAM to fit the entire ramdisk. Full installation of the precloud runtime on the host and the registration of the node afterwards will take about 30 Minutes, depending on the speed of the host's internet connection.
 

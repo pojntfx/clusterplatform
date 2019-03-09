@@ -1,0 +1,26 @@
+{
+  "name": "@clusterplatform/sshkey-generator",
+  "version": "0.0.1-alpha1",
+  "description": "",
+  "main": "src/svc.js",
+  "dependencies": {
+    "esm": "^3.2.10",
+    "moleculer": "^0.13.6",
+    "nats": "^1.2.2",
+    "async-shelljs": "^0.1.2",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Felicitas Pojtinger <felicitas@pojtinger.com>",
+  "license": "AGPL-3.0",
+  "esm": {
+    "cjs": {
+      "dedefault": true
+    }
+  }
+}

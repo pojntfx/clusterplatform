@@ -112,6 +112,12 @@ profiles:
             dockerfile: Dockerfile.dev
           sync:
             src/*.js: /opt/clusterplatform/app/src
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/sshkey-generator
+          context: packages/provisioner/packages/sshkey-generator
+          docker:
+            dockerfile: Dockerfile.dev
+          sync:
+            src/*.js: /opt/clusterplatform/app/src
         - image: registry.gitlab.com/clusterplatform/clusterplatform/localnode-manager
           context: packages/provisioner/packages/localnode-manager
           docker:
@@ -150,5 +156,6 @@ profiles:
           - packages/provisioner/packages/prebootscripts/stack.yaml
           - packages/provisioner/packages/postbootscripts/stack.yaml
           - packages/provisioner/packages/sshkeys/stack.yaml
+          - packages/provisioner/packages/sshkey-generator/stack.yaml
           - packages/provisioner/packages/localnode-manager/stack.yaml
           - packages/provisioner/packages/gateway/stack.yaml
