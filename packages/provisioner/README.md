@@ -18,9 +18,64 @@ Hosts as a service.
 
 The Cluster Platform Provisioner turns a physical or virtual host (i.e. a server, virtual machine, laptop, ...) into a locally or globally SSH accessible node by using a distributed, scalable system. You only have to run one docker container in the network that the hosts are if you are using the network distribution method or none if you are using the media distribution method; all the heavy lifting can be done in a nearly infinitly horizontally and vertically scalable Kubernetes cluster.
 
+```plaintext
++----------+
+|          |
+| Server 1 +------------+                                                             +-----------------------------------------------------+
+|          |            |                                                             |                                                     |
++----------+            |                                                             | [                                                   |
+                        |                                                             |     {                                               |
++------------+          |                                                             |         "id": 1,                                    |
+|            |          |                                                             |         "artifactId": "felix.pojtinger.swabia.sol", |
+| Computer 1 +----------+                                                             |         "ip": "192.168.178.152",                    |
+|            |          |   +-----------------------------------------------------+   |         "pingable": true                            |
++------------+          |   |                                                     |   |     },                                              |
+                        |   | [                                                   |   |     {                                               |
++-----------+           |   |     {                                               |   |         "id": 2,                                    |
+|           |           |   |         "id": 1,                                    |   |         "artifactId": "felix.pojtinger.swabia.sol", |
+| Laptop 1  +--------------->         "artifactId": "felix.pojtinger.swabia.sol", +--->         "ip": "192.168.178.102",                    |
+|           |           |   |         "nodeId": "node1+239dj293+50"               |   |         "pingable": true                            |
++-----------+           |   |     }                                               |   |     },                                              |
+                        |   | ]                                                   |   |     {                                               |
++-------------------+   |   |                                                     |   |         "id": 3,                                    |
+|                   |   |   +-----------------------------------------------------+   |         "artifactId": "felix.pojtinger.swabia.sol", |
+| Virtual Machine 1 +---+                                                             |         "ip": "192.168.178.121",                    |
+|                   |   |                                                             |         "pingable": true                            |
++-------------------+   |                                                             |     }                                               |
+                        |                                                             | ]                                                   |
++-------+               |                                                             |                                                     |
+|       |               |                                                             +-----------------------------------------------------+
+| (...) +---------------+
+|       |
++-------+
+```
+
+The following are some essential services that make up the provisioner.
+
+- **Artifact Builders**: Create artifacts
+  - [/ipxes](./packages/ipxe-manager/src/svc.js): UEFI & BIOS network bootloader compiler (queue)
+  - [/grubs](./packages/grub-manager/src/svc.js): UEFI boot media bootloader compiler (queue)
+  - [/syslinuxs](./packages/syslinux-manager/src/svc.js): BIOS boot media bootloader compiler (queue)
+- **Artifact Configurators**: Edit the artifact behaviour without re-building the artifacts
+  - [/mainscripts](./packages/mainscripts/src/svc.js): Registry for primary scripts that link to one or multiple subscripts
+  - [/subscripts](./packages/subscripts/src/svc.js): Registry for secondary scripts that contain the actual boot logic
+  - [/sshkey](./packages/sshkey-generator/src/svc.js): Generator for SSH public and private keys
+  - [/sshkeys](./packages/sshkeys/src/svc.js): Registry for public SSH keys that will allow for passwordless access of nodes
+  - [/kickstarts](./packages/kickstarts/src/svc.js): Registry for kickstart files that automate the OS installation
+  - [/prebootscripts](./packages/prebootscripts/src/svc.js): Registry for files that run before the OS installation
+  - [/postbootscripts](./packages/postbootscripts/src/svc.js): Registry for files that run after the OS installation
+- **Artifact Distributors**: Put the artifacts on to the hosts
+  - [/distributors](./packages/distributor-manager/src/svc.js): Distribute boot runtimes using the network (PXEBoot) (queue)
+  - [/isos](./packages/iso-manager/src/svc.js): Distribute boot runtimes using boot media (USB/SD/CD/DVD) (queue)
+- **Artifact Instance Managers**: Manage and register the nodes after installation
+  - [/localnodes](./packages/localnode-manager/src/svc.js): Registry for installed nodes
+- **Tooling**: Make development of the provisioner easier
+  - [builder-utils](./packages/builder-utils/src/index.js): Common functionality for all artifact compilers
+  - [insomnia](./packages/insomnia/src/workspace.json): The REST API as an Insomnia workspace
+
 ## Usage
 
-Currently, the main way of interacting with a Cluster Platform Provisioner is the REST API. If you follow the instructions below you can use any IP of and node of your Kubernetes cluster as the API Gateway endpoint; we will use `134.209.52.222` as a placeholder here.
+Currently, the main way of interacting with a Cluster Platform Provisioner is the REST API. If you follow the instructions below you can use any IP of and node of your Kubernetes cluster as the API Gateway endpoint; we will use `134.209.52.222` as a placeholder for curl here. If you prefer a full-blown REST client, take a look at the [Insomnia workspace](./packages/insomnia/src/workspace.json) and import it into [Insomnia](https://insomnia.rest/).
 A much more simple to use frontend is currently being built and can be found in [it's package](./packages/frontend/README.md).
 
 Another way of interacting with a Cluster Platform Provisioner is by using the [Moleculer](https://moleculer.services) services directly. You can use `npm install @clusterplatform/${SERVICE_PACKAGE_NAME}` and then import them as mixins to do so.
@@ -35,7 +90,7 @@ Another way of interacting with a Cluster Platform Provisioner is by using the [
 > - **"Prestart Runtime"** refers to an environment that runs on a host before it starts. Here, such an environment start the installation and configuration of the precloud runtime.
 
 ```bash
-# Deploy provisioner (skaffold.yaml is at the repo root)
+# Run provisioner development version on Kubernetes (skaffold.yaml is at the repo root)
 cd ../../
 skaffold dev -p provisioner--dev
 ```
@@ -47,7 +102,7 @@ skaffold dev -p provisioner--dev
 > - **"Distributor"** refers to a system that serves as an "exit node" for the rest of the provisioner to the network in which the hosts onto which the network distributable should be deployed. It also allows for execution of additional scripts over after the precloud runtime has been installed if they are not reachable from the provisioner/the operator, such as nodes in remote locations.
 
 ```bash
-# Deploy distributor
+# Run distributor development version on Docker
 docker run \
     -e 'TRANSPORTER=nats://134.209.52.222:30002' \
     -e 'NPM_USER=verdaccio-user' \
@@ -57,7 +112,7 @@ docker run \
     -e 'CLUSTERPLATFORM_DISTRIBUTOR_ARTIFACTID=felix.pojtinger.swabia.sol' \
     --cap-add=NET_ADMIN \
     --net=host \
-    'registry.gitlab.com/clusterplatform/clusterplatform/distributor-worker:03d8d86-dirty'
+    'registry.gitlab.com/clusterplatform/clusterplatform/distributor-worker:12f34b3'
 ```
 
 > - **"Artifact"** refers to an object managed by the provisioner such as distributors or network distributables.
@@ -232,7 +287,7 @@ curl -H 'Content-Type: application/json' \
     'http://134.209.52.222:30300/api/sshkeys'
 ```
 
-> - **"Private Key"** refers to a private SSH key. Do **not** share this key.
+> - **"Private Key"** refers to a private SSH key. Do **not** share this key. Do **not** forget the newline at the end of the key or authentication will fail.
 
 ```bash
 # Add private SSH key
@@ -469,7 +524,7 @@ curl -X PUT -H 'Content-Type: application/json' \
 
 ### Get Globalnodes
 
-Open [https://my.zerotier.com/network/1c33c1ced0d02ef9](https://my.zerotier.com/network/1c33c1ced0d02ef9) in your browser globalnode should appear there. Click the checkbox in the `Auth?` column and the node will be given an IP address; see the `Managed IPs` column. You can the join other Localnodes or your development machine into the VPN using the command you've used above which turns them into Globalnodes and enables the nodes to talk to each other.
+Open [https://my.zerotier.com/network/1c33c1ced0d02ef9](https://my.zerotier.com/network/1c33c1ced0d02ef9) in your browser; the globalnodes should appear there after some time. Click the checkbox in the `Auth?` column and the node will be given an IP address; see the `Managed IPs` column. You can the join other localnodes the operator's machine into the VPN using the command you've used above which turns them into globalnodes and enables them to communicate with each other.
 
 ## More
 
