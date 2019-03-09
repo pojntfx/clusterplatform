@@ -6,19 +6,45 @@ Hosts as a service.
 
 ## Features
 
-> TODO: Add Features
+```plaintext
++-----------------------------------------------------+                                                                         +----------------------------------------------+
+|                                                     |            +-----------------------------------------------+            |                                              |
+|                      ## Hosts                       |            |                                               |            |                  ## Nodes                    |
+|                                                     |  +------>  | Distributor(s) and other provisioner services |  +------>  |                                              |
+| (Servers, virtual machines, laptops with BIOS/UEFI) |            |                                               |            | (With local and/or global ip and SSH access) |
+|                                                     |            +-----------------------------------------------+            |                                              |
++-----------------------------------------------------+                                                                         +----------------------------------------------+
+```
+
+The Cluster Platform Provisioner turns a physical or virtual host (i.e. a server, virtual machine, laptop, ...) into a locally or globally SSH accessible node by using a distributed, scalable system. You only have to run one docker container in the network that the hosts are if you are using the network distribution method or none if you are using the media distribution method; all the heavy lifting can be done in a nearly infinitly horizontally and vertically scalable Kubernetes cluster.
 
 ## Usage
 
-### Preboot Runtime Preparation
+Currently, the main way of interacting with a Cluster Platform Provisioner is the REST API. If you follow the instructions below you can use any IP of and node of your Kubernetes cluster as the API Gateway endpoint; we will use `134.209.52.222` as a placeholder here.
+A much more simple to use frontend is currently being built and can be found in [it's package](./packages/frontend/README.md).
 
-#### Option 1: Create Network Distributable
+Another way of interacting with a Cluster Platform Provisioner is by using the [Moleculer](https://moleculer.services) services directly. You can use `npm install @clusterplatform/${SERVICE_PACKAGE_NAME}` and then import them as mixins to do so.
+
+## Tutorial
+
+### Prestart Runtime Preparation
+
+> - **"Provisioner"** refers to all services working together to form the microplatform.
+> - **"Operator"** refers to the person using the provisioner.
+> - **"Host"** refers to physical or virtual hardware (i.e. a server, virtual machine, laptop) with a 64-bit X86 processor. ARM support is planned for the future.
+> - **"Prestart Runtime"** refers to an environment that runs on a host before it starts. Here, such an environment start the installation and configuration of the precloud runtime.
 
 ```bash
-# Deploy services (skaffold.yaml is at the repo root)
+# Deploy provisioner (skaffold.yaml is at the repo root)
 cd ../../
 skaffold dev -p provisioner--dev
 ```
+
+#### Option 1: Create Network Distributable
+
+> - **"Prestart Runtime Distribution"** refers to the process of getting a system to run a prestart runtime.
+>   "Network Distributable"\*\* refers to a prestart runtime that can be distributed by a type of prestart runtime distribution that works by using the network and thus eliminates the need for boot media.
+> - **"Distributor"** refers to a system that serves as an "exit node" for the rest of the provisioner to the network in which the hosts onto which the network distributable should be deployed. It also allows for execution of additional scripts over after the precloud runtime has been installed if they are not reachable from the provisioner/the operator, such as nodes in remote locations.
 
 ```bash
 # Deploy distributor
@@ -34,8 +60,14 @@ docker run \
     'registry.gitlab.com/clusterplatform/clusterplatform/distributor-worker:03d8d86-dirty'
 ```
 
+> - **"Artifact"** refers to an object managed by the provisioner such as distributors or network distributables.
+> - **"artifactId"** refers to a unique identitifier that is used to tag artifacts.
+> - **"BIOS"** refers to Basic Input/Output System, an old way of initializing hardware during the boot process. In the case of the distributor, this or UEFI is used to select the network or media distributable.
+> - **"UEFI"** refers to the Unified Extensible Firmware Interface, the successor to the old BIOS. This is what all nearly all new hosts (except for virtual machines) use.
+> - **"Network Bootloader"** refers to iPXE, a free/libre and open source system that, in the case of the provisioner, enables a host to run network bootloader scripts (iPXE scripts) such as mainscripts.
+
 ```bash
-# Create UEFI iPXE for distributor
+# Create UEFI iPXE network bootloader for distributor
 curl -H 'Content-Type: application/json' \
     -d '{
     "script": "#!ipxe\ndhcp\nchain http://134.209.52.222:30300/api/mainscripts/1",
@@ -47,7 +79,7 @@ curl -H 'Content-Type: application/json' \
 ```
 
 ```bash
-# Create BIOS iPXE for distributor
+# Create BIOS iPXE network bootloader for distributor
 curl -H 'Content-Type: application/json' \
     -d '{
     "script": "#!ipxe\ndhcp\nchain http://134.209.52.222:30300/api/mainscripts/1",
@@ -60,14 +92,10 @@ curl -H 'Content-Type: application/json' \
 
 #### Option 2: Create Media Distributable
 
-```bash
-# Deploy services (skaffold.yaml is at the repo root)
-cd ../../
-skaffold dev -p provisioner--dev
-```
+> - **"Media Bootloader"** refers to either GRUB (for UEFI) or SYSLINUX (for BIOS), two free/libre and open source systems that enable a host to run media bootloader scripts (GRUB/SYSLINUX scripts) to, in the case of the provisioner, boot network bootloaders.
 
 ```bash
-# Create UEFI iPXE for ISO
+# Create UEFI iPXE network bootloader for ISO
 curl -H 'Content-Type: application/json' \
     -d '{
     "script": "#!ipxe\ndhcp\nchain http://134.209.52.222:30300/api/mainscripts/1",
@@ -79,7 +107,7 @@ curl -H 'Content-Type: application/json' \
 ```
 
 ```bash
-# Create BIOS iPXE for ISO
+# Create BIOS iPXE network bootloader for ISO
 curl -H 'Content-Type: application/json' \
     -d '{
     "script": "#!ipxe\ndhcp\nchain http://134.209.52.222:30300/api/mainscripts/1",
@@ -91,7 +119,7 @@ curl -H 'Content-Type: application/json' \
 ```
 
 ```bash
-# Create GRUB IMG for ISO
+# Create GRUB media bootloader IMG for ISO
 curl -H 'Content-Type: application/json' \
     -d '{
     "label": "Cluster Platform Provisioner ISO",
@@ -104,7 +132,7 @@ curl -H 'Content-Type: application/json' \
 ```
 
 ```bash
-# Create GRUB UEFI x64 for ISO
+# Create GRUB media bootloader UEFI x64 for ISO
 curl -H 'Content-Type: application/json' \
     -d '{
     "label": "Cluster Platform Provisioner ISO",
@@ -117,7 +145,7 @@ curl -H 'Content-Type: application/json' \
 ```
 
 ```bash
-# Create GRUB UEFI x86 for ISO
+# Create GRUB media bootloader UEFI x86 for ISO
 curl -H 'Content-Type: application/json' \
     -d '{
     "label": "Cluster Platform Provisioner ISO",
@@ -130,7 +158,7 @@ curl -H 'Content-Type: application/json' \
 ```
 
 ```bash
-# Create SYSLINUX Ldlinux for ISO
+# Create SYSLINUX media bootloader Ldlinux for ISO
 curl -H 'Content-Type: application/json' \
     -d '{
     "fragment": "ldlinux.c32"
@@ -139,7 +167,7 @@ curl -H 'Content-Type: application/json' \
 ```
 
 ```bash
-# Create SYSLINUX IsolinuxBin for ISO
+# Create SYSLINUX media bootloader IsolinuxBin for ISO
 curl -H 'Content-Type: application/json' \
     -d '{
     "fragment": "isolinux.bin"
@@ -148,13 +176,193 @@ curl -H 'Content-Type: application/json' \
 ```
 
 ```bash
-# Create SYSLINUX IsohdpfxBin for ISO
+# Create SYSLINUX media bootloader IsohdpfxBin for ISO
 curl -H 'Content-Type: application/json' \
     -d '{
     "fragment": "isohdpfx.bin"
 }' \
     'http://134.209.52.222:30300/api/syslinuxs'
 ```
+
+### Prestart Runtime Configuration
+
+> - **"Prestart Runtime Configuration"** refers to the process of creating and/or deploying network bootloader scripts.
+> - **"Embedded Script"** refers to a network bootloader script that is embedded into the network bootloader itself. Such a script is mostly used for chaining (loading) a mainscript and not intended to be changed all that often.
+> - **"Mainscript"** refers to the primary network bootloader script that is being chained by the embedded script. It is commonly used to provide a boot menu to enable the selection of multiple subscripts.
+
+```bash
+# Create Mainscript
+curl -H 'Content-Type: application/json' \
+    -d '{
+    "text": "#!ipxe\nmenu Choose Script\nitem mainsubscriptserver_fedora29 Main Sub Script Server Fedora 29\nchoose --default mainsubscriptserver_fedora29 --timeout 3000 server && goto ${server}\n:mainsubscriptserver_fedora29\nchain http://134.209.52.222:30300/api/subscripts/1"
+}' \
+    'http://134.209.52.222:30300/api/mainscripts'
+```
+
+> - **"Subscript"** refers to a secondary (or nearly infinitly nested) network bootloader script that is commonly being chained by a mainscript.
+
+```bash
+# Create Subscript
+curl -H 'Content-Type: application/json' \
+    -d '{
+    "text": "#!ipxe\nmenu Choose Script\nitem subscript Fedora 29\nchoose --default subscript --timeout 3000 subscript && goto ${subscript}\n:subscript\nset base http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\nkernel ${base}/images/pxeboot/vmlinuz initrd=initrd.img inst.repo=${base} inst.ks=http://134.209.52.222:30300/api/kickstarts/1\ninitrd ${base}/images/pxeboot/initrd.img\nboot"
+}' \
+    'http://134.209.52.222:30300/api/subscripts'
+```
+
+> - **"SSH Keys"** refers to keys for public/private key encryption.
+
+```bash
+# Create SSH key pair
+ssh-keygen -t ecdsa -N '' -f ~/.ssh/provisioner_id
+```
+
+> - **"Public Key"** refers to a public SSH key. You may share this key to enable you to access a SSH-enabled node such as a localnode or globalnode.
+
+```bash
+# Add public SSH key
+curl -H 'Content-Type: application/json' \
+    -d '{
+    "text": "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBB69xaEXw3y8PZeV6mjkTfK8X3z/0GlWe5dzuWcccD8fVHFl6W+XZ6qN+a8h0RD6OcFbk1mYTyh8sV2KbyIFNBk= pojntfx@pojntfx-x230-fedora\n",
+    "artifactId": "felix.pojtinger.swabia.sol",
+    "private": false
+}' \
+    'http://134.209.52.222:30300/api/sshkeys'
+```
+
+> - **"Private Key"** refers to a private SSH key. Do **not** share this key.
+
+```bash
+# Add private SSH key
+curl -H 'Content-Type: application/json' \
+    -d '{
+    "text": "-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAaAAAABNlY2RzYS\n1zaGEyLW5pc3RwMjU2AAAACG5pc3RwMjU2AAAAQQQevcWhF8N8vD2Xlepo5E3yvF98/9Bp\nVnuXc7lnHHA/H1RxZelvl2eqjfmvIdEQ+jnBW5NZmE8ofLFdim8iBTQZAAAAuPZWcbr2Vn\nG6AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBB69xaEXw3y8PZeV\n6mjkTfK8X3z/0GlWe5dzuWcccD8fVHFl6W+XZ6qN+a8h0RD6OcFbk1mYTyh8sV2KbyIFNB\nkAAAAhAOUvaCmEoMgsNL6Hl2XliKnMSvVOhXYyQqjGds21VWkKAAAAG3Bvam50ZnhAcG9q\nbnRmeC14MjMwLWZlZG9yYQECAwQ\n-----END OPENSSH PRIVATE KEY-----\n",
+    "artifactId": "felix.pojtinger.swabia.sol",
+    "private": true
+}' \
+    'http://134.209.52.222:30300/api/sshkeys'
+```
+
+> -"Kickstart"\*\* refers to a script that is used to automate the precloud runtime installation. It also commonly links to a prebootscript and a postbootscript.
+
+```bash
+# Create Kickstart
+curl -H 'Content-Type: application/json' \
+    -d '{
+    "text": "#platform=x86, AMD64, or Intel EM64T\n#version=DEVEL\n# Keyboard layouts\nkeyboard us\n# Root password\nrootpw --plaintext asdfasdf123$$44\nsshkey --username=root \"ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBB69xaEXw3y8PZeV6mjkTfK8X3z/0GlWe5dzuWcccD8fVHFl6W+XZ6qN+a8h0RD6OcFbk1mYTyh8sV2KbyIFNBk= pojntfx@pojntfx-x230-fedora\"\n# System language\nlang en_US\n# Reboot after installation\nreboot\n# System timezone\ntimezone Europe/Berlin\n# Use text mode install\ntext\n# Network information\nnetwork  --bootproto=dhcp --device=enp0s25\n# Use network installation\nurl --url=\"http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\"\n# System authorization information\nauth  --useshadow  --passalgo=sha512\n# Firewall configuration\nfirewall --disabled\n# SELinux configuration\nselinux --enforcing\n# Do not configure the X Window System\nskipx\n\n# System bootloader configuration\nbootloader --location=mbr\n# Clear the Master Boot Record\nzerombr\n# Partition clearing information\nclearpart --all\n# Disk partitioning information\npart /boot --asprimary --fstype=\"ext4\" --size=512\npart / --asprimary --fstype=\"ext4\" --grow --size=1\n\n%pre\ncurl http://134.209.52.222:30300/api/prebootscripts/1 | bash\n%end\n\n%post\ncurl http://134.209.52.222:30300/api/postbootscripts/1 > /usr/local/bin/postboot.sh\nchmod 744 /usr/local/bin/postboot.sh\ncat << EOF > /etc/systemd/system/postboot.service\n[Unit]\nDescription=Run once\nRequires=network-online.target\nAfter=network-online.target\n[Service]\nExecStart=/usr/local/bin/postboot.sh\n[Install]\nWantedBy=multi-user.target\nEOF\nchmod 664 /etc/systemd/system/postboot.service\nsystemctl enable postboot\n%end\n\n%packages\n@standard\n\n%end            \n"
+}' \
+    'http://134.209.52.222:30300/api/kickstarts'
+```
+
+> - **"Prebootscript"** refers to a script, commonly a shell script, that is run before the precloud runtime installer starts
+
+```bash
+# Create Prebootscript
+curl -H 'Content-Type: application/json' \
+    -d '{
+    "text": "#!/bin/bash\necho \"This could be the preboot script!\"\n"
+}' \
+    'http://134.209.52.222:30300/api/prebootscripts'
+```
+
+> - **"Postbootscript"** refers to a script, commonly a shell script, that is run after the precloud runtime installer finished
+
+```bash
+# Create Postbootscript
+curl -H 'Content-Type: application/json' \
+    -d '{
+    "text": "#!/bin/bash\nsudo dnf install openssh-server -y\nmkdir -p ~/.ssh\nsystemctl enable sshd\nip=$(echo $(ip -4 addr show | grep -Eo \"inet (addr:)?([0-9]*.){3}[0-9]*\" | grep -Eo \"([0-9]*.){3}[0-9]*\" | grep -v \"127.0.0.1\") | cut -d \" \" -f 1)\ncurl --request POST \"http://134.209.52.222:30300/api/localnodes?ip=${ip}&artifactId=felix.pojtinger.swabia.sol&pingable=true\"\n"
+}' \
+    'http://134.209.52.222:30300/api/postbootscripts'
+```
+
+> - **"Queue"** refers to a system that consists of managers that schedule jobs to executed by workers. In the case of the provisioner, it is used to build artifacts in the background or, more generally, to do operations that can take a long time. For such artifacts you should check whether they are actually done (have a `progress` of `100`) before continuing.
+
+```bash
+# Get Mainscript
+curl 'http://134.209.52.222:30300/api/mainscripts/1'
+# Get Subscript
+curl 'http://134.209.52.222:30300/api/subscripts/1'
+```
+
+```bash
+# Get public SSH key
+curl 'http://134.209.52.222:30300/api/sshkeys/1'
+# Get private SSH key
+curl 'http://134.209.52.222:30300/api/sshkeys/2'
+```
+
+```bash
+# Get Kickstart
+curl 'http://134.209.52.222:30300/api/kickstarts/1'
+```
+
+```bash
+# Get Prebootscript
+curl 'http://134.209.52.222:30300/api/prebootscripts/1'
+# Get Postbootscripts
+curl 'http://134.209.52.222:30300/api/postbootscripts/1'
+```
+
+### Prestart Runtime Distribution
+
+#### Option 1: Distribute Network Distributable
+
+```bash
+# Get UEFI iPXE status
+curl 'http://134.209.52.222:30300/api/ipxes'
+# Get BIOS iPXE status
+curl 'http://134.209.52.222:30300/api/ipxes'
+```
+
+```bash
+# Get distributors
+curl -G \
+    --data-urlencode 'search=felix.pojtinger.swabia.sol' \
+    --data-urlencode 'searchFields=artifactId' \
+    'http://134.209.52.222:30300/api/distributors'
+```
+
+> - **"Update Distributor"** refers to the process of distributing the network bootloaders to the distributors by scheduling a job on a distributor to download them.
+
+```bash
+# Update UEFI and BIOS iPXEs on distributor
+curl -X PUT -H 'Content-Type: application/json' \
+    -d '{
+    "ipxePxeUefiUrl": "http://134.209.52.222:30900/ipxes/bffaf7bb-b52f-4b19-99ba-d7d4fa25b28b/ipxe.efi",
+    "ipxePxeBiosUrl": "http://134.209.52.222:30900/ipxes/cf6de9eb-2079-4708-98fc-6264f2a9c9af/ipxe.kpxe",
+    "artifactId": 1,
+    "device": "enp0s25",
+    "range": "192.168.178.1"
+}' \
+    'http://134.209.52.222:30300/api/distributors/1'
+```
+
+> - **"Update Distributor Status"** refers to the process of starting/stopping distributor-internal services that enable the distribution of network distributables.
+
+```bash
+# Update distributor status to off
+curl -X PUT -H 'Content-Type: application/json' \
+    -d '{
+    "on": false,
+    "artifactId": 1
+}' \
+    'http://134.209.52.222:30300/api/distributors/1/status'
+```
+
+```bash
+# Update distributor status to on
+curl -X PUT -H 'Content-Type: application/json' \
+    -d '{
+    "on": true,
+    "artifactId": 1
+}' \
+    'http://134.209.52.222:30300/api/distributors/1/status'
+```
+
+#### Option 2: Distribute Media Distributable
+
+> - **"Media Distributable"** refers to a prestart runtime that can be distributed by a type of prestart runtime distribution that uses boot media, such as USB sticks or DVDs.
 
 ```bash
 # Get UEFI iPXE status
@@ -198,161 +406,6 @@ curl -H 'Content-Type: application/json' \
     'http://134.209.52.222:30300/api/isos'
 ```
 
-### Preboot Runtime Configuration
-
-```bash
-# Create Mainscript
-curl -H 'Content-Type: application/json' \
-    -d '{
-    "text": "#!ipxe\nmenu Choose Script\nitem mainsubscriptserver_fedora29 Main Sub Script Server Fedora 29\nchoose --default mainsubscriptserver_fedora29 --timeout 3000 server && goto ${server}\n:mainsubscriptserver_fedora29\nchain http://134.209.52.222:30300/api/subscripts/1"
-}' \
-    'http://134.209.52.222:30300/api/mainscripts'
-```
-
-```bash
-# Create Subscript
-curl -H 'Content-Type: application/json' \
-    -d '{
-    "text": "#!ipxe\nmenu Choose Script\nitem subscript Fedora 29\nchoose --default subscript --timeout 3000 subscript && goto ${subscript}\n:subscript\nset base http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\nkernel ${base}/images/pxeboot/vmlinuz initrd=initrd.img inst.repo=${base} inst.ks=http://134.209.52.222:30300/api/kickstarts/1\ninitrd ${base}/images/pxeboot/initrd.img\nboot"
-}' \
-    'http://134.209.52.222:30300/api/subscripts'
-```
-
-```bash
-# Create SSH key pair
-ssh-keygen -t ecdsa -N '' -f ~/.ssh/provisioner_id
-```
-
-```bash
-# Add public SSH key
-curl -H 'Content-Type: application/json' \
-    -d '{
-    "text": "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBB69xaEXw3y8PZeV6mjkTfK8X3z/0GlWe5dzuWcccD8fVHFl6W+XZ6qN+a8h0RD6OcFbk1mYTyh8sV2KbyIFNBk= pojntfx@pojntfx-x230-fedora\n",
-    "artifactId": "felix.pojtinger.swabia.sol",
-    "private": false
-}' \
-    'http://134.209.52.222:30300/api/sshkeys'
-```
-
-```bash
-# Add private SSH key
-curl -H 'Content-Type: application/json' \
-    -d '{
-    "text": "-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAaAAAABNlY2RzYS\n1zaGEyLW5pc3RwMjU2AAAACG5pc3RwMjU2AAAAQQQevcWhF8N8vD2Xlepo5E3yvF98/9Bp\nVnuXc7lnHHA/H1RxZelvl2eqjfmvIdEQ+jnBW5NZmE8ofLFdim8iBTQZAAAAuPZWcbr2Vn\nG6AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBB69xaEXw3y8PZeV\n6mjkTfK8X3z/0GlWe5dzuWcccD8fVHFl6W+XZ6qN+a8h0RD6OcFbk1mYTyh8sV2KbyIFNB\nkAAAAhAOUvaCmEoMgsNL6Hl2XliKnMSvVOhXYyQqjGds21VWkKAAAAG3Bvam50ZnhAcG9q\nbnRmeC14MjMwLWZlZG9yYQECAwQ\n-----END OPENSSH PRIVATE KEY-----\n",
-    "artifactId": "felix.pojtinger.swabia.sol",
-    "private": true
-}' \
-    'http://134.209.52.222:30300/api/sshkeys'
-```
-
-```bash
-# Create Kickstart
-curl -H 'Content-Type: application/json' \
-    -d '{
-    "text": "#platform=x86, AMD64, or Intel EM64T\n#version=DEVEL\n# Keyboard layouts\nkeyboard us\n# Root password\nrootpw --plaintext asdfasdf123$$44\nsshkey --username=root \"ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBB69xaEXw3y8PZeV6mjkTfK8X3z/0GlWe5dzuWcccD8fVHFl6W+XZ6qN+a8h0RD6OcFbk1mYTyh8sV2KbyIFNBk= pojntfx@pojntfx-x230-fedora\"\n# System language\nlang en_US\n# Reboot after installation\nreboot\n# System timezone\ntimezone Europe/Berlin\n# Use text mode install\ntext\n# Network information\nnetwork  --bootproto=dhcp --device=enp0s25\n# Use network installation\nurl --url=\"http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\"\n# System authorization information\nauth  --useshadow  --passalgo=sha512\n# Firewall configuration\nfirewall --disabled\n# SELinux configuration\nselinux --enforcing\n# Do not configure the X Window System\nskipx\n\n# System bootloader configuration\nbootloader --location=mbr\n# Clear the Master Boot Record\nzerombr\n# Partition clearing information\nclearpart --all\n# Disk partitioning information\npart /boot --asprimary --fstype=\"ext4\" --size=512\npart / --asprimary --fstype=\"ext4\" --grow --size=1\n\n%pre\ncurl http://134.209.52.222:30300/api/prebootscripts/1 | bash\n%end\n\n%post\ncurl http://134.209.52.222:30300/api/postbootscripts/1 > /usr/local/bin/postboot.sh\nchmod 744 /usr/local/bin/postboot.sh\ncat << EOF > /etc/systemd/system/postboot.service\n[Unit]\nDescription=Run once\nRequires=network-online.target\nAfter=network-online.target\n[Service]\nExecStart=/usr/local/bin/postboot.sh\n[Install]\nWantedBy=multi-user.target\nEOF\nchmod 664 /etc/systemd/system/postboot.service\nsystemctl enable postboot\n%end\n\n%packages\n@standard\n\n%end            \n"
-}' \
-    'http://134.209.52.222:30300/api/kickstarts'
-```
-
-```bash
-# Create Prebootscript
-curl -H 'Content-Type: application/json' \
-    -d '{
-    "text": "#!/bin/bash\necho \"This could be the preboot script!\"\n"
-}' \
-    'http://134.209.52.222:30300/api/prebootscripts'
-```
-
-```bash
-# Create Postbootscript
-curl -H 'Content-Type: application/json' \
-    -d '{
-    "text": "#!/bin/bash\nsudo dnf install openssh-server -y\nmkdir -p ~/.ssh\nsystemctl enable sshd\nip=$(echo $(ip -4 addr show | grep -Eo \"inet (addr:)?([0-9]*.){3}[0-9]*\" | grep -Eo \"([0-9]*.){3}[0-9]*\" | grep -v \"127.0.0.1\") | cut -d \" \" -f 1)\ncurl --request POST \"http://134.209.52.222:30300/api/localnodes?ip=${ip}&artifactId=felix.pojtinger.swabia.sol&pingable=true\"\n"
-}' \
-    'http://134.209.52.222:30300/api/postbootscripts'
-
-```
-
-```bash
-# Get Mainscript
-curl 'http://134.209.52.222:30300/api/mainscripts/1'
-# Get Subscript
-curl 'http://134.209.52.222:30300/api/subscripts/1'
-```
-
-```bash
-# Get public SSH key
-curl 'http://134.209.52.222:30300/api/sshkeys/1'
-# Get private SSH key
-curl 'http://134.209.52.222:30300/api/sshkeys/2'
-```
-
-```bash
-# Get Kickstart
-curl 'http://134.209.52.222:30300/api/kickstarts/1'
-```
-
-```bash
-# Get Prebootscript
-curl 'http://134.209.52.222:30300/api/prebootscripts/1'
-# Get Postbootscripts
-curl 'http://134.209.52.222:30300/api/postbootscripts/1'
-```
-
-### Preboot Runtime Distribution
-
-#### Option 1: Distribute Network Distributable
-
-```bash
-# Get UEFI iPXE status
-curl 'http://134.209.52.222:30300/api/ipxes'
-# Get BIOS iPXE status
-curl 'http://134.209.52.222:30300/api/ipxes'
-```
-
-```bash
-# Get distributors
-curl -G \
-    --data-urlencode 'search=felix.pojtinger.swabia.sol' \
-    --data-urlencode 'searchFields=artifactId' \
-    'http://134.209.52.222:30300/api/distributors'
-```
-
-```bash
-# Update UEFI and BIOS iPXEs on distributor
-curl -X PUT -H 'Content-Type: application/json' \
-    -d '{
-    "ipxePxeUefiUrl": "http://134.209.52.222:30900/ipxes/bffaf7bb-b52f-4b19-99ba-d7d4fa25b28b/ipxe.efi",
-    "ipxePxeBiosUrl": "http://134.209.52.222:30900/ipxes/cf6de9eb-2079-4708-98fc-6264f2a9c9af/ipxe.kpxe",
-    "artifactId": 1,
-    "device": "enp0s25",
-    "range": "192.168.178.1"
-}' \
-    'http://134.209.52.222:30300/api/distributors/1'
-```
-
-```bash
-# Update distributor status to off
-curl -X PUT -H 'Content-Type: application/json' \
-    -d '{
-    "on": false,
-    "artifactId": 1
-}' \
-    'http://134.209.52.222:30300/api/distributors/1/status'
-```
-
-```bash
-# Update distributor status to on
-curl -X PUT -H 'Content-Type: application/json' \
-    -d '{
-    "on": true,
-    "artifactId": 1
-}' \
-    'http://134.209.52.222:30300/api/distributors/1/status'
-```
-
-#### Option 2: Distribute Media Distributable
-
 ```bash
 # Get ISO status
 curl 'http://134.209.52.222:30300/api/isos/1'
@@ -366,8 +419,9 @@ curl -o 'dist.iso' \
 
 ### Precloud Runtime Distribution
 
-> "Precloud Runtime" refers to the bare operating system (i.e. Fedora) before the distribution of cloud software (i.e. Kubernetes + KubeVirt") turns it into a "Undercloud Runtime".
-> "Host" refers to the physical/virtual machine running either nothing or a Preboot Runtime, "Node" to the physical/virtual machine running a Precloud Runtime; more precisely, the official naming scheme calls nodes running Precloud Runtimes without a VPN connection (they are not yet reachable from outside the network in which the distributor resides) "Localnodes".
+> - **"Precloud Runtime"** refers to an environment that runs on a node after the prestart runtime has configured and installed the bare operating system (such as Fedora).
+> - **"Node"** refers to a host that is running a precloud runtime or anything higher up the stack.
+> - **"Undercloud Runtime"** refers to an environment that runs on a node after cloud services that run on top of the precloud runtime have been installed (such as Fedora with `containerd`).
 
 #### Option 1: Distribute Precloud Runtime with the Network Distributable
 
@@ -378,6 +432,8 @@ Plug a host into the network to which the distributor from above is connected, s
 Flash the ISO from above to a USB and boot from it. If you are using virtual machines, use at least 1500 MB of RAM to fit the entire ramdisk. Full installation of the precloud runtime on the host and the registration of the node afterwards will take about 30 Minutes, depending on the speed of the host's internet connection.
 
 ### Get Localnodes
+
+> - **"Localnode"** refers to a node that is reachable from other localnodes in the same network as a distributor, but not necessarly from the operator.
 
 ```bash
 # Get Localnodes
@@ -391,9 +447,14 @@ curl 'http://134.209.52.222:30300/api/localnodes/1'
 
 ### Create Globalnode from Localnode
 
-> "Globalnode" refers to a "Localnode" that has been connected to a VPN and is thus reachable from outside the network in which the distributor resides.
+> - **"Postinstallscript"** refers to a script (commonly a shell script) that can be run on a localnode from a distributor using SSH, which makes it possible to execute scripts on localnodes that are not reachable by the operator but reachable from a distributor. Such scripts are commonly used to run the commands necessary to join a localnode to a VPN.
+> - **"VPN"** refers to a virtual private network, a virtual network that allows globalnodes and/or the operator to connect to each other as though they were connected to the same ethernet switch.
+> - **"Globalnode"** refers to a node that is reachable from any other globalnode connected to the same VPN.
+> - **"Undercloud"** refers to one or multiple undercloud runtimes providing an abstract system atop the precloud runtime (such as Kubernetes and KubeVirt).
+> - **"Overcloud Runtime"** refers to an environment that runs on top of an undercloud (such as Fedora).
+> - **"Overcloud"** refers to one or multiple overcloud runtimes providing an abstract system atop the undercloud runtime (such as Kubernetes)
 
-It is possible to execute an arbitrary command as root on a localnode using the distributors and SSH. Here, we are going to use this to create a Globalnode, but the possibilities are endless. First, create a VPN using free/libre and open source [ZeroTier](https://zerotier.com). Then, copy it's network ID below to join the node into the network. Note that this uses the node's tag and assumes a working distributor with the node's tag is in the node's network.
+It is possible to execute an arbitrary command as root on a localnode using the distributors and SSH. Here, we are going to use this to create a Globalnode, but the possibilities are endless. First, create a VPN using free/libre and open source [ZeroTier](https://zerotier.com). Then, copy it's network ID below to join the node into the network. Note that this uses the node's artifactId and assumes a working distributor with the node's artifactId is in the node's network.
 
 ```bash
 # Create Globalnode from Localnode
