@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sshkey-generator
+  name: sshkeys
 spec:
   selector:
     matchLabels:
-      app: sshkey-generator
+      app: sshkeys
   template:
     metadata:
       labels:
-        app: sshkey-generator
+        app: sshkeys
     spec:
       containers:
-        - name: sshkey-generator
-          image: registry.gitlab.com/clusterplatform/clusterplatform/sshkey-generator.dev
+        - name: sshkeys
+          image: registry.gitlab.com/clusterplatform/clusterplatform/sshkeys.prod
           resources:
             limits:
-              memory: 200Mi
-              cpu: 200m
+              memory: 100Mi
+              cpu: 100m
           envFrom:
             - configMapRef:
                 name: nats
             - configMapRef:
-                name: verdaccio
+                name: postgres

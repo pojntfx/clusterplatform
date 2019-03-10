@@ -58,12 +58,6 @@ profiles:
             dockerfile: Dockerfile.dev
           sync:
             "**/*.js": .
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/bootruntime.dev
-          context: packages/provisioner/packages/bootruntime
-          docker:
-            dockerfile: Dockerfile.dev
-          sync:
-            "**/*.js": .
         - image: registry.gitlab.com/clusterplatform/clusterplatform/distributor-manager.dev
           context: packages/provisioner/packages/distributor-manager
           docker:
@@ -112,8 +106,8 @@ profiles:
             dockerfile: Dockerfile.dev
           sync:
             "**/*.js": .
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/sshkey-generator.dev
-          context: packages/provisioner/packages/sshkey-generator
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/sshkey-worker.dev
+          context: packages/provisioner/packages/sshkey-worker
           docker:
             dockerfile: Dockerfile.dev
           sync:
@@ -139,3 +133,90 @@ profiles:
           - packages/provisioner/packages/postgres/stack.yaml
           - packages/provisioner/packages/redis/stack.yaml
           - packages/provisioner/packages/verdaccio/stack.yaml
+  - name: provisioner--prod
+    build:
+      artifacts:
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-manager.prod
+          context: packages/provisioner/packages/ipxe-manager
+          docker:
+            dockerfile: Dockerfile.prod
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-worker.prod
+          context: packages/provisioner/packages/ipxe-worker
+          docker:
+            dockerfile: Dockerfile.prod
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/grub-manager.prod
+          context: packages/provisioner/packages/grub-manager
+          docker:
+            dockerfile: Dockerfile.prod
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/grub-worker.prod
+          context: packages/provisioner/packages/grub-worker
+          docker:
+            dockerfile: Dockerfile.prod
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/syslinux-manager.prod
+          context: packages/provisioner/packages/syslinux-manager
+          docker:
+            dockerfile: Dockerfile.prod
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/syslinux-worker.prod
+          context: packages/provisioner/packages/syslinux-worker
+          docker:
+            dockerfile: Dockerfile.prod
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/iso-manager.prod
+          context: packages/provisioner/packages/iso-manager
+          docker:
+            dockerfile: Dockerfile.prod
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/iso-worker.prod
+          context: packages/provisioner/packages/iso-worker
+          docker:
+            dockerfile: Dockerfile.prod
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/distributor-manager.prod
+          context: packages/provisioner/packages/distributor-manager
+          docker:
+            dockerfile: Dockerfile.prod
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/distributor-worker.prod
+          context: packages/provisioner/packages/distributor-worker
+          docker:
+            dockerfile: Dockerfile.prod
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/mainscripts.prod
+          context: packages/provisioner/packages/mainscripts
+          docker:
+            dockerfile: Dockerfile.prod
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/subscripts.prod
+          context: packages/provisioner/packages/subscripts
+          docker:
+            dockerfile: Dockerfile.prod
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/kickstarts.prod
+          context: packages/provisioner/packages/kickstarts
+          docker:
+            dockerfile: Dockerfile.prod
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/prebootscripts.prod
+          context: packages/provisioner/packages/prebootscripts
+          docker:
+            dockerfile: Dockerfile.prod
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/postbootscripts.prod
+          context: packages/provisioner/packages/postbootscripts
+          docker:
+            dockerfile: Dockerfile.prod
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/sshkeys.prod
+          context: packages/provisioner/packages/sshkeys
+          docker:
+            dockerfile: Dockerfile.prod
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/sshkey-worker.prod
+          context: packages/provisioner/packages/sshkey-worker
+          docker:
+            dockerfile: Dockerfile.prod
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/localnode-manager.prod
+          context: packages/provisioner/packages/localnode-manager
+          docker:
+            dockerfile: Dockerfile.prod
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/gateway.prod
+          context: packages/provisioner/packages/gateway
+          docker:
+            dockerfile: Dockerfile.prod
+    deploy:
+      kubectl:
+        manifests:
+          - packages/provisioner/packages/*/*.prod.yaml
+          - packages/provisioner/packages/minio/stack.yaml
+          - packages/provisioner/packages/nats/stack.yaml
+          - packages/provisioner/packages/postgres/stack.yaml
+          - packages/provisioner/packages/redis/stack.yaml

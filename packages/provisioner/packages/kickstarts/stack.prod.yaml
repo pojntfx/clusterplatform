@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kickstarts
+spec:
+  selector:
+    matchLabels:
+      app: kickstarts
+  template:
+    metadata:
+      labels:
+        app: kickstarts
+    spec:
+      containers:
+        - name: kickstarts
+          image: registry.gitlab.com/clusterplatform/clusterplatform/kickstarts.prod
+          resources:
+            limits:
+              memory: 100Mi
+              cpu: 100m
+          envFrom:
+            - configMapRef:
+                name: nats
+            - configMapRef:
+                name: postgres

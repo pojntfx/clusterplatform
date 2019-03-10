@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iso-manager
+spec:
+  selector:
+    matchLabels:
+      app: iso-manager
+  template:
+    metadata:
+      labels:
+        app: iso-manager
+    spec:
+      containers:
+        - name: iso-manager
+          image: registry.gitlab.com/clusterplatform/clusterplatform/iso-manager.prod
+          resources:
+            limits:
+              memory: 100Mi
+              cpu: 100m
+          envFrom:
+            - configMapRef:
+                name: nats
+            - configMapRef:
+                name: redis
+            - configMapRef:
+                name: postgres

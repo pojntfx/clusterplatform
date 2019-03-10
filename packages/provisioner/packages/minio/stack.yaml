@@ -66,7 +66,7 @@ kind: ConfigMap
 metadata:
   name: minio-public
 data:
-  MINIO_ENDPOINT: "142.93.30.63"
+  MINIO_ENDPOINT: "alpha.sandbox.provisioner.alphahorizon.io"
   MINIO_PORT: "30900"
   MINIO_REGION: us-east-1
   MINIO_BUCKET: ipxes

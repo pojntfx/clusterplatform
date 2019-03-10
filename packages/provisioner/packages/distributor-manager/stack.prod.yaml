@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: distributor-manager
+spec:
+  selector:
+    matchLabels:
+      app: distributor-manager
+  template:
+    metadata:
+      labels:
+        app: distributor-manager
+    spec:
+      containers:
+        - name: distributor-manager
+          image: registry.gitlab.com/clusterplatform/clusterplatform/distributor-manager.prod
+          resources:
+            limits:
+              memory: 100Mi
+              cpu: 100m
+          envFrom:
+            - configMapRef:
+                name: nats
+            - configMapRef:
+                name: postgres

@@ -55,4 +55,4 @@ kind: ConfigMap
 metadata:
   name: nats-public
 data:
-  TRANSPORTER: nats://142.93.30.63:30002
+  TRANSPORTER: nats://alpha.sandbox.provisioner.alphahorizon.io:30002

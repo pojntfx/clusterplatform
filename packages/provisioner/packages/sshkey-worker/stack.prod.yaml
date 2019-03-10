@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sshkey-worker
+spec:
+  selector:
+    matchLabels:
+      app: sshkey-worker
+  template:
+    metadata:
+      labels:
+        app: sshkey-worker
+    spec:
+      containers:
+        - name: sshkey-worker
+          image: registry.gitlab.com/clusterplatform/clusterplatform/sshkey-worker.prod
+          resources:
+            limits:
+              memory: 100Mi
+              cpu: 100m
+          envFrom:
+            - configMapRef:
+                name: nats

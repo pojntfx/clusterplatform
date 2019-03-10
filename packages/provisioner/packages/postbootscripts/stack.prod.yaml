@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postbootscripts
+spec:
+  selector:
+    matchLabels:
+      app: postbootscripts
+  template:
+    metadata:
+      labels:
+        app: postbootscripts
+    spec:
+      containers:
+        - name: postbootscripts
+          image: registry.gitlab.com/clusterplatform/clusterplatform/postbootscripts.prod
+          resources:
+            limits:
+              memory: 100Mi
+              cpu: 100m
+          envFrom:
+            - configMapRef:
+                name: nats
+            - configMapRef:
+                name: postgres

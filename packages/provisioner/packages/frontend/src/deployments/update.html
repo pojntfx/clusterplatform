@@ -60,7 +60,7 @@
           <textarea cols="30" rows="10">
       #!ipxe
       dhcp
-      chain http://142.93.30.63:30300/api/mainscripts/1
+      chain http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/mainscripts/1
       </textarea
           ><br />
           <fieldset>
@@ -90,7 +90,7 @@
           <textarea cols="30" rows="10">
       #!ipxe
       dhcp
-      chain http://142.93.30.63:30300/api/mainscripts/1
+      chain http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/mainscripts/1
       </textarea
           ><br />
           <label>🏷 Label </label>
@@ -106,7 +106,7 @@
       item mainsubscriptserver_fedora29 Main Sub Script Server Fedora 29
       choose --default mainsubscriptserver_fedora29 --timeout 3000 server &&  goto ${server}
       :mainsubscriptserver_fedora29
-      chain http://142.93.30.63:30300/api/subscripts/1
+      chain http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/subscripts/1
       </textarea
         ><br />
         <fieldset>
@@ -125,7 +125,7 @@
       choose --default subscript --timeout 3000 subscript && goto ${subscript}
       :subscript
       set base http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os
-      kernel ${base}/images/pxeboot/vmlinuz initrd=initrd.img inst.repo=${base} inst.ks=http://142.93.30.63:30300/api/kickstarts/1
+      kernel ${base}/images/pxeboot/vmlinuz initrd=initrd.img inst.repo=${base} inst.ks=http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/kickstarts/1
       initrd ${base}/images/pxeboot/initrd.img
       boot
       </textarea
@@ -216,11 +216,11 @@
       part / --asprimary --fstype="ext4" --grow --size=1
       
       %pre
-      curl http://142.93.30.63:30300/api/prebootscripts/1 | bash
+      curl http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/prebootscripts/1 | bash
       %end
       
       %post
-      curl http://142.93.30.63:30300/api/postbootscripts/1 > /usr/local/bin/postboot.sh
+      curl http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/postbootscripts/1 > /usr/local/bin/postboot.sh
       chmod 744 /usr/local/bin/postboot.sh
       cat << EOF > /etc/systemd/system/postboot.service
       [Unit]
@@ -255,7 +255,7 @@
       mkdir -p ~/.ssh;
       systemctl enable sshd;
       ip=$(echo $(ip -4 addr show | grep -Eo "inet (addr:)?([0-9]*\.){3}[0-9]*" | grep -Eo "([0-9]*\.){3}[0-9]*" | grep -v "127.0.0.1") | cut -d " " -f 1);
-      curl --request POST "http://142.93.30.63:30300/api/localnodes?ip=${ip}&artifactId=felix.pojtinger.swabia.sol&pingable=true"              
+      curl --request POST "http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/localnodes?ip=${ip}&artifactId=felix.pojtinger.swabia.sol&pingable=true"              
       </textarea
         >
         <button type="submit">➕ Create Deployment</button>
