@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: iso-manager
+  name: prebootscripts
 spec:
   selector:
     matchLabels:
-      app: iso-manager
+      app: prebootscripts
   template:
     metadata:
       labels:
-        app: iso-manager
+        app: prebootscripts
     spec:
       containers:
-        - name: iso-manager
-          image: registry.gitlab.com/clusterplatform/clusterplatform/iso-manager
+        - name: prebootscripts
+          image: registry.gitlab.com/clusterplatform/clusterplatform/prebootscripts.dev
           resources:
             limits:
               memory: 200Mi
@@ -21,8 +21,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: nats
-            - configMapRef:
-                name: redis
             - configMapRef:
                 name: postgres
             - configMapRef:

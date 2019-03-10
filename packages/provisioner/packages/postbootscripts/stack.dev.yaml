@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sshkeys
+  name: postbootscripts
 spec:
   selector:
     matchLabels:
-      app: sshkeys
+      app: postbootscripts
   template:
     metadata:
       labels:
-        app: sshkeys
+        app: postbootscripts
     spec:
       containers:
-        - name: sshkeys
-          image: registry.gitlab.com/clusterplatform/clusterplatform/sshkeys
+        - name: postbootscripts
+          image: registry.gitlab.com/clusterplatform/clusterplatform/postbootscripts.dev
           resources:
             limits:
               memory: 200Mi

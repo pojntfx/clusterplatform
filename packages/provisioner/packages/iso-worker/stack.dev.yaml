@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ipxe-worker
+  name: iso-worker
 spec:
   selector:
     matchLabels:
-      app: ipxe-worker
+      app: iso-worker
   template:
     metadata:
       labels:
-        app: ipxe-worker
+        app: iso-worker
     spec:
       containers:
-        - name: ipxe-worker
-          image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-worker
+        - name: iso-worker
+          image: registry.gitlab.com/clusterplatform/clusterplatform/iso-worker.dev
           resources:
             limits:
               memory: 500Mi
@@ -28,19 +28,19 @@ spec:
             - configMapRef:
                 name: verdaccio
             - configMapRef:
-                name: ipxe-worker
+                name: iso-worker
           volumeMounts:
-            - name: ipxe-worker
-              mountPath: /tmp/clusterplatform/app/ipxe
+            - name: iso-worker
+              mountPath: /tmp/clusterplatform/app/iso
       volumes:
-        - name: ipxe-worker
+        - name: iso-worker
           persistentVolumeClaim:
-            claimName: ipxe-worker
+            claimName: iso-worker
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: ipxe-worker
+  name: iso-worker
 spec:
   accessModes:
     - ReadWriteOnce
@@ -51,6 +51,6 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: ipxe-worker
+  name: iso-worker
 data:
-  MINIO_BUCKET: ipxes
+  MINIO_BUCKET: isos

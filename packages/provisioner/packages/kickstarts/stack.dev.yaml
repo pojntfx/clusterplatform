@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: grub-manager
+  name: kickstarts
 spec:
   selector:
     matchLabels:
-      app: grub-manager
+      app: kickstarts
   template:
     metadata:
       labels:
-        app: grub-manager
+        app: kickstarts
     spec:
       containers:
-        - name: grub-manager
-          image: registry.gitlab.com/clusterplatform/clusterplatform/grub-manager
+        - name: kickstarts
+          image: registry.gitlab.com/clusterplatform/clusterplatform/kickstarts.dev
           resources:
             limits:
               memory: 200Mi
@@ -21,8 +21,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: nats
-            - configMapRef:
-                name: redis
             - configMapRef:
                 name: postgres
             - configMapRef:

@@ -1,6 +1,6 @@
 {
   "name": "@clusterplatform/builder-utils",
-  "version": "0.0.1-alpha1",
+  "version": "0.0.1-9f019a55-d139-4958-a77c-dbc6fcb8e55a.0",
   "description": "",
   "main": "src/index.js",
   "dependencies": {
@@ -20,5 +20,8 @@
     "cjs": {
       "dedefault": true
     }
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

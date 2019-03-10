@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: syslinux-worker
+  name: ipxe-worker
 spec:
   selector:
     matchLabels:
-      app: syslinux-worker
+      app: ipxe-worker
   template:
     metadata:
       labels:
-        app: syslinux-worker
+        app: ipxe-worker
     spec:
       containers:
-        - name: syslinux-worker
-          image: registry.gitlab.com/clusterplatform/clusterplatform/syslinux-worker
+        - name: ipxe-worker
+          image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-worker.dev
           resources:
             limits:
-              memory: 200Mi
-              cpu: 200m
+              memory: 500Mi
+              cpu: 500m
           envFrom:
             - configMapRef:
                 name: nats
@@ -28,19 +28,19 @@ spec:
             - configMapRef:
                 name: verdaccio
             - configMapRef:
-                name: syslinux-worker
+                name: ipxe-worker
           volumeMounts:
-            - name: syslinux-worker
-              mountPath: /tmp/clusterplatform/app/syslinux
+            - name: ipxe-worker
+              mountPath: /tmp/clusterplatform/app/ipxe
       volumes:
-        - name: syslinux-worker
+        - name: ipxe-worker
           persistentVolumeClaim:
-            claimName: syslinux-worker
+            claimName: ipxe-worker
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: syslinux-worker
+  name: ipxe-worker
 spec:
   accessModes:
     - ReadWriteOnce
@@ -51,6 +51,6 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: syslinux-worker
+  name: ipxe-worker
 data:
-  MINIO_BUCKET: syslinuxs
+  MINIO_BUCKET: ipxes

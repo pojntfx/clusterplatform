@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
         - name: builder-utils
-          image: registry.gitlab.com/clusterplatform/clusterplatform/builder-utils
+          image: registry.gitlab.com/clusterplatform/clusterplatform/builder-utils.dev
           resources:
             limits:
               memory: 100Mi
