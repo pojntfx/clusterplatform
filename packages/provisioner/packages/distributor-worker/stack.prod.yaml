@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: distributor-worker
+spec:
+  selector:
+    matchLabels:
+      app: distributor-worker
+  template:
+    metadata:
+      labels:
+        app: distributor-worker
+    spec:
+      hostNetwork: true
+      containers:
+        - name: distributor-worker
+          image: registry.gitlab.com/clusterplatform/clusterplatform/distributor-worker.prod
+          resources:
+            limits:
+              memory: 100Mi
+              cpu: 100m
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+          envFrom:
+            - configMapRef:
+                name: nats-public
+            - configMapRef:
+                name: distributor-worker
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: distributor-worker
+data:
+  CLUSTERPLATFORM_DISTRIBUTOR_ARTIFACTID: sol-earth-eu-de-bw-fds-bbronn-hirschkopfweg-8

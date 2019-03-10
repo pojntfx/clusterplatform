@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: syslinux-manager
+spec:
+  selector:
+    matchLabels:
+      app: syslinux-manager
+  template:
+    metadata:
+      labels:
+        app: syslinux-manager
+    spec:
+      containers:
+        - name: syslinux-manager
+          image: registry.gitlab.com/clusterplatform/clusterplatform/syslinux-manager.prod
+          resources:
+            limits:
+              memory: 100Mi
+              cpu: 100m
+          envFrom:
+            - configMapRef:
+                name: nats
+            - configMapRef:
+                name: redis
+            - configMapRef:
+                name: postgres

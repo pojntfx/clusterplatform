@@ -59,7 +59,7 @@ The following are some essential services that make up the provisioner.
 - **Artifact Configurators**: Edit the artifact behaviour without re-building the artifacts
   - [/mainscripts](./packages/mainscripts/src/svc.js): Registry for primary scripts that link to one or multiple subscripts
   - [/subscripts](./packages/subscripts/src/svc.js): Registry for secondary scripts that contain the actual boot logic
-  - [/sshkey](./packages/sshkey-generator/src/svc.js): Generator for SSH public and private keys
+  - [/sshkey](./packages/sshkey-worker/src/svc.js): Generator for SSH public and private keys
   - [/sshkeys](./packages/sshkeys/src/svc.js): Registry for public SSH keys that will allow for passwordless access of nodes
   - [/kickstarts](./packages/kickstarts/src/svc.js): Registry for kickstart files that automate the OS installation
   - [/prebootscripts](./packages/prebootscripts/src/svc.js): Registry for files that run before the OS installation
@@ -75,7 +75,7 @@ The following are some essential services that make up the provisioner.
 
 ## Usage
 
-Currently, the main way of interacting with a Cluster Platform Provisioner is the REST API. If you follow the instructions below you can use any IP of and node of your Kubernetes cluster as the API Gateway endpoint; we will use `142.93.30.63` as a placeholder for curl here. If you prefer a full-blown REST client, take a look at the [Insomnia workspace](./packages/insomnia/src/workspace.json) and import it into [Insomnia](https://insomnia.rest/).
+Currently, the main way of interacting with a Cluster Platform Provisioner is the REST API. If you follow the instructions below you can use any IP of and node of your Kubernetes cluster as the API Gateway endpoint; we will use `alpha.sandbox.provisioner.alphahorizon.io` as a placeholder for curl here. If you prefer a full-blown REST client, take a look at the [Insomnia workspace](./packages/insomnia/src/workspace.json) and import it into [Insomnia](https://insomnia.rest/).
 A much more simple to use frontend is currently being built and can be found in [it's package](./packages/frontend/README.md).
 
 Another way of interacting with a Cluster Platform Provisioner is by using the [Moleculer](https://moleculer.services) services directly. You can use `npm install @clusterplatform/${SERVICE_PACKAGE_NAME}` and then import them as mixins to do so.
@@ -89,6 +89,18 @@ Another way of interacting with a Cluster Platform Provisioner is by using the [
 > - **"Host"** refers to physical or virtual hardware (i.e. a server, virtual machine, laptop) with a 64-bit X86 processor. ARM support is planned for the future.
 > - **"Prestart Runtime"** refers to an environment that runs on a host before it starts. Here, such an environment start the installation and configuration of the precloud runtime.
 
+#### Option 1: Production Services Deployment
+
+```bash
+# Run provisioner production version on Kubernetes (skaffold.yaml is at the repo root)
+cd ../../
+skaffold run -p provisioner--prod
+```
+
+#### Option 2: Development Services Deployment
+
+This enables hot-reloading the files, automatic service restarts, inter-service code dependencies with a NPM caching repository and allocates more ressources to speed up development.
+
 ```bash
 # Run provisioner development version on Kubernetes (skaffold.yaml is at the repo root)
 cd ../../
@@ -98,22 +110,42 @@ skaffold dev -p provisioner--dev
 #### Option 1: Create Network Distributable
 
 > - **"Prestart Runtime Distribution"** refers to the process of getting a system to run a prestart runtime.
->   "Network Distributable"\*\* refers to a prestart runtime that can be distributed by a type of prestart runtime distribution that works by using the network and thus eliminates the need for boot media.
+> - **"Network Distributable"** refers to a prestart runtime that can be distributed by a type of prestart runtime distribution that works by using the network and thus eliminates the need for boot media.
 > - **"Distributor"** refers to a system that serves as an "exit node" for the rest of the provisioner to the network in which the hosts onto which the network distributable should be deployed. It also allows for execution of additional scripts over after the precloud runtime has been installed if they are not reachable from the provisioner/the operator, such as nodes in remote locations.
 
+##### Option 1: Production Provisioner Deployment
+
 ```bash
+# Run distributor production version on Docker
+docker run \
+    -e 'TRANSPORTER=nats://alpha.sandbox.provisioner.alphahorizon.io:30002' \
+    -e 'CLUSTERPLATFORM_DISTRIBUTOR_ARTIFACTID=felicitas.pojtinger.swabia.sol' \
+    --cap-add=NET_ADMIN \
+    --net=host \
+    -d \
+    'registry.gitlab.com/clusterplatform/clusterplatform/distributor-worker.prod:db4209a-dirty'
+```
+
+##### Option 2: Development Provisioner Deployment
+
+This does enable inter-service code dependencies with a NPM caching repository. It also runs the container in the background.
+
+```bash
+
 # Run distributor development version on Docker
 docker run \
-    -e 'TRANSPORTER=nats://142.93.30.63:30002' \
+    -e 'TRANSPORTER=nats://alpha.sandbox.provisioner.alphahorizon.io:30002' \
     -e 'NPM_USER=verdaccio-user' \
     -e 'NPM_PASS=verdaccio-password' \
     -e 'NPM_EMAIL=verdaccio-user@example.com' \
-    -e 'NPM_REGISTRY=http://142.93.30.63:30004' \
+    -e 'NPM_REGISTRY=http://alpha.sandbox.provisioner.alphahorizon.io:30004' \
     -e 'CLUSTERPLATFORM_DISTRIBUTOR_ARTIFACTID=felicitas.pojtinger.swabia.sol' \
     --cap-add=NET_ADMIN \
     --net=host \
     'registry.gitlab.com/clusterplatform/clusterplatform/distributor-worker.dev:fa1f547-dirty'
 ```
+
+Either way, continue here now.
 
 > - **"Artifact"** refers to an object managed by the provisioner such as distributors or network distributables.
 > - **"artifactId"** refers to a unique identitifier that is used to tag artifacts.
@@ -125,24 +157,24 @@ docker run \
 # Create UEFI iPXE network bootloader for distributor
 curl -H 'Content-Type: application/json' \
     -d '{
-    "script": "#!ipxe\ndhcp\nchain http://142.93.30.63:30300/api/mainscripts/1",
+    "script": "#!ipxe\ndhcp\nchain http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/mainscripts/1",
     "platform": "bin-x86_64-efi",
     "driver": "ipxe",
     "extension": "efi"
 }' \
-    'http://142.93.30.63:30300/api/ipxes'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/ipxes'
 ```
 
 ```bash
 # Create BIOS iPXE network bootloader for distributor
 curl -H 'Content-Type: application/json' \
     -d '{
-    "script": "#!ipxe\ndhcp\nchain http://142.93.30.63:30300/api/mainscripts/1",
+    "script": "#!ipxe\ndhcp\nchain http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/mainscripts/1",
     "platform": "bin-x86_64-pcbios",
     "driver": "ipxe",
     "extension": "kpxe"
 }' \
-    'http://142.93.30.63:30300/api/ipxes'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/ipxes'
 ```
 
 #### Option 2: Create Media Distributable
@@ -153,24 +185,24 @@ curl -H 'Content-Type: application/json' \
 # Create UEFI iPXE network bootloader for ISO
 curl -H 'Content-Type: application/json' \
     -d '{
-    "script": "#!ipxe\ndhcp\nchain http://142.93.30.63:30300/api/mainscripts/1",
+    "script": "#!ipxe\ndhcp\nchain http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/mainscripts/1",
     "platform": "bin-x86_64-efi",
     "driver": "ipxe",
     "extension": "efi"
 }' \
-    'http://142.93.30.63:30300/api/ipxes'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/ipxes'
 ```
 
 ```bash
 # Create BIOS iPXE network bootloader for ISO
 curl -H 'Content-Type: application/json' \
     -d '{
-    "script": "#!ipxe\ndhcp\nchain http://142.93.30.63:30300/api/mainscripts/1",
+    "script": "#!ipxe\ndhcp\nchain http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/mainscripts/1",
     "platform": "bin",
     "driver": "ipxe",
     "extension": "lkrn"
 }' \
-    'http://142.93.30.63:30300/api/ipxes'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/ipxes'
 ```
 
 ```bash
@@ -183,7 +215,7 @@ curl -H 'Content-Type: application/json' \
     "extension": "efi",
     "fragment": "img"
 }' \
-    'http://142.93.30.63:30300/api/grubs'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/grubs'
 ```
 
 ```bash
@@ -196,7 +228,7 @@ curl -H 'Content-Type: application/json' \
     "extension": "efi",
     "fragment": "efi"
 }' \
-    'http://142.93.30.63:30300/api/grubs'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/grubs'
 ```
 
 ```bash
@@ -209,7 +241,7 @@ curl -H 'Content-Type: application/json' \
     "extension": "efi",
     "fragment": "efi"
 }' \
-    'http://142.93.30.63:30300/api/grubs'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/grubs'
 ```
 
 ```bash
@@ -218,7 +250,7 @@ curl -H 'Content-Type: application/json' \
     -d '{
     "fragment": "ldlinux.c32"
 }' \
-    'http://142.93.30.63:30300/api/syslinuxs'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/syslinuxs'
 ```
 
 ```bash
@@ -227,7 +259,7 @@ curl -H 'Content-Type: application/json' \
     -d '{
     "fragment": "isolinux.bin"
 }' \
-    'http://142.93.30.63:30300/api/syslinuxs'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/syslinuxs'
 ```
 
 ```bash
@@ -236,7 +268,7 @@ curl -H 'Content-Type: application/json' \
     -d '{
     "fragment": "isohdpfx.bin"
 }' \
-    'http://142.93.30.63:30300/api/syslinuxs'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/syslinuxs'
 ```
 
 ### Prestart Runtime Configuration
@@ -249,9 +281,9 @@ curl -H 'Content-Type: application/json' \
 # Create Mainscript
 curl -H 'Content-Type: application/json' \
     -d '{
-    "text": "#!ipxe\nmenu Choose Script\nitem mainsubscriptserver_fedora29 Main Sub Script Server Fedora 29\nchoose --default mainsubscriptserver_fedora29 --timeout 3000 server && goto ${server}\n:mainsubscriptserver_fedora29\nchain http://142.93.30.63:30300/api/subscripts/1"
+    "text": "#!ipxe\nmenu Choose Script\nitem mainsubscriptserver_fedora29 Main Sub Script Server Fedora 29\nchoose --default mainsubscriptserver_fedora29 --timeout 3000 server && goto ${server}\n:mainsubscriptserver_fedora29\nchain http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/subscripts/1"
 }' \
-    'http://142.93.30.63:30300/api/mainscripts'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/mainscripts'
 ```
 
 > - **"Subscript"** refers to a secondary (or nearly infinitly nested) network bootloader script that is commonly being chained by a mainscript.
@@ -260,9 +292,9 @@ curl -H 'Content-Type: application/json' \
 # Create Subscript
 curl -H 'Content-Type: application/json' \
     -d '{
-    "text": "#!ipxe\nmenu Choose Script\nitem subscript Fedora 29\nchoose --default subscript --timeout 3000 subscript && goto ${subscript}\n:subscript\nset base http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\nkernel ${base}/images/pxeboot/vmlinuz initrd=initrd.img inst.repo=${base} inst.ks=http://142.93.30.63:30300/api/kickstarts/1\ninitrd ${base}/images/pxeboot/initrd.img\nboot"
+    "text": "#!ipxe\nmenu Choose Script\nitem subscript Fedora 29\nchoose --default subscript --timeout 3000 subscript && goto ${subscript}\n:subscript\nset base http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\nkernel ${base}/images/pxeboot/vmlinuz initrd=initrd.img inst.repo=${base} inst.ks=http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/kickstarts/1\ninitrd ${base}/images/pxeboot/initrd.img\nboot"
 }' \
-    'http://142.93.30.63:30300/api/subscripts'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/subscripts'
 ```
 
 > - **"SSH Keys"** refers to keys for public/private key encryption.
@@ -271,7 +303,7 @@ curl -H 'Content-Type: application/json' \
 # Get new SSH key pair
 curl -G \
     --data-urlencode 'algorithm=ecdsa' \
-    'http://142.93.30.63:30300/api/sshkey'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/sshkey'
 ```
 
 > - **"Public Key"** refers to a public SSH key. You may share this key to enable you to access a SSH-enabled node such as a localnode or globalnode.
@@ -284,7 +316,7 @@ curl -H 'Content-Type: application/json' \
     "artifactId": "felicitas.pojtinger.swabia.sol",
     "private": false
 }' \
-    'http://142.93.30.63:30300/api/sshkeys'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/sshkeys'
 ```
 
 > - **"Private Key"** refers to a private SSH key. Do **not** share this key. Do **not** forget the newline at the end of the key or authentication will fail.
@@ -297,7 +329,7 @@ curl -H 'Content-Type: application/json' \
     "artifactId": "felicitas.pojtinger.swabia.sol",
     "private": true
 }' \
-    'http://142.93.30.63:30300/api/sshkeys'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/sshkeys'
 ```
 
 > - **"Kickstart"** refers to a script that is used to automate the precloud runtime installation. It also commonly links to a prebootscript and a postbootscript.
@@ -306,9 +338,9 @@ curl -H 'Content-Type: application/json' \
 # Create Kickstart
 curl -H 'Content-Type: application/json' \
     -d '{
-    "text": "#platform=x86, AMD64, or Intel EM64T\n#version=DEVEL\n# Keyboard layouts\nkeyboard us\n# Root password\nrootpw --plaintext asdfasdf123$$44\nsshkey --username=root \"ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBB69xaEXw3y8PZeV6mjkTfK8X3z/0GlWe5dzuWcccD8fVHFl6W+XZ6qN+a8h0RD6OcFbk1mYTyh8sV2KbyIFNBk= pojntfx@pojntfx-x230-fedora\"\n# System language\nlang en_US\n# Reboot after installation\nreboot\n# System timezone\ntimezone Europe/Berlin\n# Use text mode install\ntext\n# Network information\nnetwork  --bootproto=dhcp --device=enp0s25\n# Use network installation\nurl --url=\"http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\"\n# System authorization information\nauth  --useshadow  --passalgo=sha512\n# Firewall configuration\nfirewall --disabled\n# SELinux configuration\nselinux --enforcing\n# Do not configure the X Window System\nskipx\n\n# System bootloader configuration\nbootloader --location=mbr\n# Clear the Master Boot Record\nzerombr\n# Partition clearing information\nclearpart --all\n# Disk partitioning information\npart /boot --asprimary --fstype=\"ext4\" --size=512\npart / --asprimary --fstype=\"ext4\" --grow --size=1\n\n%pre\ncurl http://142.93.30.63:30300/api/prebootscripts/1 | bash\n%end\n\n%post\ncurl http://142.93.30.63:30300/api/postbootscripts/1 > /usr/local/bin/postboot.sh\nchmod 744 /usr/local/bin/postboot.sh\ncat << EOF > /etc/systemd/system/postboot.service\n[Unit]\nDescription=Run once\nRequires=network-online.target\nAfter=network-online.target\n[Service]\nExecStart=/usr/local/bin/postboot.sh\n[Install]\nWantedBy=multi-user.target\nEOF\nchmod 664 /etc/systemd/system/postboot.service\nsystemctl enable postboot\n%end\n\n%packages\n@standard\n\n%end            \n"
+    "text": "#platform=x86, AMD64, or Intel EM64T\n#version=DEVEL\n# Keyboard layouts\nkeyboard us\n# Root password\nrootpw --plaintext asdfasdf123$$44\nsshkey --username=root \"ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBB69xaEXw3y8PZeV6mjkTfK8X3z/0GlWe5dzuWcccD8fVHFl6W+XZ6qN+a8h0RD6OcFbk1mYTyh8sV2KbyIFNBk= pojntfx@pojntfx-x230-fedora\"\n# System language\nlang en_US\n# Reboot after installation\nreboot\n# System timezone\ntimezone Europe/Berlin\n# Use text mode install\ntext\n# Network information\nnetwork  --bootproto=dhcp --device=enp0s25\n# Use network installation\nurl --url=\"http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\"\n# System authorization information\nauth  --useshadow  --passalgo=sha512\n# Firewall configuration\nfirewall --disabled\n# SELinux configuration\nselinux --enforcing\n# Do not configure the X Window System\nskipx\n\n# System bootloader configuration\nbootloader --location=mbr\n# Clear the Master Boot Record\nzerombr\n# Partition clearing information\nclearpart --all\n# Disk partitioning information\npart /boot --asprimary --fstype=\"ext4\" --size=512\npart / --asprimary --fstype=\"ext4\" --grow --size=1\n\n%pre\ncurl http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/prebootscripts/1 | bash\n%end\n\n%post\ncurl http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/postbootscripts/1 > /usr/local/bin/postboot.sh\nchmod 744 /usr/local/bin/postboot.sh\ncat << EOF > /etc/systemd/system/postboot.service\n[Unit]\nDescription=Run once\nRequires=network-online.target\nAfter=network-online.target\n[Service]\nExecStart=/usr/local/bin/postboot.sh\n[Install]\nWantedBy=multi-user.target\nEOF\nchmod 664 /etc/systemd/system/postboot.service\nsystemctl enable postboot\n%end\n\n%packages\n@standard\n\n%end            \n"
 }' \
-    'http://142.93.30.63:30300/api/kickstarts'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/kickstarts'
 ```
 
 > - **"Prebootscript"** refers to a script, commonly a shell script, that is run before the precloud runtime installer starts
@@ -319,7 +351,7 @@ curl -H 'Content-Type: application/json' \
     -d '{
     "text": "#!/bin/bash\necho \"This could be the preboot script!\"\n"
 }' \
-    'http://142.93.30.63:30300/api/prebootscripts'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/prebootscripts'
 ```
 
 > - **"Postbootscript"** refers to a script, commonly a shell script, that is run after the precloud runtime installer finished
@@ -328,37 +360,37 @@ curl -H 'Content-Type: application/json' \
 # Create Postbootscript
 curl -H 'Content-Type: application/json' \
     -d '{
-    "text": "#!/bin/bash\nsudo dnf install openssh-server -y\nmkdir -p ~/.ssh\nsystemctl enable sshd\nip=$(echo $(ip -4 addr show | grep -Eo \"inet (addr:)?([0-9]*.){3}[0-9]*\" | grep -Eo \"([0-9]*.){3}[0-9]*\" | grep -v \"127.0.0.1\") | cut -d \" \" -f 1)\ncurl --request POST \"http://142.93.30.63:30300/api/localnodes?ip=${ip}&artifactId=felicitas.pojtinger.swabia.sol&pingable=true\"\n"
+    "text": "#!/bin/bash\nsudo dnf install openssh-server -y\nmkdir -p ~/.ssh\nsystemctl enable sshd\nip=$(echo $(ip -4 addr show | grep -Eo \"inet (addr:)?([0-9]*.){3}[0-9]*\" | grep -Eo \"([0-9]*.){3}[0-9]*\" | grep -v \"127.0.0.1\") | cut -d \" \" -f 1)\ncurl --request POST \"http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/localnodes?ip=${ip}&artifactId=felicitas.pojtinger.swabia.sol&pingable=true\"\n"
 }' \
-    'http://142.93.30.63:30300/api/postbootscripts'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/postbootscripts'
 ```
 
 > - **"Queue"** refers to a system that consists of managers that schedule jobs to executed by workers. In the case of the provisioner, it is used to build artifacts in the background or, more generally, to do operations that can take a long time. For such artifacts you should check whether they are actually done (have a `progress` of `100`) before continuing.
 
 ```bash
 # Get Mainscript
-curl 'http://142.93.30.63:30300/api/mainscripts/1'
+curl 'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/mainscripts/1'
 # Get Subscript
-curl 'http://142.93.30.63:30300/api/subscripts/1'
+curl 'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/subscripts/1'
 ```
 
 ```bash
 # Get public SSH key
-curl 'http://142.93.30.63:30300/api/sshkeys/1'
+curl 'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/sshkeys/1'
 # Get private SSH key
-curl 'http://142.93.30.63:30300/api/sshkeys/2'
+curl 'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/sshkeys/2'
 ```
 
 ```bash
 # Get Kickstart
-curl 'http://142.93.30.63:30300/api/kickstarts/1'
+curl 'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/kickstarts/1'
 ```
 
 ```bash
 # Get Prebootscript
-curl 'http://142.93.30.63:30300/api/prebootscripts/1'
+curl 'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/prebootscripts/1'
 # Get Postbootscripts
-curl 'http://142.93.30.63:30300/api/postbootscripts/1'
+curl 'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/postbootscripts/1'
 ```
 
 ### Prestart Runtime Distribution
@@ -367,9 +399,9 @@ curl 'http://142.93.30.63:30300/api/postbootscripts/1'
 
 ```bash
 # Get UEFI iPXE status
-curl 'http://142.93.30.63:30300/api/ipxes'
+curl 'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/ipxes'
 # Get BIOS iPXE status
-curl 'http://142.93.30.63:30300/api/ipxes'
+curl 'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/ipxes'
 ```
 
 ```bash
@@ -377,7 +409,7 @@ curl 'http://142.93.30.63:30300/api/ipxes'
 curl -G \
     --data-urlencode 'search=felicitas.pojtinger.swabia.sol' \
     --data-urlencode 'searchFields=artifactId' \
-    'http://142.93.30.63:30300/api/distributors'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/distributors'
 ```
 
 > - **"Update Distributor"** refers to the process of distributing the network bootloaders to the distributors by scheduling a job on a distributor to download them.
@@ -386,13 +418,13 @@ curl -G \
 # Update UEFI and BIOS iPXEs on distributor
 curl -X PUT -H 'Content-Type: application/json' \
     -d '{
-    "ipxePxeUefiUrl": "http://142.93.30.63:30900/ipxes/bffaf7bb-b52f-4b19-99ba-d7d4fa25b28b/ipxe.efi",
-    "ipxePxeBiosUrl": "http://142.93.30.63:30900/ipxes/cf6de9eb-2079-4708-98fc-6264f2a9c9af/ipxe.kpxe",
+    "ipxePxeUefiUrl": "http://alpha.sandbox.provisioner.alphahorizon.io:30900/ipxes/bffaf7bb-b52f-4b19-99ba-d7d4fa25b28b/ipxe.efi",
+    "ipxePxeBiosUrl": "http://alpha.sandbox.provisioner.alphahorizon.io:30900/ipxes/cf6de9eb-2079-4708-98fc-6264f2a9c9af/ipxe.kpxe",
     "artifactId": 1,
     "device": "enp0s25",
     "range": "192.168.178.1"
 }' \
-    'http://142.93.30.63:30300/api/distributors/1'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/distributors/1'
 ```
 
 > - **"Update Distributor Status"** refers to the process of starting/stopping distributor-internal services that enable the distribution of network distributables.
@@ -404,7 +436,7 @@ curl -X PUT -H 'Content-Type: application/json' \
     "on": false,
     "artifactId": 1
 }' \
-    'http://142.93.30.63:30300/api/distributors/1/status'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/distributors/1/status'
 ```
 
 ```bash
@@ -414,7 +446,7 @@ curl -X PUT -H 'Content-Type: application/json' \
     "on": true,
     "artifactId": 1
 }' \
-    'http://142.93.30.63:30300/api/distributors/1/status'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/distributors/1/status'
 ```
 
 #### Option 2: Distribute Media Distributable
@@ -423,27 +455,27 @@ curl -X PUT -H 'Content-Type: application/json' \
 
 ```bash
 # Get UEFI iPXE status
-curl 'http://142.93.30.63:30300/api/ipxes/3'
+curl 'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/ipxes/3'
 # Get BIOS iPXE status
-curl 'http://142.93.30.63:30300/api/ipxes/4'
+curl 'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/ipxes/4'
 ```
 
 ```bash
 # Get GRUB IMG status
-curl 'http://142.93.30.63:30300/api/grubs/1'
+curl 'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/grubs/1'
 # Get GRUB UEFI x64 status
-curl 'http://142.93.30.63:30300/api/grubs/2'
+curl 'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/grubs/2'
 # Get GRUB UEFI x86 status
-curl 'http://142.93.30.63:30300/api/grubs/3'
+curl 'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/grubs/3'
 ```
 
 ```bash
 # Get SYSLINUX Ldlinux status
-curl 'http://142.93.30.63:30300/api/syslinuxs/1'
+curl 'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/syslinuxs/1'
 # Get SYSLINUX IsolinuxBin status
-curl 'http://142.93.30.63:30300/api/syslinuxs/2'
+curl 'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/syslinuxs/2'
 # Get SYSLINUX IsohdpfxBin status
-curl 'http://142.93.30.63:30300/api/syslinuxs/3'
+curl 'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/syslinuxs/3'
 ```
 
 ```bash
@@ -451,27 +483,27 @@ curl 'http://142.93.30.63:30300/api/syslinuxs/3'
 curl -H 'Content-Type: application/json' \
     -d '{
     "label": "Cluster Platform Provisioner ISO",
-    "ipxeUefiUrl": "http://142.93.30.63:30900/ipxes/1353f0e4-09b9-48b1-a4fb-f45532730c65/ipxe.efi",
-    "ipxeBiosUrl": "http://142.93.30.63:30900/ipxes/eff537ee-bf99-48ea-be96-ed9ee08d62b9/ipxe.lkrn",
-    "grubImgUrl": "http://142.93.30.63:30900/grubs/c23bee3a-ee2d-4f44-8223-86bed61b7940/grub.img",
-    "grubEfiX64Url": "http://142.93.30.63:30900/grubs/e8f68f77-5cb5-4a0a-8d47-fb31a73ea3bc/grub.zip",
-    "grubEfiX86Url": "http://142.93.30.63:30900/grubs/da39b0b5-d15c-41e8-ab8a-4cf710cf427d/grub.zip",
-    "ldLinuxUrl": "http://142.93.30.63:30900/syslinuxs/83b15488-0ed5-4ee3-8352-5e3cecc87423/ldlinux.c32",
-    "isolinuxBinUrl": "http://142.93.30.63:30900/syslinuxs/b9771721-53bf-4dcb-a094-1a901a9203b9/isolinux.bin",
-    "isohdpfxBinUrl": "http://142.93.30.63:30900/syslinuxs/dc68e8f5-900c-49ff-a376-e84b7c806056/isohdpfx.bin"
+    "ipxeUefiUrl": "http://alpha.sandbox.provisioner.alphahorizon.io:30900/ipxes/1353f0e4-09b9-48b1-a4fb-f45532730c65/ipxe.efi",
+    "ipxeBiosUrl": "http://alpha.sandbox.provisioner.alphahorizon.io:30900/ipxes/eff537ee-bf99-48ea-be96-ed9ee08d62b9/ipxe.lkrn",
+    "grubImgUrl": "http://alpha.sandbox.provisioner.alphahorizon.io:30900/grubs/c23bee3a-ee2d-4f44-8223-86bed61b7940/grub.img",
+    "grubEfiX64Url": "http://alpha.sandbox.provisioner.alphahorizon.io:30900/grubs/e8f68f77-5cb5-4a0a-8d47-fb31a73ea3bc/grub.zip",
+    "grubEfiX86Url": "http://alpha.sandbox.provisioner.alphahorizon.io:30900/grubs/da39b0b5-d15c-41e8-ab8a-4cf710cf427d/grub.zip",
+    "ldLinuxUrl": "http://alpha.sandbox.provisioner.alphahorizon.io:30900/syslinuxs/83b15488-0ed5-4ee3-8352-5e3cecc87423/ldlinux.c32",
+    "isolinuxBinUrl": "http://alpha.sandbox.provisioner.alphahorizon.io:30900/syslinuxs/b9771721-53bf-4dcb-a094-1a901a9203b9/isolinux.bin",
+    "isohdpfxBinUrl": "http://alpha.sandbox.provisioner.alphahorizon.io:30900/syslinuxs/dc68e8f5-900c-49ff-a376-e84b7c806056/isohdpfx.bin"
 }' \
-    'http://142.93.30.63:30300/api/isos'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/isos'
 ```
 
 ```bash
 # Get ISO status
-curl 'http://142.93.30.63:30300/api/isos/1'
+curl 'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/isos/1'
 ```
 
 ```bash
 # Get ISO
 curl -o 'dist.iso' \
-    'http://142.93.30.63:30900/isos/b1cf7b64-8965-4be0-9b6c-50d3c62d63fd/dist.iso'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30900/isos/b1cf7b64-8965-4be0-9b6c-50d3c62d63fd/dist.iso'
 ```
 
 ### Precloud Runtime Distribution
@@ -494,12 +526,12 @@ Flash the ISO from above to a USB and boot from it. If you are using virtual mac
 
 ```bash
 # Get Localnodes
-curl 'http://142.93.30.63:30300/api/localnodes'
+curl 'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/localnodes'
 ```
 
 ```bash
 # Get Localnode
-curl 'http://142.93.30.63:30300/api/localnodes/1'
+curl 'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/localnodes/1'
 ```
 
 ### Create Globalnode from Localnode
@@ -519,7 +551,7 @@ curl -X PUT -H 'Content-Type: application/json' \
     -d '{
     "script": "curl https://install.zerotier.com/ | sudo bash\nzerotier-cli join 1c33c1ced0d02ef9\nip a | grep zt",
 }' \
-    'http://142.93.30.63:30300/api/localnodes/1/script'
+    'http://alpha.sandbox.provisioner.alphahorizon.io:30300/api/localnodes/1/script'
 ```
 
 ### Get Globalnodes

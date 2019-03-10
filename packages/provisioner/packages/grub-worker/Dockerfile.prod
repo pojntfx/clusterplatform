@@ -1,0 +1,20 @@
+# Setup env
+FROM fedora:29
+RUN mkdir -p /opt/clusterplatform/app
+WORKDIR /opt/clusterplatform/app
+RUN dnf install -y npm git gcc binutils make mtools flex bison python autoconf automake dosfstools zip
+
+# Add app
+COPY package.json .
+COPY src src
+
+# Install app
+RUN npm install --production
+
+# Setup app
+ENV SERVICEDIR=src
+ENV SERVICES=svc.js
+ENV TRANSPORTER=TCP
+
+# Run app
+CMD node -r esm node_modules/moleculer/bin/moleculer-runner.js

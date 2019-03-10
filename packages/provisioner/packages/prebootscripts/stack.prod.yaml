@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prebootscripts
+spec:
+  selector:
+    matchLabels:
+      app: prebootscripts
+  template:
+    metadata:
+      labels:
+        app: prebootscripts
+    spec:
+      containers:
+        - name: prebootscripts
+          image: registry.gitlab.com/clusterplatform/clusterplatform/prebootscripts.prod
+          resources:
+            limits:
+              memory: 100Mi
+              cpu: 100m
+          envFrom:
+            - configMapRef:
+                name: nats
+            - configMapRef:
+                name: postgres

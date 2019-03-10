@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bootruntime
+  name: sshkey-worker
 spec:
   selector:
     matchLabels:
-      app: bootruntime
+      app: sshkey-worker
   template:
     metadata:
       labels:
-        app: bootruntime
+        app: sshkey-worker
     spec:
       containers:
-        - name: bootruntime
-          image: registry.gitlab.com/clusterplatform/clusterplatform/bootruntime.dev
+        - name: sshkey-worker
+          image: registry.gitlab.com/clusterplatform/clusterplatform/sshkey-worker.dev
           resources:
             limits:
               memory: 200Mi
@@ -22,8 +22,4 @@ spec:
             - configMapRef:
                 name: nats
             - configMapRef:
-                name: postgres
-            - configMapRef:
                 name: verdaccio
-            - configMapRef:
-                name: minio-public

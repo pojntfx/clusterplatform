@@ -2,7 +2,7 @@ import * as shell from "async-shelljs";
 import uuidv1 from "uuid/v4";
 
 export default {
-  name: "sshkey-generator",
+  name: "sshkey-worker",
   actions: {
     get: {
       params: {
@@ -10,7 +10,7 @@ export default {
       },
       handler: async function(ctx) {
         const artifactId = uuidv1();
-        const builddir = `/tmp/clusterplatform/app/sshkey-generator/builddir/${artifactId}`;
+        const builddir = `/tmp/clusterplatform/app/sshkey-worker/builddir/${artifactId}`;
         await shell.mkdir("-p", builddir);
         await shell.exec(
           `ssh-keygen -t ${ctx.params.algorithm} -N '' -f ${builddir}/id`

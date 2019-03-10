@@ -26,8 +26,8 @@ spec:
           image: verdaccio/verdaccio:3.11.4
           resources:
             limits:
-              memory: 250Mi
-              cpu: 250m
+              memory: 200Mi
+              cpu: 200m
           ports:
             - containerPort: 4873
           volumeMounts:
@@ -89,4 +89,4 @@ data:
   NPM_USER: verdaccio-user
   NPM_PASS: verdaccio-password
   NPM_EMAIL: verdaccio-user@example.com
-  NPM_REGISTRY: http://142.93.30.63:30004
+  NPM_REGISTRY: http://alpha.sandbox.provisioner.alphahorizon.io:30004

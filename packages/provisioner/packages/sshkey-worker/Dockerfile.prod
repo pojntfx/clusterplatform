@@ -2,10 +2,14 @@
 FROM node:lts-alpine
 RUN mkdir -p /opt/clusterplatform/app
 WORKDIR /opt/clusterplatform/app
+RUN apk add openssh-client
 
 # Add app
 COPY package.json .
 COPY src src
+
+# Install app
+RUN npm install --production
 
 # Setup app
 ENV SERVICEDIR=src
@@ -13,10 +17,4 @@ ENV SERVICES=svc.js
 ENV TRANSPORTER=TCP
 
 # Run app
-CMD npm set registry ${NPM_REGISTRY}; \
-    npm install; \
-    node node_modules/nodemon/bin/nodemon.js \
-    --inspect=0.0.0.0:9229 \
-    --watch src/ \
-    -r esm \
-    node_modules/moleculer/bin/moleculer-runner.js
+CMD node -r esm node_modules/moleculer/bin/moleculer-runner.js

@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ipxe-worker
+spec:
+  selector:
+    matchLabels:
+      app: ipxe-worker
+  template:
+    metadata:
+      labels:
+        app: ipxe-worker
+    spec:
+      containers:
+        - name: ipxe-worker
+          image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-worker.prod
+          resources:
+            limits:
+              memory: 100Mi
+              cpu: 100m
+          envFrom:
+            - configMapRef:
+                name: nats
+            - configMapRef:
+                name: redis
+            - configMapRef:
+                name: minio
+            - configMapRef:
+                name: ipxe-worker
+          volumeMounts:
+            - name: ipxe-worker
+              mountPath: /tmp/clusterplatform/app/ipxe
+      volumes:
+        - name: ipxe-worker
+          persistentVolumeClaim:
+            claimName: ipxe-worker
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ipxe-worker
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ipxe-worker
+data:
+  MINIO_BUCKET: ipxes

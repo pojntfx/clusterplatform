@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grub-worker
+spec:
+  selector:
+    matchLabels:
+      app: grub-worker
+  template:
+    metadata:
+      labels:
+        app: grub-worker
+    spec:
+      containers:
+        - name: grub-worker
+          image: registry.gitlab.com/clusterplatform/clusterplatform/grub-worker.prod
+          resources:
+            limits:
+              memory: 100Mi
+              cpu: 100m
+          envFrom:
+            - configMapRef:
+                name: nats
+            - configMapRef:
+                name: redis
+            - configMapRef:
+                name: minio
+            - configMapRef:
+                name: grub-worker
+          volumeMounts:
+            - name: grub-worker
+              mountPath: /tmp/clusterplatform/app/grub
+      volumes:
+        - name: grub-worker
+          persistentVolumeClaim:
+            claimName: grub-worker
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grub-worker
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grub-worker
+data:
+  MINIO_BUCKET: grubs

@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subscripts
+spec:
+  selector:
+    matchLabels:
+      app: subscripts
+  template:
+    metadata:
+      labels:
+        app: subscripts
+    spec:
+      containers:
+        - name: subscripts
+          image: registry.gitlab.com/clusterplatform/clusterplatform/subscripts.prod
+          resources:
+            limits:
+              memory: 100Mi
+              cpu: 100m
+          envFrom:
+            - configMapRef:
+                name: nats
+            - configMapRef:
+                name: postgres

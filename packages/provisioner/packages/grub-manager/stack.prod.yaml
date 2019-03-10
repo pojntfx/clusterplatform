@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grub-manager
+spec:
+  selector:
+    matchLabels:
+      app: grub-manager
+  template:
+    metadata:
+      labels:
+        app: grub-manager
+    spec:
+      containers:
+        - name: grub-manager
+          image: registry.gitlab.com/clusterplatform/clusterplatform/grub-manager.prod
+          resources:
+            limits:
+              memory: 100Mi
+              cpu: 100m
+          envFrom:
+            - configMapRef:
+                name: nats
+            - configMapRef:
+                name: redis
+            - configMapRef:
+                name: postgres
