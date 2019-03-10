@@ -1,161 +1,141 @@
-apiVersion: skaffold/v1beta5
+apiVersion: skaffold/v1beta6
 kind: Config
 profiles:
   - name: provisioner--dev
     build:
       artifacts:
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/builder-utils
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/builder-utils.dev
           context: packages/provisioner/packages/builder-utils
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            src/*.js: /opt/clusterplatform/app/src
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-manager
+            "**/*.js": .
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-manager.dev
           context: packages/provisioner/packages/ipxe-manager
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            src/*.js: /opt/clusterplatform/app/src
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-worker
+            "**/*.js": .
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-worker.dev
           context: packages/provisioner/packages/ipxe-worker
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            src/*.js: /opt/clusterplatform/app/src
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/grub-manager
+            "**/*.js": .
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/grub-manager.dev
           context: packages/provisioner/packages/grub-manager
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            src/*.js: /opt/clusterplatform/app/src
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/grub-worker
+            "**/*.js": .
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/grub-worker.dev
           context: packages/provisioner/packages/grub-worker
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            src/*.js: /opt/clusterplatform/app/src
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/syslinux-manager
+            "**/*.js": .
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/syslinux-manager.dev
           context: packages/provisioner/packages/syslinux-manager
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            src/*.js: /opt/clusterplatform/app/src
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/syslinux-worker
+            "**/*.js": .
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/syslinux-worker.dev
           context: packages/provisioner/packages/syslinux-worker
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            src/*.js: /opt/clusterplatform/app/src
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/iso-manager
+            "**/*.js": .
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/iso-manager.dev
           context: packages/provisioner/packages/iso-manager
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            src/*.js: /opt/clusterplatform/app/src
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/iso-worker
+            "**/*.js": .
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/iso-worker.dev
           context: packages/provisioner/packages/iso-worker
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            src/*.js: /opt/clusterplatform/app/src
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/bootruntime
+            "**/*.js": .
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/bootruntime.dev
           context: packages/provisioner/packages/bootruntime
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            src/*.js: /opt/clusterplatform/app/src
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/distributor-manager
+            "**/*.js": .
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/distributor-manager.dev
           context: packages/provisioner/packages/distributor-manager
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            src/*.js: /opt/clusterplatform/app/src
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/distributor-worker
+            "**/*.js": .
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/distributor-worker.dev
           context: packages/provisioner/packages/distributor-worker
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            src/*.js: /opt/clusterplatform/app/src
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/mainscripts
+            "**/*.js": .
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/mainscripts.dev
           context: packages/provisioner/packages/mainscripts
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            src/*.js: /opt/clusterplatform/app/src
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/subscripts
+            "**/*.js": .
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/subscripts.dev
           context: packages/provisioner/packages/subscripts
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            src/*.js: /opt/clusterplatform/app/src
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/kickstarts
+            "**/*.js": .
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/kickstarts.dev
           context: packages/provisioner/packages/kickstarts
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            src/*.js: /opt/clusterplatform/app/src
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/prebootscripts
+            "**/*.js": .
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/prebootscripts.dev
           context: packages/provisioner/packages/prebootscripts
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            src/*.js: /opt/clusterplatform/app/src
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/postbootscripts
+            "**/*.js": .
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/postbootscripts.dev
           context: packages/provisioner/packages/postbootscripts
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            src/*.js: /opt/clusterplatform/app/src
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/sshkeys
+            "**/*.js": .
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/sshkeys.dev
           context: packages/provisioner/packages/sshkeys
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            src/*.js: /opt/clusterplatform/app/src
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/sshkey-generator
+            "**/*.js": .
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/sshkey-generator.dev
           context: packages/provisioner/packages/sshkey-generator
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            src/*.js: /opt/clusterplatform/app/src
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/localnode-manager
+            "**/*.js": .
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/localnode-manager.dev
           context: packages/provisioner/packages/localnode-manager
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            src/*.js: /opt/clusterplatform/app/src
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/gateway
+            "**/*.js": .
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/gateway.dev
           context: packages/provisioner/packages/gateway
           docker:
             dockerfile: Dockerfile.dev
           sync:
-            src/*.js: /opt/clusterplatform/app/src
+            "**/*.js": .
     deploy:
       kubectl:
         manifests:
-          - packages/provisioner/packages/verdaccio/stack.yaml
-          - packages/provisioner/packages/nats/stack.yaml
-          - packages/provisioner/packages/redis/stack.yaml
-          - packages/provisioner/packages/postgres/stack.yaml
+          - packages/provisioner/packages/*/*.dev.yaml
           - packages/provisioner/packages/minio/stack.yaml
-          - packages/provisioner/packages/builder-utils/stack.yaml
-          - packages/provisioner/packages/ipxe-manager/stack.yaml
-          - packages/provisioner/packages/ipxe-worker/stack.yaml
-          - packages/provisioner/packages/grub-manager/stack.yaml
-          - packages/provisioner/packages/grub-worker/stack.yaml
-          - packages/provisioner/packages/syslinux-manager/stack.yaml
-          - packages/provisioner/packages/syslinux-worker/stack.yaml
-          - packages/provisioner/packages/iso-manager/stack.yaml
-          - packages/provisioner/packages/iso-worker/stack.yaml
-          - packages/provisioner/packages/bootruntime/stack.yaml
-          - packages/provisioner/packages/distributor-manager/stack.yaml
-          - packages/provisioner/packages/distributor-worker/stack.yaml
-          - packages/provisioner/packages/mainscripts/stack.yaml
-          - packages/provisioner/packages/subscripts/stack.yaml
-          - packages/provisioner/packages/kickstarts/stack.yaml
-          - packages/provisioner/packages/prebootscripts/stack.yaml
-          - packages/provisioner/packages/postbootscripts/stack.yaml
-          - packages/provisioner/packages/sshkeys/stack.yaml
-          - packages/provisioner/packages/sshkey-generator/stack.yaml
-          - packages/provisioner/packages/localnode-manager/stack.yaml
-          - packages/provisioner/packages/gateway/stack.yaml
+          - packages/provisioner/packages/nats/stack.yaml
+          - packages/provisioner/packages/postgres/stack.yaml
+          - packages/provisioner/packages/redis/stack.yaml
+          - packages/provisioner/packages/verdaccio/stack.yaml

@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: localnode-manager
+  name: syslinux-manager
 spec:
   selector:
     matchLabels:
-      app: localnode-manager
+      app: syslinux-manager
   template:
     metadata:
       labels:
-        app: localnode-manager
+        app: syslinux-manager
     spec:
       containers:
-        - name: localnode-manager
-          image: registry.gitlab.com/clusterplatform/clusterplatform/localnode-manager
+        - name: syslinux-manager
+          image: registry.gitlab.com/clusterplatform/clusterplatform/syslinux-manager.dev
           resources:
             limits:
               memory: 200Mi
@@ -21,6 +21,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: nats
+            - configMapRef:
+                name: redis
             - configMapRef:
                 name: postgres
             - configMapRef:

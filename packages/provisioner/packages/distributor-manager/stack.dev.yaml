@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ipxe-manager
+  name: distributor-manager
 spec:
   selector:
     matchLabels:
-      app: ipxe-manager
+      app: distributor-manager
   template:
     metadata:
       labels:
-        app: ipxe-manager
+        app: distributor-manager
     spec:
       containers:
-        - name: ipxe-manager
-          image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-manager
+        - name: distributor-manager
+          image: registry.gitlab.com/clusterplatform/clusterplatform/distributor-manager.dev
           resources:
             limits:
               memory: 200Mi
@@ -21,8 +21,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: nats
-            - configMapRef:
-                name: redis
             - configMapRef:
                 name: postgres
             - configMapRef:

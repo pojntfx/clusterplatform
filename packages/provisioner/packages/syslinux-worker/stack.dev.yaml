@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: iso-worker
+  name: syslinux-worker
 spec:
   selector:
     matchLabels:
-      app: iso-worker
+      app: syslinux-worker
   template:
     metadata:
       labels:
-        app: iso-worker
+        app: syslinux-worker
     spec:
       containers:
-        - name: iso-worker
-          image: registry.gitlab.com/clusterplatform/clusterplatform/iso-worker
+        - name: syslinux-worker
+          image: registry.gitlab.com/clusterplatform/clusterplatform/syslinux-worker.dev
           resources:
             limits:
-              memory: 500Mi
-              cpu: 500m
+              memory: 200Mi
+              cpu: 200m
           envFrom:
             - configMapRef:
                 name: nats
@@ -28,19 +28,19 @@ spec:
             - configMapRef:
                 name: verdaccio
             - configMapRef:
-                name: iso-worker
+                name: syslinux-worker
           volumeMounts:
-            - name: iso-worker
-              mountPath: /tmp/clusterplatform/app/iso
+            - name: syslinux-worker
+              mountPath: /tmp/clusterplatform/app/syslinux
       volumes:
-        - name: iso-worker
+        - name: syslinux-worker
           persistentVolumeClaim:
-            claimName: iso-worker
+            claimName: syslinux-worker
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: iso-worker
+  name: syslinux-worker
 spec:
   accessModes:
     - ReadWriteOnce
@@ -51,6 +51,6 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: iso-worker
+  name: syslinux-worker
 data:
-  MINIO_BUCKET: isos
+  MINIO_BUCKET: syslinuxs

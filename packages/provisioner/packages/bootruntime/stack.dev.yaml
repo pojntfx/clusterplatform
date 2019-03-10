@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: bootruntime
-          image: registry.gitlab.com/clusterplatform/clusterplatform/bootruntime
+          image: registry.gitlab.com/clusterplatform/clusterplatform/bootruntime.dev
           resources:
             limits:
               memory: 200Mi

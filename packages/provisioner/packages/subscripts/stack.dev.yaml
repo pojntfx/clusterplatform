@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mainscripts
+  name: subscripts
 spec:
   selector:
     matchLabels:
-      app: mainscripts
+      app: subscripts
   template:
     metadata:
       labels:
-        app: mainscripts
+        app: subscripts
     spec:
       containers:
-        - name: mainscripts
-          image: registry.gitlab.com/clusterplatform/clusterplatform/mainscripts
+        - name: subscripts
+          image: registry.gitlab.com/clusterplatform/clusterplatform/subscripts.dev
           resources:
             limits:
               memory: 200Mi
