@@ -27,11 +27,35 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: gateway
+  name: gateway-public
 spec:
   selector:
     app: gateway
   type: NodePort
   ports:
     - port: 3000
-      nodePort: 30300
+      nodePort: 30002
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+spec:
+  selector:
+    app: gateway
+  ports:
+    - port: 3000
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: gateway-public
+spec:
+  rules:
+    - host: api.provisioner.sandbox.cloud.alphahorizon.io
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: gateway
+              servicePort: 3000

@@ -47,7 +47,7 @@ spec:
     app: minio
   ports:
     - port: 9000
-      nodePort: 30900
+      nodePort: 30003
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -66,8 +66,8 @@ kind: ConfigMap
 metadata:
   name: minio-public
 data:
-  MINIO_ENDPOINT: "alpha.sandbox.provisioner.alphahorizon.io"
-  MINIO_PORT: "30900"
+  MINIO_ENDPOINT: services.provisioner.sandbox.cloud.alphahorizon.io
+  MINIO_PORT: "30003"
   MINIO_REGION: us-east-1
   MINIO_BUCKET: ipxes
   MINIO_ACCESS_KEY: minio-access-key

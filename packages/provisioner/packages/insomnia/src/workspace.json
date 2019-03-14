@@ -732,7 +732,7 @@
 			"authentication": {},
 			"body": {
 				"mimeType": "application/json",
-				"text": "{\"text\":\"#!ipxe\\nmenu Choose Script\\nitem mainsubscriptserver_fedora29 Main Sub Script Server Fedora 29\\nchoose --default mainsubscriptserver_fedora29 --timeout 3000 server &&  goto ${server}\\n:mainsubscriptserver_fedora29\\nchain http://46.101.114.216:30300/api/subscripts/1\"}"
+				"text": "{\"text\":\"#!ipxe\\nmenu Choose Script\\nitem mainsubscriptserver_fedora29 Main Sub Script Server Fedora 29\\nchoose --default mainsubscriptserver_fedora29 --timeout 3000 server &&  goto ${server}\\n:mainsubscriptserver_fedora29\\nchain http://46.101.114.216:30002/api/subscripts/1\"}"
 			},
 			"created": 1551789414957,
 			"description": "",
@@ -865,7 +865,7 @@
 			"authentication": {},
 			"body": {
 				"mimeType": "application/json",
-				"text": "{\"text\":\"#!ipxe\\nmenu Choose Script\\nitem subscript Fedora 29\\nchoose --default subscript --timeout 3000 subscript && goto ${subscript}\\n:subscript\\nset base http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\\nkernel ${base}/images/pxeboot/vmlinuz initrd=initrd.img inst.repo=${base} inst.ks=http://46.101.114.216:30300/api/kickstarts/1\\ninitrd ${base}/images/pxeboot/initrd.img\\nboot\\n\"}"
+				"text": "{\"text\":\"#!ipxe\\nmenu Choose Script\\nitem subscript Fedora 29\\nchoose --default subscript --timeout 3000 subscript && goto ${subscript}\\n:subscript\\nset base http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\\nkernel ${base}/images/pxeboot/vmlinuz initrd=initrd.img inst.repo=${base} inst.ks=http://46.101.114.216:30002/api/kickstarts/1\\ninitrd ${base}/images/pxeboot/initrd.img\\nboot\\n\"}"
 			},
 			"created": 1551791837752,
 			"description": "",
@@ -998,7 +998,7 @@
 			"authentication": {},
 			"body": {
 				"mimeType": "application/json",
-				"text": "{\"text\":\"#platform=x86, AMD64, or Intel EM64T\\n#version=DEVEL\\n# Keyboard layouts\\nkeyboard 'us'\\n# Root password\\nrootpw --plaintext asdfasdf123$$44\\n# System language\\nlang en_US\\n# Reboot after installation\\nreboot\\n# System timezone\\ntimezone Europe/Berlin\\n# Use text mode install\\ntext\\n# Network information\\nnetwork  --bootproto=dhcp --device=enp0s25\\n# Use network installation\\nurl --url=\\\"http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\\\"\\n# System authorization information\\nauth  --useshadow  --passalgo=sha512\\n# Firewall configuration\\nfirewall --disabled\\n# SELinux configuration\\nselinux --enforcing\\n# Do not configure the X Window System\\nskipx\\n\\n# System bootloader configuration\\nbootloader --location=mbr\\n# Clear the Master Boot Record\\nzerombr\\n# Partition clearing information\\nclearpart --all\\n# Disk partitioning information\\npart /boot --asprimary --fstype=\\\"ext4\\\" --size=512\\npart / --asprimary --fstype=\\\"ext4\\\" --grow --size=1\\n\\n%pre\\ncurl http://46.101.114.216:30300/api/prebootscripts/1 | bash\\n%end\\n\\n%post\\ncurl http://46.101.114.216:30300/api/postbootscripts/1 | bash\\n%end\\n\\n%packages\\n@standard\\n\\n%end\\n\"}"
+				"text": "{\"text\":\"#platform=x86, AMD64, or Intel EM64T\\n#version=DEVEL\\n# Keyboard layouts\\nkeyboard 'us'\\n# Root password\\nrootpw --plaintext asdfasdf123$$44\\n# System language\\nlang en_US\\n# Reboot after installation\\nreboot\\n# System timezone\\ntimezone Europe/Berlin\\n# Use text mode install\\ntext\\n# Network information\\nnetwork  --bootproto=dhcp --device=enp0s25\\n# Use network installation\\nurl --url=\\\"http://dl.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/os\\\"\\n# System authorization information\\nauth  --useshadow  --passalgo=sha512\\n# Firewall configuration\\nfirewall --disabled\\n# SELinux configuration\\nselinux --enforcing\\n# Do not configure the X Window System\\nskipx\\n\\n# System bootloader configuration\\nbootloader --location=mbr\\n# Clear the Master Boot Record\\nzerombr\\n# Partition clearing information\\nclearpart --all\\n# Disk partitioning information\\npart /boot --asprimary --fstype=\\\"ext4\\\" --size=512\\npart / --asprimary --fstype=\\\"ext4\\\" --grow --size=1\\n\\n%pre\\ncurl http://46.101.114.216:30002/api/prebootscripts/1 | bash\\n%end\\n\\n%post\\ncurl http://46.101.114.216:30002/api/postbootscripts/1 | bash\\n%end\\n\\n%packages\\n@standard\\n\\n%end\\n\"}"
 			},
 			"created": 1551791891642,
 			"description": "",
@@ -1264,7 +1264,7 @@
 			"authentication": {},
 			"body": {
 				"mimeType": "application/json",
-				"text": "{\"text\": \"sudo dnf install openssh-server -y\\nmkdir -p ~/.ssh\\ncurl http://46.101.114.216:30300/api/sshkeys/1 >> ~/.ssh/authorized_keys\\nsystemctl enable sshd\\ncurl --request POST --header \\\"Content-Type: application/json\\\" --data \\\"{\\\"ip\\\": \\\"$(ip -4 addr show enp0s25 | grep -oP '(?<=inets)d+(.d+){3}' | head -n 1)\\\",\\\"tag\\\":\\\"sol-earth-eu-de-bw-fds-bbronn-hirschkopfweg-8-pojtinger-felix-local-nodes\\\"}\\\" http://46.101.114.216:30300/api/localnodes\"}"
+				"text": "{\"text\": \"sudo dnf install openssh-server -y\\nmkdir -p ~/.ssh\\ncurl http://46.101.114.216:30002/api/sshkeys/1 >> ~/.ssh/authorized_keys\\nsystemctl enable sshd\\ncurl --request POST --header \\\"Content-Type: application/json\\\" --data \\\"{\\\"ip\\\": \\\"$(ip -4 addr show enp0s25 | grep -oP '(?<=inets)d+(.d+){3}' | head -n 1)\\\",\\\"tag\\\":\\\"sol-earth-eu-de-bw-fds-bbronn-hirschkopfweg-8-pojtinger-felix-local-nodes\\\"}\\\" http://46.101.114.216:30002/api/localnodes\"}"
 			},
 			"created": 1551791992245,
 			"description": "",

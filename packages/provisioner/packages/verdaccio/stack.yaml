@@ -89,4 +89,4 @@ data:
   NPM_USER: verdaccio-user
   NPM_PASS: verdaccio-password
   NPM_EMAIL: verdaccio-user@example.com
-  NPM_REGISTRY: http://alpha.sandbox.provisioner.alphahorizon.io:30004
+  NPM_REGISTRY: http://services.provisioner.sandbox.cloud.alphahorizon.io:30004
