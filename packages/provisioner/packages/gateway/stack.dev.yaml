@@ -36,4 +36,4 @@ spec:
   type: NodePort
   ports:
     - port: 3000
-      nodePort: 30300
+      nodePort: 30002

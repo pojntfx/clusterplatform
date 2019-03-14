@@ -103,3 +103,51 @@ localnodes.create(ip, artifactId, pingable)
 PUT /localnodes/:id/vpn
 localnodes.updateVpn(id, network)
 ```
+
+## New Docs Structure
+
+```plaintext
+# Cluster Platform Provisioner
+    ## Features
+        ### Introduction
+        ### Diagram
+        ### Services
+    ## Usage
+        ### REST API
+        ### Moleculer Services
+        ### Frontend
+    ## Deployment
+        ### Prerequesites
+            #### Kubernetes Cluster
+            #### NodePort
+            #### Optional Ingress and DNS
+        ### Services
+        ### Distributor
+    ## Tutorial
+        ### Input
+            #### Mainscript
+            #### Subscript
+            #### SSH Keys
+            #### Kickstart
+            #### Prebootscript
+            #### Postbootscript
+        ### Provisioning
+            #### With Network
+                ##### Create Preboot Runtime for Network
+                ##### Distribute Preboot Runtime with Network
+                ##### Activate Distributor
+                ##### Distribute Precloud Runtime with Network
+            #### Provisioning with Media
+                ##### Create Preboot Runtime for Media
+                ##### Distribute Preboot Runtime with Media
+                ##### Distribute Precloud Runtime with Media
+        ### Output
+            #### Localnodes
+            #### Create Globalnodes from Localnodes
+            #### Globalnodes
+    ## Development
+        ### Prerequesites
+        ### Services
+        ### Distributor
+    ## More
+```
