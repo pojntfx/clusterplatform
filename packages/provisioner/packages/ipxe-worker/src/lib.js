@@ -17,15 +17,39 @@ export default class {
     await git.cloneOrPullRepo(remote, this.downloaddir);
   }
 
+  /**
+   * Fix a bug where iPXE sleeps which breaks U-Boot support
+   */
+  async patchForAarch64() {
+    await shell.touch(`${this.downloaddir}/src/config/local/nap.h`);
+    await fs.writeFile(
+      `${this.downloaddir}/src/config/local/nap.h`,
+      `/* nap.h */
+#undef NAP_EFIX86
+#undef NAP_EFIARM
+#define NAP_NULL`
+    );
+  }
+
   async build({ platform, driver, extension, script }) {
     this.localFilename = `${driver}.${extension}`;
     this.remoteFilename = `${this.artifactId}/${driver}.${extension}`;
     await fs.writeFile(`${this.downloaddir}/preseed.ipxe`, script);
     await shell.cd(`${this.downloaddir}/src/`);
-    await autotools.make(
-      `${platform}/${driver}.${extension}`,
-      `EMBED=${this.downloaddir}/preseed.ipxe NO_WERROR=1`
-    );
+    switch (platform) {
+      case "bin-arm64-efi":
+        await autotools.make(
+          `${platform}/${driver}.${extension}`,
+          `EMBED=${
+            this.downloaddir
+          }/preseed.ipxe NO_WERROR=1 CROSS_COMPILE=aarch64-linux-gnu- ARCH=arm64`
+        );
+      default:
+        await autotools.make(
+          `${platform}/${driver}.${extension}`,
+          `EMBED=${this.downloaddir}/preseed.ipxe NO_WERROR=1`
+        );
+    }
     return await shell.cp(
       `${this.downloaddir}/src/${platform}/${this.localFilename}`,
       `${this.builddir}/${this.localFilename}`
