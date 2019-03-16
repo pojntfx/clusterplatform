@@ -1,21 +1,27 @@
 import { Client } from "minio";
 import * as shell from "async-shelljs";
-import { fs } from "@clusterplatform/builder-utils";
+import { fs, git } from "@clusterplatform/builder-utils";
 
 export default class {
-  constructor({ artifactId, builddir, distdir }) {
+  constructor({ artifactId, downloaddir, builddir, distdir }) {
     this.artifactId = artifactId;
+    this.downloaddir = downloaddir;
     this.builddir = `${builddir}/${this.artifactId}`;
     this.distdir = `${distdir}/${this.artifactId}`;
+    shell.mkdir("-p", this.downloaddir);
     shell.mkdir("-p", this.builddir);
     shell.mkdir("-p", this.distdir);
+  }
+
+  async download({ remote }) {
+    await git.cloneOrPullRepo(remote, this.downloaddir, "--depth 1");
   }
 
   async build({ fragment }) {
     this.localFilename = fragment;
     this.remoteFilename = `${this.artifactId}/${fragment}`;
-    if (await fs.exists(`/usr/share/syslinux/${fragment}`)) {
-      await shell.cp(`/usr/share/syslinux/${fragment}`, this.builddir);
+    if (await fs.exists(`${this.downloaddir}/boot/${fragment}`)) {
+      await shell.cp(`${this.downloaddir}/boot/${fragment}`, this.builddir);
       return true;
     } else {
       return false;

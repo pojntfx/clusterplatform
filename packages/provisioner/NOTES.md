@@ -459,7 +459,7 @@ function sdimages.package() {
 ## Aarch64 Docs Extension Concepts
 
 ```bash
-# Create U-Boot media bootloader UEFI aarch64 for ISO
+# Create U-Boot media bootloader UEFI aarch64
 curl -H 'Content-Type: application/json' \
     -d '{
     "platform": "aarch64",
@@ -471,7 +471,7 @@ curl -H 'Content-Type: application/json' \
 ```
 
 ```bash
-# Create U-Boot media bootloader UEFI aarch64 IMG for ISO
+# Create U-Boot media bootloader UEFI aarch64 IMG
 curl -H 'Content-Type: application/json' \
     -d '{
     "platform": "arm64",
@@ -484,5 +484,43 @@ curl -H 'Content-Type: application/json' \
 
 ```bash
 # Get U-Boot UEFI aarch64 status
-curl 'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/uboots'
+curl 'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/uboots/1'
+# Get U-Boot UEFI aarch64 IMG status
+curl 'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/uboots/2'
+```
+
+```bash
+# Create non-free Raspberry Pi 3 bootcodeBin
+curl -H 'Content-Type: application/json' \
+    -d '{
+    "fragment": "bootcode.bin"
+}' \
+    'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/rpi3firmwares'
+```
+
+```bash
+# Create non-free Raspberry Pi 3 fixupDat
+curl -H 'Content-Type: application/json' \
+    -d '{
+    "fragment": "fixup.dat"
+}' \
+    'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/rpi3firmwares'
+```
+
+```bash
+# Create non-free Raspberry Pi 3 startElf
+curl -H 'Content-Type: application/json' \
+    -d '{
+    "fragment": "start.elf"
+}' \
+    'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/rpi3firmwares'
+```
+
+```bash
+# Get non-free Raspberry Pi 3 bootcodeBin status
+curl 'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/rpi3firmwares/1'
+# Get non-free Raspberry Pi 3 fixupDat status
+curl 'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/rpi3firmwares/2'
+# Get non-free Raspberry Pi 3 startElf status
+curl 'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/rpi3firmwares/3'
 ```
