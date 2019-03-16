@@ -24,15 +24,13 @@ export default {
     name: "sshkey",
     define: {
       text: Orm.TEXT,
-      artifactId: Orm.STRING,
-      private: Orm.BOOLEAN
+      artifactId: Orm.STRING
     }
   },
   settings: {
     entityValidator: {
       text: "string",
-      artifactId: "string",
-      private: "boolean"
+      artifactId: "string"
     }
   }
 };
