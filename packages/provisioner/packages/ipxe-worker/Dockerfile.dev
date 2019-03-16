@@ -2,7 +2,7 @@
 FROM fedora:29
 RUN mkdir -p /opt/clusterplatform/app
 WORKDIR /opt/clusterplatform/app
-RUN dnf install -y npm git gcc binutils make perl xz xz-devel
+RUN dnf install -y npm git gcc binutils make perl xz xz-devel gcc-aarch64-linux-gnu
 
 # Add app
 COPY package.json .

@@ -15,9 +15,13 @@ export default {
       });
       await job.progress(10);
       await ipxe.download({
-        remote: "https://github.com/ipxe/ipxe.git"
+        remote: "https://github.com/pojntfx/ipxe.git" // Use fork to fix bug in build system
       });
       await job.progress(20);
+      if (job.data.platform === "bin-arm64-efi") {
+        await ipxe.patchForAarch64();
+      }
+      await job.progress(30);
       await ipxe.build(job.data);
       await job.progress(50);
       await ipxe.package();
