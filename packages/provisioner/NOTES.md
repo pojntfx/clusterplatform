@@ -358,7 +358,6 @@ function uboot.init() {
     mkdir -p ${SRCDIR}
     mkdir -p ${BUILDDIR}
     mkdir -p ${DISTDIR}
-    mkdir -p ${PACKAGEDIR}
 }
 
 function uboot.getSources() {
@@ -372,7 +371,7 @@ function uboot.buildUbootBin() {
     cd ${BUILDDIR}
     make CROSS_COMPILE=${PLATFORM} ${TARGET}
     make CROSS_COMPILE=${PLATFORM} -j$(nproc) -s all
-    cp -r ${BUILDDIR}/u-boot.bin ${DISTDIR}/u-boot.bin
+    cp -r ${BUILDDIR}/u-boot.bin ${DISTDIR}/kernel.img
 }
 
 function uboot.buildBootCmdImg() {
@@ -382,14 +381,6 @@ function uboot.buildBootCmdImg() {
     cd ${BUILDDIR}
     echo "${SCRIPT}" >${BUILDDIR}/boot.cmd
     mkimage -C none -A ${PLATFORM} -T script -d ${BUILDDIR}/boot.cmd ${DISTDIR}/boot.scr
-}
-
-function uboot.packageUbootBin() {
-    cp ${DISTDIR}/u-boot.bin ${PACKAGEDIR}/kernel.img
-}
-
-function uboot.packageBootCmdImg() {
-    cp ${DISTDIR}/boot.scr ${PACKAGEDIR}/boot.scr
 }
 ```
 
@@ -463,4 +454,35 @@ function sdimages.build() {
 function sdimages.package() {
     cp ${SDIMGSDIR}/disk.img ${DISTDIR}/out.img
 }
+```
+
+## Aarch64 Docs Extension Concepts
+
+```bash
+# Create U-Boot media bootloader UEFI aarch64 for ISO
+curl -H 'Content-Type: application/json' \
+    -d '{
+    "platform": "aarch64",
+    "target": "rpi_3_defconfig",
+    "fragment": "ubootBin",
+    "script": "load mmc 0:1 0x0020000 snp.efi\nbootefi 0x0020000\n"
+}' \
+    'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/uboots'
+```
+
+```bash
+# Create U-Boot media bootloader UEFI aarch64 IMG for ISO
+curl -H 'Content-Type: application/json' \
+    -d '{
+    "platform": "arm64",
+    "target": "rpi_3_defconfig",
+    "fragment": "ubootCmdImg",
+    "script": "load mmc 0:1 0x0020000 snp.efi\nbootefi 0x0020000\n"
+}' \
+    'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/uboots'
+```
+
+```bash
+# Get U-Boot UEFI aarch64 status
+curl 'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/uboots'
 ```

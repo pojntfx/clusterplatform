@@ -7,6 +7,7 @@ import zip from "./zip";
 import mkDosFs from "./mkDosFs";
 import mcopy from "./mcopy";
 import xorriso from "./xorriso";
+import mkimage from "./mkimage";
 
 export {
   autotools,
@@ -17,5 +18,6 @@ export {
   zip,
   mkDosFs,
   mcopy,
-  xorriso
+  xorriso,
+  mkimage
 };

@@ -1,0 +1,23 @@
+# Setup env
+FROM fedora:29
+RUN mkdir -p /opt/clusterplatform/app
+WORKDIR /opt/clusterplatform/app
+RUN dnf install -y npm git gcc binutils make uboot-tools gcc-aarch64-linux-gnu bison byacc flex findutils
+
+# Add app
+COPY package.json .
+COPY src src
+
+# Setup app
+ENV SERVICEDIR=src
+ENV SERVICES=svc.js
+ENV TRANSPORTER=TCP
+
+# Run app
+CMD npm set registry ${NPM_REGISTRY}; \
+    npm install; \
+    node node_modules/nodemon/bin/nodemon.js \
+    --inspect=0.0.0.0:9229 \
+    --watch src/ \
+    -r esm \
+    node_modules/moleculer/bin/moleculer-runner.js
