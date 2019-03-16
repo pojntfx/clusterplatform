@@ -13,7 +13,7 @@ export default class {
   }
   static async make(target, args) {
     return await shell.exec(
-      `make${target && ` ${target}`}${args && ` ${args}`}`
+      `make${args && ` ${args}`}${target && ` ${target}`}`
     );
   }
   static async makeInstall() {

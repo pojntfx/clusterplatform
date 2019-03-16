@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ipxe-worker
+  name: uboot-worker
 spec:
   selector:
     matchLabels:
-      app: ipxe-worker
+      app: uboot-worker
   template:
     metadata:
       labels:
-        app: ipxe-worker
+        app: uboot-worker
     spec:
       containers:
-        - name: ipxe-worker
-          image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-worker.dev
+        - name: uboot-worker
+          image: registry.gitlab.com/clusterplatform/clusterplatform/uboot-worker.dev
           resources:
             limits:
               memory: 300Mi
@@ -28,19 +28,19 @@ spec:
             - configMapRef:
                 name: verdaccio
             - configMapRef:
-                name: ipxe-worker
+                name: uboot-worker
           volumeMounts:
-            - name: ipxe-worker
-              mountPath: /tmp/clusterplatform/app/ipxe
+            - name: uboot-worker
+              mountPath: /tmp/clusterplatform/app/uboot
       volumes:
-        - name: ipxe-worker
+        - name: uboot-worker
           persistentVolumeClaim:
-            claimName: ipxe-worker
+            claimName: uboot-worker
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: ipxe-worker
+  name: uboot-worker
 spec:
   accessModes:
     - ReadWriteOnce
@@ -51,6 +51,6 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: ipxe-worker
+  name: uboot-worker
 data:
-  MINIO_BUCKET: ipxes
+  MINIO_BUCKET: uboots

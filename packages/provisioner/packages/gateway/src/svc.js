@@ -24,6 +24,10 @@ export default {
           "iso-manager.createOverwrite",
           "iso-manager.list",
           "iso-manager.get",
+          // uboots
+          "uboot-manager.createOverwrite",
+          "uboot-manager.list",
+          "uboot-manager.get",
           // distributors
           "distributor-manager.create",
           "distributor-manager.updateDistributor",
@@ -77,6 +81,10 @@ export default {
           "POST /isos": "iso-manager.createOverwrite",
           "GET /isos": "iso-manager.list",
           "GET /isos/:id": "iso-manager.get",
+          // uboots
+          "POST /uboots": "uboot-manager.createOverwrite",
+          "GET /uboots": "uboot-manager.list",
+          "GET /uboots/:id": "uboot-manager.get",
           // distributors
           "POST /distributors": "distributor-manager.create",
           "PUT /distributors/:id": "distributor-manager.updateDistributor",
