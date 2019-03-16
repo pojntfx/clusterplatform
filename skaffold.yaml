@@ -118,14 +118,26 @@ profiles:
             dockerfile: Dockerfile.dev
           sync:
             "**/*.js": src/
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/uboot-manager.dev
+          context: packages/provisioner/packages/uboot-manager
+          docker:
+            dockerfile: Dockerfile.dev
+          sync:
+            "**/*.js": src/
         - image: registry.gitlab.com/clusterplatform/clusterplatform/uboot-worker.dev
           context: packages/provisioner/packages/uboot-worker
           docker:
             dockerfile: Dockerfile.dev
           sync:
             "**/*.js": src/
-        - image: registry.gitlab.com/clusterplatform/clusterplatform/uboot-manager.dev
-          context: packages/provisioner/packages/uboot-manager
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/rpi3firmware-manager.dev
+          context: packages/provisioner/packages/rpi3firmware-manager
+          docker:
+            dockerfile: Dockerfile.dev
+          sync:
+            "**/*.js": src/
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/rpi3firmware-worker.dev
+          context: packages/provisioner/packages/rpi3firmware-worker
           docker:
             dockerfile: Dockerfile.dev
           sync:

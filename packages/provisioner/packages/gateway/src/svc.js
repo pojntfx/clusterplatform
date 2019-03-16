@@ -28,6 +28,10 @@ export default {
           "uboot-manager.createOverwrite",
           "uboot-manager.list",
           "uboot-manager.get",
+          // rpi3firmwares
+          "rpi3firmware-manager.createOverwrite",
+          "rpi3firmware-manager.list",
+          "rpi3firmware-manager.get",
           // distributors
           "distributor-manager.create",
           "distributor-manager.updateDistributor",
@@ -81,6 +85,10 @@ export default {
           "POST /isos": "iso-manager.createOverwrite",
           "GET /isos": "iso-manager.list",
           "GET /isos/:id": "iso-manager.get",
+          // rpi3firmwares
+          "POST /rpi3firmwares": "rpi3firmware-manager.createOverwrite",
+          "GET /rpi3firmwares": "rpi3firmware-manager.list",
+          "GET /rpi3firmwares/:id": "rpi3firmware-manager.get",
           // uboots
           "POST /uboots": "uboot-manager.createOverwrite",
           "GET /uboots": "uboot-manager.list",

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rpi3firmware-worker
+spec:
+  selector:
+    matchLabels:
+      app: rpi3firmware-worker
+  template:
+    metadata:
+      labels:
+        app: rpi3firmware-worker
+    spec:
+      containers:
+        - name: rpi3firmware-worker
+          image: registry.gitlab.com/clusterplatform/clusterplatform/rpi3firmware-worker.dev
+          resources:
+            limits:
+              memory: 200Mi
+              cpu: 200m
+          envFrom:
+            - configMapRef:
+                name: nats
+            - configMapRef:
+                name: redis
+            - configMapRef:
+                name: minio
+            - configMapRef:
+                name: verdaccio
+            - configMapRef:
+                name: rpi3firmware-worker
+          volumeMounts:
+            - name: rpi3firmware-worker
+              mountPath: /tmp/clusterplatform/app/rpi3firmware
+      volumes:
+        - name: rpi3firmware-worker
+          persistentVolumeClaim:
+            claimName: rpi3firmware-worker
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rpi3firmware-worker
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rpi3firmware-worker
+data:
+  MINIO_BUCKET: rpi3firmwares
