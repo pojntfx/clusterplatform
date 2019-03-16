@@ -152,7 +152,9 @@ localnodes.updateVpn(id, network)
     ## More
 ```
 
-## New Services Concepts
+## Aarch64 Services Concepts
+
+Services prefixed with `rpi3` are specific to the Raspberry Pi 3, but you could of course implement such services for any platform you want to support; the other services have been implemented platform-independent.
 
 ```js
 const ubootWorker = {
@@ -165,16 +167,33 @@ const ubootWorker = {
     },
     handler: async function(ctx) {
       const uboot = new Uboot();
-      await uboot.getSources(remote);
-      await uboot.configure(script);
-      if (fragment === "ubootCmdImg") {
-        await uboot.buildImage({ ubootCmdImg });
+      await uboot.getSources("remote");
+      if (ctx.params.fragment === "ubootCmdImg") {
+        await uboot.configure(ctx.params.script); // ubootCmd
+        await uboot.buildImage();
       } else {
-        await uboot.build({ platform, target }); // ubootBin
+        await uboot.build({
+          platform: ctx.params.platform,
+          target: ctx.params.target
+        }); // ubootBin
       }
-      await uboot.buildImage({ ubootCmdImg });
-      await uboot.package();
-      return await uboot.upload();
+      await uboot.package(ctx.params.fragment);
+      return await uboot.upload(ctx.params.fragment);
+    }
+  }
+};
+
+const rpi3firmwareWorker = {
+  create: {
+    params: {
+      fragment: "string"
+    },
+    handler: async function(ctx) {
+      const rpi3Patches = new Rpi3Patches();
+      await rpi3Patches.getSources("remote");
+      await rpi3Patches.build(ctx.params.fragment); // bootcodeBin, fixupDat, startElf
+      await rpi3Patches.package();
+      return await rpi3Patches.upload();
     }
   }
 };
@@ -182,21 +201,7 @@ const ubootWorker = {
 const rpi3patchesWorker = {
   create: {
     params: {
-      fragment: "string"
-    },
-    handler: async function(ctx) {
-      const rpi3Patches = new Rpi3Patches();
-      await rpi3Patches.getSources(remote);
-      await rpi3Patches.build(fragment); // bootcodeBin, fixupDat, startElf
-      await rpi3Patches.package();
-      return await rpi3Patches.upload();
-    }
-  }
-};
-
-const rpi3imagesWorker = {
-  create: {
-    params: {
+      ixpeEfiUrl: "string",
       bootcodeBinUrl: "string",
       fixupDatUrl: "string",
       startElfUrl: "string",
@@ -205,24 +210,34 @@ const rpi3imagesWorker = {
       script: "string"
     },
     handler: async function(ctx) {
-      const rpi3Images = new rpi3Images();
-      await rpi3Images.download({
-        bootcodeBinUrl,
-        fixupDatUrl,
-        startElfUrl,
-        ubootBinUrl,
-        ubootCmdImgUrl
-      });
-      await rpi3Images.configure(script); // config.txt
+      const rpi3Images = new Rpi3Images();
+      await rpi3Images.download(ctx.params);
+      await rpi3Images.configure(ctx.params.script); // config.txt
       await rpi3Images.build();
       await rpi3Images.package();
       return await rpi3Images.upload();
     }
   }
 };
+
+const sdimagesWorker = {
+  create: {
+    params: {
+      label: "string",
+      artifactsZipUrl: "string"
+    },
+    handler: async function(ctx) {
+      const sdImages = new SdImages();
+      await sdImages.download(ctx.params.artifactsZipUrl);
+      await sdImages.build(ctx.params.label); // CLUSTERPLATFORM_BOOT_MEDIA
+      await sdImages.package();
+      return await sdImages.upload();
+    }
+  }
+};
 ```
 
-## New Services Bash Implementation
+## Aarch64 Services Bash Implementation
 
 ```bash
 function env.get_dependencies() {
@@ -327,7 +342,7 @@ function sd.unmount() {
 }
 ```
 
-## Images Worker Bash Implementation
+## Aarch64 Images Worker Bash Implementation
 
 ```bash
 # sudo dnf install fuse-devel libfdisk-devel -y
@@ -359,13 +374,14 @@ function sdimages.getSources() {
 }
 
 function sdimages.build() {
+    local LABEL=$1
     dd if=/dev/zero of=${SDIMGSDIR}/disk.img count=50 bs=1M
     parted -a minimal ${SDIMGSDIR}/disk.img mklabel msdos
     parted -a minimal ${SDIMGSDIR}/disk.img mkpart primary fat32 0% 100%
     mkdir -p ${SDIMGSDIR}/disk-extracted
     ${DEPENDENCIES_PARTFSDIR}/build/bin/partfs -o dev=${SDIMGSDIR}/disk.img ${SDIMGSDIR}/disk-extracted
     echo 'mtools_skip_check=1' >~/.mtoolsrc
-    mkfs.vfat -n BOOT ${SDIMGSDIR}/disk-extracted/p1
+    mkfs.vfat -n ${LABEL} ${SDIMGSDIR}/disk-extracted/p1
     mcopy -i ${SDIMGSDIR}/disk-extracted/p1 ${INPUTDIR}/** ::
 }
 
