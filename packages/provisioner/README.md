@@ -306,33 +306,21 @@ curl -H 'Content-Type: application/json' \
 
 ```bash
 # Get new SSH key pair
+# Save this info on your machine or you will loose access!
 curl -G \
     --data-urlencode 'algorithm=ecdsa' \
     'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/sshkey'
 ```
 
 > - **"Public Key"** refers to a public SSH key. You may share this key to enable you to access a SSH-enabled node such as a localnode or globalnode.
+> - **"Private Key"** refers to a private SSH key. Do **not** share this key. Do **not** forget the newline at the end of the key or authentication will fail. And, most importantly: **DO NOT UPLOAD THIS KEY TO THE SSHKEYS SERVICE**.
 
 ```bash
 # Add public SSH key
 curl -H 'Content-Type: application/json' \
     -d '{
     "text": "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBB69xaEXw3y8PZeV6mjkTfK8X3z/0GlWe5dzuWcccD8fVHFl6W+XZ6qN+a8h0RD6OcFbk1mYTyh8sV2KbyIFNBk= pojntfx@pojntfx-x230-fedora\n",
-    "artifactId": "felicitas.pojtinger.swabia.sol",
-    "private": false
-}' \
-    'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/sshkeys'
-```
-
-> - **"Private Key"** refers to a private SSH key. Do **not** share this key. Do **not** forget the newline at the end of the key or authentication will fail.
-
-```bash
-# Add private SSH key
-curl -H 'Content-Type: application/json' \
-    -d '{
-    "text": "-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAaAAAABNlY2RzYS\n1zaGEyLW5pc3RwMjU2AAAACG5pc3RwMjU2AAAAQQQevcWhF8N8vD2Xlepo5E3yvF98/9Bp\nVnuXc7lnHHA/H1RxZelvl2eqjfmvIdEQ+jnBW5NZmE8ofLFdim8iBTQZAAAAuPZWcbr2Vn\nG6AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBB69xaEXw3y8PZeV\n6mjkTfK8X3z/0GlWe5dzuWcccD8fVHFl6W+XZ6qN+a8h0RD6OcFbk1mYTyh8sV2KbyIFNB\nkAAAAhAOUvaCmEoMgsNL6Hl2XliKnMSvVOhXYyQqjGds21VWkKAAAAG3Bvam50ZnhAcG9q\nbnRmeC14MjMwLWZlZG9yYQECAwQ\n-----END OPENSSH PRIVATE KEY-----\n",
-    "artifactId": "felicitas.pojtinger.swabia.sol",
-    "private": true
+    "artifactId": "felicitas.pojtinger.swabia.sol"
 }' \
     'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/sshkeys'
 ```
@@ -551,10 +539,11 @@ curl 'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/localn
 It is possible to execute an arbitrary command as root on a localnode using the distributors and SSH. Here, we are going to use this to create a Globalnode, but the possibilities are endless. First, create a VPN using free/libre and open source [ZeroTier](https://zerotier.com). Then, copy it's network ID below to join the node into the network. Note that this uses the node's artifactId and assumes a working distributor with the node's artifactId is in the node's network.
 
 ```bash
-# Create Globalnode from Localnode
+# Create Globalnode from Localnode (use the private key you've got from above)
 curl -X PUT -H 'Content-Type: application/json' \
     -d '{
     "script": "curl https://install.zerotier.com/ | sudo bash\nzerotier-cli join 1c33c1ced0d02ef9\nip a | grep zt",
+    "privateKey": "-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAaAAAABNlY2RzYS\n1zaGEyLW5pc3RwMjU2AAAACG5pc3RwMjU2AAAAQQQevcWhF8N8vD2Xlepo5E3yvF98/9Bp\nVnuXc7lnHHA/H1RxZelvl2eqjfmvIdEQ+jnBW5NZmE8ofLFdim8iBTQZAAAAuPZWcbr2Vn\nG6AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBB69xaEXw3y8PZeV\n6mjkTfK8X3z/0GlWe5dzuWcccD8fVHFl6W+XZ6qN+a8h0RD6OcFbk1mYTyh8sV2KbyIFNB\nkAAAAhAOUvaCmEoMgsNL6Hl2XliKnMSvVOhXYyQqjGds21VWkKAAAAG3Bvam50ZnhAcG9q\nbnRmeC14MjMwLWZlZG9yYQECAwQ\n-----END OPENSSH PRIVATE KEY-----\n"
 }' \
     'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/localnodes/1/script'
 ```

@@ -49,7 +49,8 @@ export default {
     runScript: {
       params: {
         id: { type: "number", convert: true },
-        script: "string"
+        script: "string",
+        privateKey: "string"
       },
       handler: async function(ctx) {
         const node = await ctx.call("localnode-manager.get", {
@@ -58,16 +59,13 @@ export default {
         const distributor = (await ctx.call("distributor-manager.find", {
           query: { artifactId: node.artifactId }
         }))[0];
-        const privateKey = (await ctx.call("sshkeys.find", {
-          query: { artifactId: node.artifactId, private: true }
-        }))[0];
         return await ctx.call(
           "distributor-manager.runScriptFromDistributorWorkerOnNode",
           {
             nodeIp: node.ip,
             distributorId: distributor.id,
             script: ctx.params.script,
-            privateKey: privateKey.text
+            privateKey: ctx.params.privateKey
           }
         );
       }
