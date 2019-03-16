@@ -342,7 +342,7 @@ function sd.unmount() {
 }
 ```
 
-## Aarch64 Images Worker Bash Implementation
+## Aarch64 Sdimages Worker Bash Implementation
 
 ```bash
 # sudo dnf install fuse-devel libfdisk-devel -y
@@ -387,5 +387,57 @@ function sdimages.build() {
 
 function sdimages.package() {
     cp ${SDIMGSDIR}/disk.img ${DISTDIR}/out.img
+}
+```
+
+## Aarch64 Uboot Worker Bash Implementation
+
+```bash
+# sudo dnf install uboot-tools gcc-aarch64-linux-gnu -y
+
+function uboot.init() {
+    local WORKDIR_ID=$1
+    export WORKDIR="${PWD}/workspace-${1}"
+    export SRCDIR="${WORKDIR}/srcdir"
+    export BUILDDIR="${WORKDIR}/builddir"
+    export DISTDIR="${WORKDIR}/distdir"
+    export PACKAGEDIR="${WORKDIR}/packagedir"
+
+    mkdir -p ${WORKDIR}
+    mkdir -p ${SRCDIR}
+    mkdir -p ${BUILDDIR}
+    mkdir -p ${DISTDIR}
+    mkdir -p ${PACKAGEDIR}
+}
+
+function uboot.getSources() {
+    git clone --depth 1 git://git.denx.de/u-boot.git ${SRCDIR}
+}
+
+function uboot.buildUbootBin() {
+    local PLATFORM=$1
+    local TARGET=$2
+    cp -r ${SRCDIR}/** ${BUILDDIR}
+    cd ${BUILDDIR}
+    make CROSS_COMPILE=${PLATFORM} ${TARGET}
+    make CROSS_COMPILE=${PLATFORM} -j$(nproc) -s all
+    cp -r ${BUILDDIR}/u-boot.bin ${DISTDIR}/u-boot.bin
+}
+
+function uboot.buildBootCmdImg() {
+    local PLATFORM=$1
+    local SCRIPT=$2
+    cp -r ${SRCDIR} ${BUILDDIR}
+    cd ${BUILDDIR}
+    echo "${SCRIPT}" >${BUILDDIR}/boot.cmd
+    mkimage -C none -A ${PLATFORM} -T script -d ${BUILDDIR}/boot.cmd ${DISTDIR}/boot.scr
+}
+
+function uboot.packageUbootBin() {
+    cp ${DISTDIR}/u-boot.bin ${PACKAGEDIR}/kernel.img
+}
+
+function uboot.packageBootCmdImg() {
+    cp ${DISTDIR}/boot.scr ${PACKAGEDIR}/boot.scr
 }
 ```
