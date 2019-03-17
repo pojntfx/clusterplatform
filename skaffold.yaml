@@ -142,6 +142,18 @@ profiles:
             dockerfile: Dockerfile.dev
           sync:
             "**/*.js": src/
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/rpi3patch-manager.dev
+          context: packages/provisioner/packages/rpi3patch-manager
+          docker:
+            dockerfile: Dockerfile.dev
+          sync:
+            "**/*.js": src/
+        - image: registry.gitlab.com/clusterplatform/clusterplatform/rpi3patch-worker.dev
+          context: packages/provisioner/packages/rpi3patch-worker
+          docker:
+            dockerfile: Dockerfile.dev
+          sync:
+            "**/*.js": src/
         - image: registry.gitlab.com/clusterplatform/clusterplatform/gateway.dev
           context: packages/provisioner/packages/gateway
           docker:

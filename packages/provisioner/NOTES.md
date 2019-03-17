@@ -459,6 +459,18 @@ function sdimages.package() {
 ## Aarch64 Docs Extension Concepts
 
 ```bash
+# Create UEFI iPXE network bootloader for IMG
+curl -H 'Content-Type: application/json' \
+    -d '{
+    "script": "#!ipxe\ndhcp\nchain http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/mainscripts/1",
+    "platform": "bin-arm64-efi",
+    "driver": "snp",
+    "extension": "efi"
+}' \
+    'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/ipxes'
+```
+
+```bash
 # Create U-Boot media bootloader UEFI aarch64
 curl -H 'Content-Type: application/json' \
     -d '{
@@ -480,13 +492,6 @@ curl -H 'Content-Type: application/json' \
     "script": "load mmc 0:1 0x0020000 snp.efi\nbootefi 0x0020000\n"
 }' \
     'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/uboots'
-```
-
-```bash
-# Get U-Boot UEFI aarch64 status
-curl 'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/uboots/1'
-# Get U-Boot UEFI aarch64 IMG status
-curl 'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/uboots/2'
 ```
 
 ```bash
@@ -517,10 +522,42 @@ curl -H 'Content-Type: application/json' \
 ```
 
 ```bash
+# Get UEFI iPXE network bootloader status
+curl 'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/ipxes/1'
+```
+
+```bash
+# Get U-Boot UEFI aarch64 status
+curl 'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/uboots/1'
+# Get U-Boot UEFI aarch64 IMG status
+curl 'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/uboots/2'
+```
+
+```bash
 # Get non-free Raspberry Pi 3 bootcodeBin status
 curl 'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/rpi3firmwares/1'
 # Get non-free Raspberry Pi 3 fixupDat status
 curl 'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/rpi3firmwares/2'
 # Get non-free Raspberry Pi 3 startElf status
 curl 'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/rpi3firmwares/3'
+```
+
+```bash
+# Create non-free Raspberry Pi 3 patches
+curl -H 'Content-Type: application/json' \
+    -d '{
+    ixpeEfiUrl: "http://services.provisioner.sandbox.cloud.alphahorizon.io:30004/ipxes/345ttr/snp.efi",
+    bootcodeBinUrl: "http://services.provisioner.sandbox.cloud.alphahorizon.io:30004/rpi3firmwares/234df3/bootcode.bin",
+    fixupDatUrl: "http://services.provisioner.sandbox.cloud.alphahorizon.io:30004/rpi3firmwares/34rd/fixup.dat",
+    startElfUrl: "http://services.provisioner.sandbox.cloud.alphahorizon.io:30004/rpi3firmwares/234r/start.elf",
+    ubootBinUrl: "http://services.provisioner.sandbox.cloud.alphahorizon.io:30004/uboots/sdf/uboot.bin",
+    ubootCmdImgUrl: "http://services.provisioner.sandbox.cloud.alphahorizon.io:30004/uboots/wedss/boot.scr",
+    script: "arm_64bit=1\ndevice_tree_address=0x100\ndevice_tree_end=0x8000"
+}' \
+    'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/rpi3patches'
+```
+
+```bash
+# Get non-free Raspberry Pi 3 patches status
+curl 'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/rpi3patches/1'
 ```

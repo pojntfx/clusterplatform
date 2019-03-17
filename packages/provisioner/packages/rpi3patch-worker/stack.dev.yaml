@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: iso-worker
+  name: rpi3patch-worker
 spec:
   selector:
     matchLabels:
-      app: iso-worker
+      app: rpi3patch-worker
   template:
     metadata:
       labels:
-        app: iso-worker
+        app: rpi3patch-worker
     spec:
       containers:
-        - name: iso-worker
-          image: registry.gitlab.com/clusterplatform/clusterplatform/iso-worker.dev
+        - name: rpi3patch-worker
+          image: registry.gitlab.com/clusterplatform/clusterplatform/rpi3patch-worker.dev
           resources:
             limits:
-              memory: 500Mi
-              cpu: 500m
+              memory: 200Mi
+              cpu: 200m
           envFrom:
             - configMapRef:
                 name: nats
@@ -28,19 +28,19 @@ spec:
             - configMapRef:
                 name: verdaccio
             - configMapRef:
-                name: iso-worker
+                name: rpi3patch-worker
           volumeMounts:
-            - name: iso-worker
-              mountPath: /tmp/clusterplatform/app/iso
+            - name: rpi3patch-worker
+              mountPath: /tmp/clusterplatform/app/rpi3patch
       volumes:
-        - name: iso-worker
+        - name: rpi3patch-worker
           persistentVolumeClaim:
-            claimName: iso-worker
+            claimName: rpi3patch-worker
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: iso-worker
+  name: rpi3patch-worker
 spec:
   accessModes:
     - ReadWriteOnce
@@ -51,6 +51,6 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: iso-worker
+  name: rpi3patch-worker
 data:
-  MINIO_BUCKET: isos
+  MINIO_BUCKET: rpi3patchs
