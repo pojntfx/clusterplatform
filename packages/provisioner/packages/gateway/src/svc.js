@@ -32,6 +32,10 @@ export default {
           "rpi3firmware-manager.createOverwrite",
           "rpi3firmware-manager.list",
           "rpi3firmware-manager.get",
+          // rpi3patches
+          "rpi3patch-manager.createOverwrite",
+          "rpi3patch-manager.list",
+          "rpi3patch-manager.get",
           // distributors
           "distributor-manager.create",
           "distributor-manager.updateDistributor",
@@ -93,6 +97,10 @@ export default {
           "POST /uboots": "uboot-manager.createOverwrite",
           "GET /uboots": "uboot-manager.list",
           "GET /uboots/:id": "uboot-manager.get",
+          // rpi3patches
+          "POST /rpi3patches": "rpi3patch-manager.createOverwrite",
+          "GET /rpi3patches": "rpi3patch-manager.list",
+          "GET /rpi3patches/:id": "rpi3patch-manager.get",
           // distributors
           "POST /distributors": "distributor-manager.create",
           "PUT /distributors/:id": "distributor-manager.updateDistributor",

@@ -1,9 +1,8 @@
 # Setup env
-FROM node:lts-stretch-slim
+FROM node:lts-alpine
 RUN mkdir -p /opt/clusterplatform/app
 WORKDIR /opt/clusterplatform/app
-RUN apt update
-RUN apt install -y git gcc binutils make perl xz-utils lzma lzma-dev liblzma-dev gcc-aarch64-linux-gnu
+RUN apk add zip
 
 # Add app
 COPY package.json .

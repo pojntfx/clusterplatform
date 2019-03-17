@@ -16,8 +16,8 @@ spec:
           image: registry.gitlab.com/clusterplatform/clusterplatform/ipxe-worker.dev
           resources:
             limits:
-              memory: 300Mi
-              cpu: 300m
+              memory: 500Mi
+              cpu: 500m
           envFrom:
             - configMapRef:
                 name: nats
