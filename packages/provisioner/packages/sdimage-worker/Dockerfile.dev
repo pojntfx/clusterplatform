@@ -1,0 +1,26 @@
+# Setup env
+FROM fedora:29
+RUN dnf install -y npm git gcc gcc-c++ make cmake fuse-devel libfdisk-devel zip parted
+WORKDIR /tmp
+RUN git clone https://github.com/braincorp/partfs.git
+RUN cd partfs && make && cp build/bin/partfs /usr/local/bin
+RUN mkdir -p /opt/clusterplatform/app
+WORKDIR /opt/clusterplatform/app
+
+# Add app
+COPY package.json .
+COPY src src
+
+# Setup app
+ENV SERVICEDIR=src
+ENV SERVICES=svc.js
+ENV TRANSPORTER=TCP
+
+# Run app
+CMD npm set registry ${NPM_REGISTRY}; \
+    npm install; \
+    node node_modules/nodemon/bin/nodemon.js \
+    --inspect=0.0.0.0:9229 \
+    --watch src/ \
+    -r esm \
+    node_modules/moleculer/bin/moleculer-runner.js

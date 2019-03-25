@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sdimage-manager
+spec:
+  selector:
+    matchLabels:
+      app: sdimage-manager
+  template:
+    metadata:
+      labels:
+        app: sdimage-manager
+    spec:
+      containers:
+        - name: sdimage-manager
+          image: registry.gitlab.com/clusterplatform/clusterplatform/sdimage-manager.dev
+          resources:
+            limits:
+              memory: 200Mi
+              cpu: 200m
+          envFrom:
+            - configMapRef:
+                name: nats
+            - configMapRef:
+                name: redis
+            - configMapRef:
+                name: postgres
+            - configMapRef:
+                name: verdaccio

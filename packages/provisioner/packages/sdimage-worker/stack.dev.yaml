@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sdimage-worker
+spec:
+  selector:
+    matchLabels:
+      app: sdimage-worker
+  template:
+    metadata:
+      labels:
+        app: sdimage-worker
+    spec:
+      containers:
+        - name: sdimage-worker
+          image: registry.gitlab.com/clusterplatform/clusterplatform/sdimage-worker.dev
+          resources:
+            limits:
+              memory: 500Mi
+              cpu: 500m
+          envFrom:
+            - configMapRef:
+                name: nats
+            - configMapRef:
+                name: redis
+            - configMapRef:
+                name: minio
+            - configMapRef:
+                name: verdaccio
+            - configMapRef:
+                name: sdimage-worker
+          volumeMounts:
+            - name: sdimage-worker
+              mountPath: /tmp/clusterplatform/app/sdimage
+      volumes:
+        - name: sdimage-worker
+          persistentVolumeClaim:
+            claimName: sdimage-worker
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sdimage-worker
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sdimage-worker
+data:
+  MINIO_BUCKET: sdimages
