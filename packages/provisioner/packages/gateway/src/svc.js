@@ -36,6 +36,10 @@ export default {
           "rpi3patch-manager.createOverwrite",
           "rpi3patch-manager.list",
           "rpi3patch-manager.get",
+          // sdimages
+          "sdimage-manager.createOverwrite",
+          "sdimage-manager.list",
+          "sdimage-manager.get",
           // distributors
           "distributor-manager.create",
           "distributor-manager.updateDistributor",
@@ -101,6 +105,10 @@ export default {
           "POST /rpi3patches": "rpi3patch-manager.createOverwrite",
           "GET /rpi3patches": "rpi3patch-manager.list",
           "GET /rpi3patches/:id": "rpi3patch-manager.get",
+          // sdimages
+          "POST /sdimages": "sdimage-manager.createOverwrite",
+          "GET /sdimages": "sdimage-manager.list",
+          "GET /sdimages/:id": "sdimage-manager.get",
           // distributors
           "POST /distributors": "distributor-manager.create",
           "PUT /distributors/:id": "distributor-manager.updateDistributor",

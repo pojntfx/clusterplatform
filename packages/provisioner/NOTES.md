@@ -561,3 +561,439 @@ curl -H 'Content-Type: application/json' \
 # Get non-free Raspberry Pi 3 patches status
 curl 'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/rpi3patches/1'
 ```
+
+```bash
+# Create SD image
+curl -H 'Content-Type: application/json' \
+    -d '{
+    label: "Cluster Platform Provisioner IMG",
+    artifactsZipUrl: "http://services.provisioner.sandbox.cloud.alphahorizon.io:30004/rpi3patches/234df3/patches.zip"
+}' \
+    'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/sdimages'
+```
+
+```bash
+# Get SD image status
+curl 'http://services.provisioner.sandbox.cloud.alphahorizon.io:30002/api/sdimages/1'
+```
+
+## Undercloud Objects Concept
+
+```plaintext
++--------------------------------------+
+|                                      |
+|  Domains            + Create Domain  |
+|                                      |
+|  api1.sandbox.cloud.alphahorizon.io  |
+|  api2.sandbox.cloud.alphahorizon.io  |
+|                                      |
++--------------------------------------+
+
++--------------------------------------+
+|                                      |
+|  Compute              + Create Node  |
+|                                      |
+|  no1.sandbox.cloud.alphahorizon.sol  |
+|  no2.sandbox.cloud.alphahorizon.sol  |
+|  no3.sandbox.cloud.alphahorizon.sol  |
+|  no4.sandbox.cloud.alphahorizon.sol  |
+|  no5.sandbox.cloud.alphahorizon.sol  |
+|                                      |
++--------------------------------------+
+
++---------------------------------------+
+|                                       |
+|  Networking         + Create Network  |
+|                                       |
+|  net1.sandbox.cloud.alphahorizon.sol  |
+|  net2.sandbox.cloud.alphahorizon.sol  |
+|                                       |
++---------------------------------------+
+
++---------------------------------------+
+|                                       |
+|  Volume Storage      + Create Volume  |
+|                                       |
+|  vol1.sandbox.cloud.alphahorizon.sol  |
+|  vol2.sandbox.cloud.alphahorizon.sol  |
+|  vol3.sandbox.cloud.alphahorizon.sol  |
+|                                       |
++---------------------------------------+
+
++---------------------------------------+
+|                                       |
+|  Object Storage      + Create Bucket  |
+|                                       |
+|  obj1.sandbox.cloud.alphahorizon.sol  |
+|  obj2.sandbox.cloud.alphahorizon.sol  |
+|  obj3.sandbox.cloud.alphahorizon.sol  |
+|  obj4.sandbox.cloud.alphahorizon.sol  |
+|                                       |
++---------------------------------------+
+```
+
+## Undercloud Deployment Experiment
+
+> Tested on: `fedora-29`, `ubuntu-18.04`
+
+```bash
+# To apply infrastructure:
+export HCLOUD_SERVERS=("alphahorizonio-cloud--sandbox-node1" "alphahorizonio-cloud--sandbox-node2" "alphahorizonio-cloud--sandbox-node3" "alphahorizonio-cloud--sandbox-node4" "alphahorizonio-cloud--sandbox-node5")
+export HCLOUD_SERVER_IMAGE="fedora-29" # or ubuntu-18.04
+for server in "${HCLOUD_SERVERS[@]}"; do
+    hcloud server rebuild --image "${HCLOUD_SERVER_IMAGE}" "${server}" &
+done
+export LOCALNODES=("116.203.140.202" "116.203.140.204" "116.203.49.163" "116.203.136.4" "116.203.140.203")
+for localnode in "${LOCALNODES[@]}"; do
+    ssh root@"${localnode}" 'cat /etc/os-release'
+done
+```
+
+```bash
+# To apply cluster:
+env.config
+export NETWORK_ID="159924d63032a4e7"
+export API_ACCESS_TOKEN="G3nxjygB1GrdIMXsgJjYriXIbPCnEiMU"
+zerotier.hosts.config "${LOCALNODES[@]}"
+zerotier.config "${NETWORK_ID}" "${API_ACCESS_TOKEN}"
+zerotier.apply
+zerotier.interfaces.get
+export REDHAT_MANAGERS=("10.243.227.134")
+export REDHAT_WORKERS=("10.243.171.57" "10.243.241.144" "10.243.21.156" "10.243.26.26")
+export DEBIAN_MANAGERS=()
+export DEBIAN_WORKERS=()
+export MANAGERS=("${REDHAT_MANAGERS[@]}" "${DEBIAN_MANAGERS[@]}")
+export WORKERS=("${REDHAT_WORKERS[@]}" "${DEBIAN_WORKERS[@]}")
+export GLOBALNODES=("${MANAGERS[@]}" "${WORKERS[@]}")
+for globalnode in "${GLOBALNODES[@]}"; do
+    ssh root@"${globalnode}" 'hostname'
+done
+kubeadm.redhat.config "${REDHAT_MANAGERS[@]}" "${REDHAT_WORKERS[@]}"
+kubeadm.debian.config "${DEBIAN_MANAGERS[@]}" "${DEBIAN_WORKERS[@]}"
+export JOIN_TOKEN="kggjyu.oibo4midrs8skfqx"
+export KUBERNETES_VERSION="v1.13.4"
+kubeadm.masters.config "${JOIN_TOKEN}" "${KUBERNETES_VERSION}"
+kubeadm.masters.apply "${MANAGERS[@]}"
+export DISCOVERY_TOKEN="0d06c41b8fa2db43bfd8be5daf525b814583f411bb930473bde3b80562d4e2b0"
+kubeadm.nodes.config "${JOIN_TOKEN}" "${DISCOVERY_TOKEN}" "${MANAGERS[0]}:6443"
+export KUBECONFIG_NAME="alphahorizonio-cloud--sandbox.yaml"
+kubeconfig.get "${MANAGERS[0]}" "${KUBECONFIG_NAME}"
+kubeconfig.activate "${KUBECONFIG_NAME}"
+kubeconfig.test
+export KUBEROUTER_VERSION="${KUBERNETES_VERSION}"
+kuberouter.config "${KUBEROUTER_VERSION}"
+kuberouter.apply "${MANAGERS[@]}"
+kuberouter.patch "${MANAGERS[@]}"
+kubeconfig.test
+kubeadm.nodes.apply "${WORKERS[@]}"
+kuberouter.patch "${WORKERS[@]}"
+kubeconfig.test
+export ROOK_RELEASE="release-0.9"
+export ROOK_REPLICAS="3"
+rook.config "${ROOK_RELEASE}" "${ROOK_REPLICAS}"
+rook.apply
+rook.get
+```
+
+```bash
+# To delete:
+rook.delete "${MANAGERS[@]}" "${WORKERS[@]}"
+kuberouter.delete "${MANAGERS[@]}" "${WORKERS[@]}"
+kubeadm.delete "${MANAGERS[@]}" "${WORKERS[@]}"
+zerotier.delete "${MANAGERS[@]}" "${WORKERS[@]}"
+```
+
+```bash
+# All functions:
+# env
+
+# env.config
+function env.config() {
+    export WORKSPACEDIR="${PWD}/workspaces/$(cat /proc/sys/kernel/random/uuid)"
+    export ZEROTIERDIR="${WORKSPACEDIR}/zerotierdir"
+    export KUBEADMDIR="${WORKSPACEDIR}/kubeadmdir"
+    export ROOKDIR="${WORKSPACEDIR}/rookdir"
+    mkdir -p "$WORKSPACEDIR"
+    mkdir -p "$ZEROTIERDIR"
+    mkdir -p "$KUBEADMDIR"
+    mkdir -p "$ROOKDIR"
+    echo 'Applied env:'
+    tree "${WORKSPACEDIR}"
+}
+
+# zerotier
+
+# zerotier.hosts.config 116.203.140.202 116.203.140.204 116.203.49.163 116.203.136.4 116.203.140.203
+function zerotier.hosts.config() {
+    git clone git@github.com:m4rcu5nl/ansible-role-zerotier.git "${ZEROTIERDIR}"
+    echo '[node]' >"${ZEROTIERDIR}/hosts.ini"
+    for ip in "$@"; do
+        echo "${ip}" >>"${ZEROTIERDIR}/hosts.ini"
+    done
+    echo 'Applied hosts:'
+    cat "${ZEROTIERDIR}/hosts.ini"
+}
+
+# zerotier.config 159924d63032a4e7 G3nxjygB1GrdIMXsgJjYriXIbPCnEiMU
+function zerotier.config() {
+    local ID="${1}"
+    local ACCESS_TOKEN="${2}"
+    cat <<EOF >"${ZEROTIERDIR}/site.yaml"
+---
+- hosts: node
+  vars:
+     zerotier_network_id: "${ID}"
+     zerotier_accesstoken: "${ACCESS_TOKEN}"
+     zerotier_register_short_hostname: true
+
+  roles:
+     - { role: ., become: true }
+EOF
+    echo 'Applied playbook:'
+    cat "${ZEROTIERDIR}/site.yaml"
+}
+
+# zerotier.apply
+function zerotier.apply() {
+    ansible-playbook -i "${ZEROTIERDIR}/hosts.ini" "${ZEROTIERDIR}/site.yaml" -u root -e 'ansible_python_interpreter=/usr/bin/python3'
+}
+
+# zerotier.delete 159924d63032a4e7
+function zerotier.delete() {
+    local ID="${1}"
+    ansible -i "${ZEROTIERDIR}/hosts.ini" all -u root -m shell -a "zerotier-cli leave ${1}" -e 'ansible_python_interpreter=/usr/bin/python3'
+}
+
+# zerotier.interfaces.get
+function zerotier.interfaces.get() {
+    ansible -i "${ZEROTIERDIR}/hosts.ini" all -u root -m shell -a 'ip a | grep zt' -e 'ansible_python_interpreter=/usr/bin/python3'
+}
+
+# kubeadm
+
+# kubeadm.redhat.config 10.243.101.52 10.243.229.214 10.243.230.206 10.243.80.21 10.243.80.21
+function kubeadm.redhat.config() {
+    for ip in "$@"; do
+        ssh "root@${ip}" "command -v docker || curl https://get.docker.com | sh
+cat <<EOF >/etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+exclude=kube*
+EOF
+setenforce 0
+sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+yum update -y
+yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+cat <<EOF >/etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+mkdir -p /opt/cni/bin
+ln -s /usr/libexec/cni/* /opt/cni/bin
+sysctl --system
+modprobe br_netfilter
+systemctl enable --now systemd-resolved
+systemctl restart systemd-resolved
+systemctl enable --now docker
+systemctl restart docker
+systemctl enable --now kubelet
+systemctl restart kubelet" &
+    done
+}
+
+# kubeadm.debian.config 10.243.101.52 10.243.229.214 10.243.230.206 10.243.80.21 10.243.80.21
+function kubeadm.debian.config() {
+    for ip in "$@"; do
+        ssh "root@${ip}" "apt-get update
+apt-get install -y apt-transport-https curl
+command -v docker || curl https://get.docker.com | sh
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+deb https://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+apt-get update
+apt-get install -y kubelet kubeadm kubectl
+apt-mark hold kubelet kubeadm kubectl
+cat <<EOF >/etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+sysctl --system
+modprobe br_netfilter
+systemctl enable --now systemd-resolved
+systemctl restart systemd-resolved
+systemctl enable --now docker
+systemctl restart docker
+systemctl enable --now kubelet
+systemctl restart kubelet" &
+    done
+}
+
+# kubeadm.masters.config kggjyu.oibo4midrs8skfqx v1.13.4
+function kubeadm.masters.config() {
+    export TOKEN="${1}"
+    export KUBERNETES_VERSION="${2}"
+}
+
+# kubeadm.masters.apply 10.243.101.52
+function kubeadm.masters.apply() {
+    local IP="${1}"
+    for ip in "$@"; do
+        ssh "root@${ip}" "kubeadm init --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address ${IP} --kubernetes-version ${KUBERNETES_VERSION} --token ${TOKEN}; echo 'Join token:'; echo ${TOKEN}; echo 'Discovery token:'; openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'" &
+    done
+}
+
+# kubeadm.nodes.config kggjyu.oibo4midrs8skfqx 6bbcca595ad76417a20cbc698c4f2e546375e86932b0c810912999dbce40a609 10.243.101.52:6443
+function kubeadm.nodes.config() {
+    export JOIN_TOKEN="${1}"
+    export DISCOVERY_TOKEN="${2}"
+    export APISERVER="${3}"
+}
+
+# kubeadm.nodes.apply 10.243.229.214 10.243.230.206 10.243.80.21 10.243.80.21
+function kubeadm.nodes.apply() {
+    for ip in "$@"; do
+        ssh "root@${ip}" "kubeadm join --token ${JOIN_TOKEN} --discovery-token-ca-cert-hash sha256:${DISCOVERY_TOKEN} ${APISERVER}" &
+    done
+}
+
+# kubeadm.delete 10.243.101.52 10.243.229.214 10.243.230.206 10.243.80.21 10.243.80.21
+function kubeadm.delete() {
+    for ip in "$@"; do
+        ssh "root@${ip}" "kubeadm reset -f" &
+    done
+}
+
+# kubeconfig
+
+# kubeconfig.get 10.243.160.132 alphahorizonio-cloud--sandbox.yaml
+function kubeconfig.get() {
+    local MASTER_IP="${1}"
+    local KUBECONFIG_NAME="${2}"
+    scp "root@${MASTER_IP}:/etc/kubernetes/admin.conf" "${HOME}/.kube/${KUBECONFIG_NAME}"
+    echo 'Get kubeconfig:':
+    cat "${HOME}/.kube/${KUBECONFIG_NAME}"
+}
+
+# kubeconfig.activate alphahorizonio-cloud--sandbox.yaml
+function kubeconfig.activate() {
+    local KUBECONFIG_NAME="${1}"
+    cp "${HOME}/.kube/${KUBECONFIG_NAME}" "${HOME}/.kube/config"
+    echo 'Activated kubeconfig:'
+    cat "${HOME}/.kube/${KUBECONFIG_NAME}"
+}
+
+# kubeconfig.test
+function kubeconfig.test() {
+    kubectl get nodes
+}
+
+# kuberouter
+
+# kuberouter.config v1.13.4
+function kuberouter.config() {
+    export KUBEROUTER_VERSION="${1}"
+}
+
+# kuberouter.apply 10.243.99.94 10.243.140.249 10.243.165.160 10.243.170.87 10.243.160.132
+function kuberouter.apply() {
+    kubectl apply -f https://raw.githubusercontent.com/cloudnativelabs/kube-router/master/daemonset/kubeadm-kuberouter-all-features.yaml
+    kubectl -n kube-system delete ds kube-proxy
+    for ip in "$@"; do
+        ssh "root@${ip}" "docker run --privileged -v /lib/modules:/lib/modules:z --net=host k8s.gcr.io/kube-proxy-amd64:${KUBEROUTER_VERSION} kube-proxy --cleanup" &
+    done
+}
+
+# kuberouter.patch 10.243.99.94 10.243.140.249 10.243.165.160 10.243.170.87 10.243.160.132
+function kuberouter.patch() {
+    for ip in "$@"; do
+        ssh "root@${ip}" "cp -f /etc/resolv.conf /etc/resolv.conf.backup; rm /etc/resolv.conf; ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf" &
+    done
+}
+
+# kuberouter.delete 10.243.99.94 10.243.140.249 10.243.165.160 10.243.170.87 10.243.160.132
+function kuberouter.delete() {
+    for ip in "$@"; do
+        ssh "root@${ip}" "rm /etc/resolv.conf; cp -f /etc/resolv.conf.backup /etc/resolv.conf" &
+    done
+    kubectl delete -f https://raw.githubusercontent.com/cloudnativelabs/kube-router/master/daemonset/kubeadm-kuberouter-all-features.yaml
+}
+
+# rook
+
+# rook.config release-0.9 3
+function rook.config() {
+    local RELEASE="${1}"
+    local SIZE="${2}"
+    git clone git@github.com:rook/rook.git "${ROOKDIR}"
+    git --git-dir="${ROOKDIR}/.git" checkout "${RELEASE}" --force
+    cat <<EOF >"${ROOKDIR}/cluster/examples/kubernetes/ceph/storageclass.yaml"
+apiVersion: ceph.rook.io/v1
+kind: CephBlockPool
+metadata:
+  name: replicapool
+  namespace: rook-ceph
+spec:
+  failureDomain: host
+  replicated:
+    size: ${SIZE}
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+   name: rook-ceph-block
+provisioner: ceph.rook.io/block
+parameters:
+  blockPool: replicapool
+  clusterNamespace: rook-ceph
+EOF
+    echo 'Configurated rook:'
+    cat "${ROOKDIR}/cluster/examples/kubernetes/ceph/storageclass.yaml"
+}
+
+# rook.apply
+function rook.apply() {
+    kubectl apply -f "${ROOKDIR}/cluster/examples/kubernetes/ceph/operator.yaml"
+    kubectl apply -f "${ROOKDIR}/cluster/examples/kubernetes/ceph/cluster.yaml"
+    kubectl apply -f "${ROOKDIR}/cluster/examples/kubernetes/ceph/storageclass.yaml"
+    kubectl patch storageclass rook-ceph-block -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+}
+
+# rook.get
+function rook.get() {
+    kubectl -n rook-ceph-system get pods
+    kubectl -n rook-ceph get pods
+}
+
+# rook.delete 10.243.99.94 10.243.140.249 10.243.165.160 10.243.170.87 10.243.160.132
+function rook.delete() {
+    kubectl delete -f "${ROOKDIR}/cluster/examples/kubernetes/ceph/storageclass.yaml"
+    kubectl delete -f "${ROOKDIR}/cluster/examples/kubernetes/ceph/cluster.yaml"
+    kubectl delete -f "${ROOKDIR}/cluster/examples/kubernetes/ceph/operator.yaml"
+    for ip in "$@"; do
+        ssh "root@${ip}" "rm -rf /var/lib/rook/ && echo \"Removed rook from ${ip}\"" &
+    done
+}
+
+# rook.test.apply
+function rook.test.apply() {
+    kubectl apply -f "${ROOKDIR}/cluster/examples/kubernetes/mysql.yaml"
+    kubectl apply -f "${ROOKDIR}/cluster/examples/kubernetes/wordpress.yaml"
+}
+
+# rook.test.get
+function rook.test.get() {
+    kubectl get pvc
+}
+
+# rook.test.delete
+function rook.test.delete() {
+    kubectl delete -f "${ROOKDIR}/cluster/examples/kubernetes/mysql.yaml"
+    kubectl apply -f "${ROOKDIR}/cluster/examples/kubernetes/wordpress.yaml"
+}
+```
