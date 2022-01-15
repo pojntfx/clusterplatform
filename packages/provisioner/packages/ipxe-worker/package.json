@@ -10,7 +10,7 @@
     "moleculer": "^0.13.6",
     "moleculer-bull": "^0.2.3",
     "nats": "^1.2.2",
-    "shelljs": "^0.8.3",
+    "shelljs": "^0.8.5",
     "@clusterplatform/builder-utils": "canary"
   },
   "devDependencies": {
